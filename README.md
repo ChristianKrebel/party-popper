@@ -26,7 +26,7 @@ are displayed. These events get hotter depending on how many users have agreed t
 * Map of current events
 * private events by regular users
 
-### Will not have ...
+### Won't have ...
 * User tailored views
 * QR code promos
 * Sponsored contributions 

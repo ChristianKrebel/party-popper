@@ -27,3 +27,5 @@
 
  https://dev.to/miguelrodoma95/tips-to-keep-your-android-app-project-organized-361n 
 
+ https://github.com/futurice/android-best-practices 
+

@@ -26,11 +26,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.partypopper.app.R;
+import com.partypopper.app.features.authentication.register.RegistrationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
+import com.partypopper.app.utils.BaseActivity;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private ProgressDialog mProgressDialog;
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -51,11 +51,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
 
         initializeUI();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     private void signInWithEmail() {
@@ -102,6 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         findViewById(R.id.emailLoginButton).setOnClickListener(this);
         findViewById(R.id.googleLoginButton).setOnClickListener(this);
+        //findViewById(R.id.registerNewButton).setOnClickListener(this);
     }
 
     private void configureGoogleSignIn() {
@@ -122,6 +118,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.googleLoginButton:
                 singInWithGoogle();
                 break;
+            /*case R.id.registerNewButton:
+                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
+                break;*/
         }
     }
 
@@ -168,27 +167,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                         }
-
-                        // [START_EXCLUDE]
                         hideProgressDialog();
-                        // [END_EXCLUDE]
                     }
                 });
-    }
-
-    public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage("Logge ein");
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
     }
 }

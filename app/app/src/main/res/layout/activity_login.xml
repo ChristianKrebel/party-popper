@@ -1,68 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_dark_background"
+    android:background="#FFF"
+    android:gravity="center"
     android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/auth_email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/passwordInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="@string/auth_password"
+        android:inputType="textPassword" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/emailInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/auth_email"
-            android:inputType="textWebEmailAddress" />
-
-        <EditText
-            android:id="@+id/passwordInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/auth_password"
-            android:inputType="textPassword" />
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/emailLoginButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/auth_login_button" />
+            android:layout_width="140dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/colorAccent"
+            android:text="@string/auth_login_button"
+            android:textAllCaps="true"
+            android:textColor="#FFFF" />
 
         <Button
-            android:id="@+id/registerNewButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:selectAllOnFocus="false"
-            android:text="Register new Account" />
-
+            android:id="@+id/auth_register_button"
+            android:layout_width="140dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorAccent"
+            android:text="Register!"
+            android:textColor="#FFFF" />
     </LinearLayout>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/auth_forgot_password_button"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@null"
+        android:text="I forgot password"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary" />
+
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="OR"
+        android:textColor="@color/colorPrimary" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Or Login with"
-            android:textColor="#FFF"
-            android:textSize="14pt" />
-
-        <Button
-            android:id="@+id/googleLoginButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#E92E2E"
-            android:text="Google"
-            android:textColor="#FFF" />
-
-    </LinearLayout>
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/googleLoginButton"
+        android:layout_width="300dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="15dp" />
 
 </LinearLayout>

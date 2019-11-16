@@ -39,7 +39,7 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_authentication);
 
         configureGoogleSignIn();
 

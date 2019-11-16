@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/emailInput"
+        android:id="@+id/auth_email_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -17,7 +17,7 @@
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/passwordInput"
+        android:id="@+id/auth_password_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -32,7 +32,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/emailLoginButton"
+            android:id="@+id/auth_email_login_button"
             android:layout_width="140dp"
             android:layout_height="45dp"
             android:layout_marginTop="10dp"
@@ -71,7 +71,7 @@
         android:textColor="@color/colorPrimary" />
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/googleLoginButton"
+        android:id="@+id/auth_google_login_button"
         android:layout_width="300dp"
         android:layout_height="55dp"
         android:layout_marginTop="15dp" />

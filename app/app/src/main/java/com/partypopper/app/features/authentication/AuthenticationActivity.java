@@ -1,16 +1,13 @@
-package com.partypopper.app.features.authentication.login;
+package com.partypopper.app.features.authentication;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -19,18 +16,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.partypopper.app.R;
-import com.partypopper.app.features.authentication.register.RegistrationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.utils.BaseActivity;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class AuthenticationActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -53,6 +48,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         initializeUI();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.auth_email_login_button:
+                signInWithEmail();
+                break;
+            case R.id.auth_google_login_button:
+                singInWithGoogle();
+                break;
+            case R.id.auth_register_button:
+                registerNewUser();
+                break;
+            case R.id.auth_forgot_password_button:
+                resetPassword();
+                break;
+        }
+    }
+
     private void signInWithEmail() {
         String email, password;
 
@@ -60,11 +78,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         password = passwordInput.getText().toString();
 
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getApplicationContext(), "Please enter email...", Toast.LENGTH_LONG).show();
+            showText("Please enter email...");
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "Please enter password!", Toast.LENGTH_LONG).show();
+            showText("Please enter password!");
             return;
         }
 
@@ -73,14 +91,69 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                            showText("Login successful!");
 
-                            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                            Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                         }
                         else {
-                            Toast.makeText(getApplicationContext(), "Login failed! Please try again later", Toast.LENGTH_LONG).show();
+                            showText("Login failed! Please try again later");
+                        }
+                    }
+                });
+    }
+    private void registerNewUser() {
+        String email, password;
+
+        email = emailInput.getText().toString();
+        password = passwordInput.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            showText("Please enter email...");
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            showText("Please enter password!");
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            showText("Registration successful!");
+                            showProgressDialog();
+
+                            Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            showText("Registration failed! Please try again later");
+                            hideProgressDialog();
+                        }
+                    }
+                });
+    }
+
+    private void resetPassword() {
+        String email = emailInput.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            showText("Please enter email...");
+            return;
+        }
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            showText("Email sent.");
+                            Log.d(TAG, "Email sent.");
+                        } else {
+                            showText("Something went wrong!");
                         }
                     }
                 });
@@ -92,12 +165,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initializeUI() {
-        emailInput = findViewById(R.id.emailInput);
-        passwordInput = findViewById(R.id.passwordInput);
+        emailInput = findViewById(R.id.auth_email_input);
+        passwordInput = findViewById(R.id.auth_password_input);
 
-        findViewById(R.id.emailLoginButton).setOnClickListener(this);
-        findViewById(R.id.googleLoginButton).setOnClickListener(this);
-        //findViewById(R.id.registerNewButton).setOnClickListener(this);
+        findViewById(R.id.auth_email_login_button).setOnClickListener(this);
+        findViewById(R.id.auth_register_button).setOnClickListener(this);
+        findViewById(R.id.auth_forgot_password_button).setOnClickListener(this);
+        findViewById(R.id.auth_google_login_button).setOnClickListener(this);
+
     }
 
     private void configureGoogleSignIn() {
@@ -107,21 +182,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.emailLoginButton:
-                signInWithEmail();
-                break;
-            case R.id.googleLoginButton:
-                singInWithGoogle();
-                break;
-            /*case R.id.registerNewButton:
-                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
-                break;*/
-        }
     }
 
     @Override
@@ -159,13 +219,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                            Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            showText("Authentication Failed.");
                         }
                         hideProgressDialog();
                     }

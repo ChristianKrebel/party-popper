@@ -7,4 +7,24 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sort_hottest"
+        android:orderInCategory="99"
+        android:title="@string/action_sort_hottest"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sort_nearest"
+        android:orderInCategory="98"
+        android:title="@string/action_sort_nearest"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sort_favorites"
+        android:orderInCategory="97"
+        android:title="@string/action_sort_favorites"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sort_alphabetical"
+        android:orderInCategory="96"
+        android:title="@string/action_sort_alphabetical"
+        app:showAsAction="never" />
 </menu>

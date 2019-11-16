@@ -57,6 +57,7 @@ public class DashboardActivity extends AppCompatActivity {
                 text = "Settings";
                 testToast(text);
                 return true;
+                // TODO more cases
             default:
                 return super.onOptionsItemSelected(item);
         }

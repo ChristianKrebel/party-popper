@@ -40,7 +40,6 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
-
         configureGoogleSignIn();
 
         mAuth = FirebaseAuth.getInstance();
@@ -55,7 +54,7 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.auth_email_login_button:
                 signInWithEmail();
                 break;
@@ -96,13 +95,13 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                             Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
-                        }
-                        else {
+                        } else {
                             showText("Login failed! Please try again later");
                         }
                     }
                 });
     }
+
     private void registerNewUser() {
         String email, password;
 
@@ -124,12 +123,11 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             showText("Registration successful!");
-                            showProgressDialog();
+                            showProgressDialog("Logge ein ...");
 
                             Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
                             startActivity(intent);
-                        }
-                        else {
+                        } else {
                             showText("Registration failed! Please try again later");
                             hideProgressDialog();
                         }
@@ -206,7 +204,7 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
-        showProgressDialog();
+        showProgressDialog("Logge ein ...");
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);

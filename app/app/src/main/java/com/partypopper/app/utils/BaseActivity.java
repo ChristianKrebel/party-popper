@@ -1,7 +1,9 @@
 package com.partypopper.app.utils;
 
 import android.app.ProgressDialog;
+import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -11,15 +13,20 @@ public class BaseActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         hideProgressDialog();
     }
 
-    public void showProgressDialog() {
+    public void showProgressDialog(String text) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage("Logge ein");
+            mProgressDialog.setMessage(text);
             mProgressDialog.setIndeterminate(true);
         }
 

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">app</string>
     <string name="action_settings">Settings</string>
+    <string name="action_sort_hottest">Hottest</string>
+    <string name="action_sort_nearest">Nearest</string>
+    <string name="action_sort_favorites">Favorites</string>
+    <string name="action_sort_alphabetical">A-Z</string>
 
     <string name="auth_login_head">Login to your Account</string>
     <string name="auth_email">Email</string>

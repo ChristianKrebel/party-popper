@@ -30,7 +30,7 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(FirebaseAuth.getInstance().getCurrentUser()== null) {
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(SplashActivity.this, AuthenticationActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

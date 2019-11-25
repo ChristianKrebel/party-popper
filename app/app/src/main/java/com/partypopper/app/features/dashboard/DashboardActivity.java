@@ -1,5 +1,6 @@
 package com.partypopper.app.features.dashboard;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,11 +8,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,7 +86,8 @@ public class DashboardActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(DashboardViewHolder holder, int position, DashboardModel model) {
-                holder.setDetails(model.getTitle(), model.getDate(), model.getImage(), model.getOrganizer(), model.getVisitor_count());
+                holder.setDetails(model.getTitle(), model.getDate(), model.getImage(),
+                        model.getOrganizer(), model.getVisitor_count());
             }
         };
         adapter.startListening();
@@ -99,7 +103,22 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        MenuItem searchItem = menu.findItem((R.id.action_search));
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem); //TODO use not deprecated method
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                firebaseSearch(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                firebaseSearch(newText);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**
@@ -119,6 +138,43 @@ public class DashboardActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Query a String to the Firebase database and get results in the recyclerview
+     * @param searchText
+     */
+    private void firebaseSearch(String searchText) {
+        // Different query than the one in the onStart method
+        // TODO shorten redundant code?
+        // TODO exchange with Elastic Search for 'contains'-ability and no case sensitivity
+        Query firebaseSearchQuery = mDatabaseReference.orderByChild("title")
+                .startAt(searchText)
+                .endAt(searchText + "\uf8ff"); // High point unicode character, called Escape
+        FirebaseRecyclerOptions<DashboardModel> options =
+                new FirebaseRecyclerOptions.Builder<DashboardModel>()
+                        .setQuery(firebaseSearchQuery, DashboardModel.class)
+                        .build();
+
+        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<DashboardModel, DashboardViewHolder>(options) {
+            @Override
+            public DashboardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.row_dashboard for each item
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.row_dashboard, parent, false);
+
+                return new DashboardViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(DashboardViewHolder holder, int position, DashboardModel model) {
+                holder.setDetails(model.getTitle(), model.getDate(), model.getImage(),
+                        model.getOrganizer(), model.getVisitor_count());
+            }
+        };
+        adapter.startListening();
+        mRecyclerView.setAdapter(adapter);
     }
 
     /**

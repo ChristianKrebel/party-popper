@@ -13,6 +13,8 @@
 | 16.11.19 | 2,5h | Add action bar and prepare for list view                     |
 | 17.11.19 | 3h   | Read about recyclerview and firebase                         |
 | 18.11.19 | 5h   | Add recyclerview which downloads its content from firebase (RTDB) |
+| 22.11.19 | 2h   | Change recyclerview row layout                               |
+| 26.11.19 | 4h   | Change recyclerview row layout + add very simple search      |
 |          |      |                                                              |
 | Total    |      |                                                              |
-|          | 22h  |                                                              |
+|          | 28h  |                                                              |

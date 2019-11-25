@@ -83,7 +83,7 @@ public class DashboardActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(DashboardViewHolder holder, int position, DashboardModel model) {
-                holder.setDetails(model.getTitle(), model.getDate(), model.getVisitor_count(), model.getImage());
+                holder.setDetails(model.getTitle(), model.getDate(), model.getImage(), model.getOrganizer(), model.getVisitor_count());
             }
         };
         adapter.startListening();

@@ -2,7 +2,10 @@ package com.partypopper.app.features.dashboard;
 
 public class DashboardModel {
 
-    private String title, date, image;
+    private String title;
+    private String date;
+    private String image;
+    private String organizer;
     private long visitor_count;
 
     public DashboardModel() {
@@ -32,6 +35,10 @@ public class DashboardModel {
     public void setImage(String image) {
         this.image = image;
     }
+
+    public String getOrganizer() { return organizer; }
+
+    public void setOrganizer(String organizer) { this.organizer = organizer; }
 
     public long getVisitor_count() {
         return visitor_count;

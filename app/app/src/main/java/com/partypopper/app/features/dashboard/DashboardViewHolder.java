@@ -20,11 +20,12 @@ public class DashboardViewHolder extends RecyclerView.ViewHolder {
         mView = itemView;
     }
 
-    public void setDetails(String title, String date, long visitorCount, String image) {
+    public void setDetails(String title, String date, String image, String organizer, long visitorCount) {
         // Views
         ImageView mBannerIv = mView.findViewById(R.id.rBannerIv);
         TextView mTitleTv = mView.findViewById(R.id.rTitleTv);
         TextView mDateTv = mView.findViewById(R.id.rDateTv);
+        TextView mOrganizerTv = mView.findViewById(R.id.rOrganizerTv);
         TextView mVisitorCountTv = mView.findViewById(R.id.rVisitorCountTv);
 
         // set data to views
@@ -32,6 +33,7 @@ public class DashboardViewHolder extends RecyclerView.ViewHolder {
 
         mTitleTv.setText(title);
         mDateTv.setText(date);
+        mOrganizerTv.setText(organizer);
         mVisitorCountTv.setText(Long.toString(visitorCount) + " Attendees");
     }
 }

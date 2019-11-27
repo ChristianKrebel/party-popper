@@ -15,6 +15,7 @@
 | 18.11.19 | 5h   | Add recyclerview which downloads its content from firebase (RTDB) |
 | 22.11.19 | 2h   | Change recyclerview row layout                               |
 | 26.11.19 | 4h   | Change recyclerview row layout + add very simple search      |
+| 27.11.19 | 4h   | Experimenting with adapters and listeners for event detail activity |
 |          |      |                                                              |
 | Total    |      |                                                              |
-|          | 28h  |                                                              |
+|          | 32h  |                                                              |

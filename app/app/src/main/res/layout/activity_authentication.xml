@@ -40,7 +40,7 @@
             android:background="@color/colorAccent"
             android:text="@string/auth_login_button"
             android:textAllCaps="true"
-            android:textColor="#FFFF" />
+            android:textColor="#FFF" />
 
         <Button
             android:id="@+id/auth_register_button"
@@ -50,7 +50,7 @@
             android:layout_marginTop="10dp"
             android:background="@color/colorAccent"
             android:text="Register!"
-            android:textColor="#FFFF" />
+            android:textColor="#FFF" />
     </LinearLayout>
 
     <Button

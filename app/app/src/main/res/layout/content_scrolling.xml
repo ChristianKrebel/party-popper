@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".features.dashboard.ScrollingActivity"
+    tools:showIn="@layout/activity_scrolling">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="Rebellion - the Rockfuckingpartynight"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:text="Saturday, 2.11.19, starts at 10 pm" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/goToEventbt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:text="Go" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:text="42 people are going" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/widget_horizontal_black_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/black_trans90"
+            android:layout_marginBottom="@dimen/horizontal_line_margin"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:text="X Herford" />
+
+        <LinearLayout
+            android:id="@+id/widget_horizontal_black_bar_2"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/black_trans90"
+            android:layout_marginBottom="@dimen/horizontal_line_margin"
+            android:layout_marginTop="@dimen/horizontal_line_margin"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:text="@string/large_text" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

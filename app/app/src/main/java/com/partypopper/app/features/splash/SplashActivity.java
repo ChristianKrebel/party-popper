@@ -16,8 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
-import com.partypopper.app.features.dashboard.DashboardActivity;
-import com.partypopper.app.features.dashboard.ScrollingActivity;
+import com.partypopper.app.features.dashboard.EventDetailActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class SplashActivity extends BaseActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } else {
-            Intent intent = new Intent(SplashActivity.this, ScrollingActivity.class);
+            Intent intent = new Intent(SplashActivity.this, EventDetailActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }

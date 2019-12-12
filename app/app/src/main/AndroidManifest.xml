@@ -12,10 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".features.dashboard.ScrollingActivity"
+            android:name=".features.dashboard.EventDetailActivity"
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".features.dashboard.EventDetailActivity" />
         <activity
             android:name=".features.splash.SplashActivity"
             android:theme="@style/SplashTheme">

@@ -215,8 +215,8 @@ public class EventDetailActivity extends BaseActivity {
         showText("onAttendEventButtonClick");
     }
 
-    public void onOrganizerImageViewClick(View view) {
-        showText("onOrganizerImageViewClick");
+    public void onOrganizerClick(View view) {
+        showText("onOrganizerClick");
     }
 
     public void onOrganizerFavButtonClick(View view) {

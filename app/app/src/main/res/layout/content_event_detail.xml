@@ -117,7 +117,7 @@
                     android:layout_height="@dimen/organizer_profile_pic"
                     android:src="@drawable/testlogo"
                     android:scaleType="centerCrop"
-                    android:onClick="onOrganizerImageViewClick" />
+                    android:onClick="onOrganizerClick" />
 
             </androidx.cardview.widget.CardView>
 
@@ -135,7 +135,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/text_margin"
                     android:layout_marginEnd="@dimen/text_margin"
-                    android:text="X Herford" />
+                    android:text="X Herford"
+                    android:onClick="onOrganizerClick"/>
 
                 <RatingBar
                     android:id="@+id/edOrganizerRb"
@@ -189,7 +190,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/text_margin_4"
+                android:layout_marginTop="@dimen/text_margin_3"
                 android:layout_marginBottom="@dimen/text_margin">
 
                 <TextView

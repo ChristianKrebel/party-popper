@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.partypopper.app.features.dashboard.EventDetailActivity">
     <item
-        android:id="@+id/action_event_open_image"
+        android:id="@+id/action_event_open_event_link"
         android:orderInCategory="100"
         android:title="@string/action_event_open_image"
         android:icon="@drawable/ic_open_in_new_white_24dp"

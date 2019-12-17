@@ -14,6 +14,7 @@
 
     <string name="separator_point">\u2022</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="block_organizer">Block organizer</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -102,6 +103,24 @@
         "On the layout level, design your app layout to minimize opportunities for interference. "
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
+    </string>
+    <string name="event_text">
+        "Music: All Killer No Filler\n\n"
+
+        "von 22 bis 23 Uhr Eintritt nur 1€, anschließend 6,- € !\n"
+        "50% weniger Eintritt für Studenten die ganze Nacht!\n\n"
+
+        "Specials: alle Getränke außer Cocktails die ganze Nacht 2 Euro.\n\n"
+
+        "[Main]: Machine Head, Bring Me The Horizon, August Burns Red, Limp Bizkit, Bodycount, Skindred, Rammstein, Papa Roach, Caliban, Broilers, Ramones, In Flames, Airbourne, Amon Amarth, Slayer, usw. usw.\n\n"
+
+        "[Church]: MEGADETH, AC/DC, KISS, GUNS N ROSES, METALLICA, SCORPIONS, WHITESNAKE, DEEP PURPLE, LED ZEPPELIN, JOAN JETT, THE SWEET, T REX usw.usw.\n\n"
+
+        "[Atomix]: Melissa Etheridge, Bob Marley, Gentleman, Seed, Madonna, Placebo, DM, Lady GAGA, Prince, Jamiroquai, usw.usw.\n\n"
+
+        "[X1] Spezialitäten- und Kaffee-Lounge und gr. Biergarten\n\n"
+
+        "Einlass ab 16 Jahren (mehr infos hier: https://x-herford.de/erziehungsauftrag/ )"
     </string>
     <string name="action_event_open_image">action_event_open_image</string>
     <string name="action_event_share">action_event_share</string>

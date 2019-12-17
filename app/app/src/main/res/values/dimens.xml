@@ -10,4 +10,6 @@
     <dimen name="horizontal_line_margin">10dp</dimen>
     <dimen name="organizer_profile_pic">40dp</dimen>
     <dimen name="corner_radius_material_button">24dp</dimen>
+    <dimen name="organizer_map_height">250dp</dimen>
+    <dimen name="organizer_map_corner_radius">6dp</dimen>
 </resources>

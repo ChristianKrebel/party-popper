@@ -10,6 +10,16 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -33,7 +43,7 @@ import com.google.android.material.button.MaterialButton;
 import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
 
-public class EventDetailActivity extends BaseActivity {
+public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
     private TextView mTitleTv, mDateTv, mOrganizerTv, mVisitorCountTv;
     private ImageView mBannerIv;
@@ -41,7 +51,7 @@ public class EventDetailActivity extends BaseActivity {
     private MaterialButton expandBt, favBt;
     private LinearLayout organizerInfoLl;
     private AppBarLayout appBarLayout;
-    private CoordinatorLayout coordinatorLayout;
+    private MapFragment organizerLocationMf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +74,6 @@ public class EventDetailActivity extends BaseActivity {
 
 
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.edToolbarLayout);
-        coordinatorLayout = findViewById(R.id.edCoordinatorLayout);
         appBarLayout = findViewById(R.id.edAppBarLayout);
 
         // Set start height of image
@@ -110,7 +119,7 @@ public class EventDetailActivity extends BaseActivity {
         final TextView organizerPhoneTv = findViewById(R.id.edOrganizerPhoneTv);
         final MaterialButton blockOrganizerBt = findViewById(R.id.edBlockOrganizerBt);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),    // TODO change to fetching images
-                R.drawable.testevent2);
+                R.drawable.testevent);
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
@@ -140,6 +149,13 @@ public class EventDetailActivity extends BaseActivity {
 
         favBt = findViewById(R.id.edOrganizerFavBt);
 
+
+
+        // map
+        // get MapFragment
+        organizerLocationMf = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.edOrganizerLocationMf);
+        organizerLocationMf.getMapAsync(this);
 
 
         /*
@@ -262,5 +278,26 @@ public class EventDetailActivity extends BaseActivity {
             valueAnimator.setDuration(400);
             valueAnimator.start();
         }
+    }
+
+    /**
+     * When the map is loaded set a marker and move and zoom its camera to the marker
+     * @param googleMap
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        // Add a marker
+        TextView titleTv = findViewById(R.id.edOrganizerNameTv);
+        LatLng coords = new LatLng(52.131, 8.666); // TODO get real coords
+        googleMap.addMarker(new MarkerOptions().position(coords)
+                .title(titleTv.getText().toString()));
+
+        // move the map's camera to the same location and zoom
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.moveCamera(cameraUpdate);
+
+        // Set zoom controls
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
     }
 }

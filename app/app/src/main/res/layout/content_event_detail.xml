@@ -276,12 +276,30 @@
 
             </RelativeLayout>
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin_3"
+                android:layout_marginEnd="@dimen/text_margin_3"
+                app:cardCornerRadius="@dimen/organizer_map_corner_radius">
+
+                <fragment
+                    android:id="@+id/edOrganizerLocationMf"
+                    android:name="com.google.android.gms.maps.MapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/organizer_map_height" />
+
+            </androidx.cardview.widget.CardView>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/edBlockOrganizerBt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_margin"
                 android:layout_marginStart="@dimen/text_margin_3"
+                android:layout_marginBottom="@dimen/text_margin_2"
                 android:text="@string/block_organizer"
                 app:strokeColor="@color/white_trans70"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"

@@ -11,8 +11,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
+
+    public static final FirebaseFunctions mFunctions;
+    public static final FirebaseAuth mAuth;
+    public static final FirebaseFirestore mFireStore;
+
+    static {
+        mFunctions = FirebaseFunctions.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        mFireStore = FirebaseFirestore.getInstance();
+    }
 
     private ProgressDialog mProgressDialog;
 

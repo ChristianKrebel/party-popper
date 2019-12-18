@@ -28,4 +28,20 @@
  https://dev.to/miguelrodoma95/tips-to-keep-your-android-app-project-organized-361n 
 
  https://github.com/futurice/android-best-practices 
+ 
+ 
+ 
+ FireStore
+ - Max Dokumenten Größe 1 MiB (1.048.576 bytes) => 1.048.576 UTF-8 Zeichen pro Dokument
+ - UID 28 Zeichen lang // Kann sich in Zukunft ändern aber erstmal unwahrscheinlich
+ 
+ Follower
+ - Aktuelles Limit ca. 37.449 Follower
+    - Skalierbar durch mehrere Dokumente aneinander reihen mit next oder Subcollections?
+    
+    
+    
+1.000.000.000
+ 
+ 
 

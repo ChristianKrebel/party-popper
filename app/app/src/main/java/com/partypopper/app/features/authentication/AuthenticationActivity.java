@@ -18,11 +18,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.partypopper.app.R;
-import com.partypopper.app.features.dashboard.DashboardActivity;
+import com.partypopper.app.features.splash.SplashActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 public class AuthenticationActivity extends BaseActivity implements View.OnClickListener {
@@ -30,7 +29,6 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
     private EditText emailInput;
@@ -41,8 +39,6 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
         configureGoogleSignIn();
-
-        mAuth = FirebaseAuth.getInstance();
 
         initializeUI();
     }
@@ -92,7 +88,7 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                         if (task.isSuccessful()) {
                             showText("Login successful!");
 
-                            Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
+                            Intent intent = new Intent(AuthenticationActivity.this, SplashActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                         } else {
@@ -125,7 +121,7 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                             showText("Registration successful!");
                             showProgressDialog("Logge ein ...");
 
-                            Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
+                            Intent intent = new Intent(AuthenticationActivity.this, SplashActivity.class);
                             startActivity(intent);
                         } else {
                             showText("Registration failed! Please try again later");
@@ -217,7 +213,7 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            Intent intent = new Intent(AuthenticationActivity.this, DashboardActivity.class);
+                            Intent intent = new Intent(AuthenticationActivity.this, SplashActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                         } else {

@@ -28,11 +28,9 @@ exports.follow = functions.https.onCall(async (data, context) => {
       );
 
       // Increment Follower Count
-      const org = orgDoc.update(
-        "followCount",
-        admin.firestore.FieldValue.increment(1)
+      promises.push(
+        orgDoc.update("followCount", admin.firestore.FieldValue.increment(1))
       );
-      promises.push(org);
 
       // Add to Following
       promises.push(
@@ -84,11 +82,9 @@ exports.unfollow = functions.https.onCall(async (data, context) => {
       );
 
       // Increment Follower Count
-      const org = orgDoc.update(
-        "followCount",
-        admin.firestore.FieldValue.increment(-1)
+      promises.push(
+        orgDoc.update("followCount", admin.firestore.FieldValue.increment(-1))
       );
-      promises.push(org);
 
       // Add to Following
       promises.push(

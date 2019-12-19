@@ -16,7 +16,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.partypopper.app.database.model.Event;
+import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
@@ -37,7 +39,7 @@ public class LeonTest extends BaseActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        test();
+        //test();
 
         if(currentUser == null) {
             showLoginUI();
@@ -52,50 +54,15 @@ public class LeonTest extends BaseActivity {
                 @Override
                 public void onSuccess(GetTokenResult result) {
                     if(result.getClaims().get("organizer") != null) {
-                        showOrganizerUI();
+                        //showOrganizerUI();
+                        mAuth.signOut();
                     } else {
-                        showUserUI();
+                        testFollow();
+                        mFunctions.getHttpsCallable("signUpOrganizer").call(new HashMap<>());
                     }
                 }
             });
         }
-
-        /*System.out.println("ABC " + mFunctions
-                .getHttpsCallable("helloWorld")
-                .call()
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        System.out.println("TEST3");
-                        System.out.println(e.getMessage());
-                    }
-                })
-                .continueWith(new Continuation<HttpsCallableResult, String>() {
-                    @Override
-                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        // This continuation runs on either success or failure, but if the task
-                        // has failed then getResult() will throw an Exception which will be
-                        // propagated down.
-
-                        System.out.println("TEST2");
-                        System.out.println("R " + task.getResult());
-                        System.out.println("RE " + task.getResult().getData().toString());
-                        System.out.println("E " + task.getException().getMessage());
-                        String result = (String) task.getResult().getData();
-
-                        return result;
-                    }
-                }));*/
-
-        /*if(mAuth.getCurrentUser() == null) {
-            Intent intent = new Intent(SplashActivity.this, AuthenticationActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }*/
     }
 
     private void showOrganizerUI() {
@@ -112,6 +79,34 @@ public class LeonTest extends BaseActivity {
         Intent intent = new Intent(LeonTest.this, AuthenticationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    private void testFollow() {
+        final FollowRepository repo = FollowRepository.getInstance();
+
+        repo.followOrganizer("Beispiel").addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
+            @Override
+            public void onComplete(@NonNull Task<HttpsCallableResult> task) {
+                repo.getFollowing().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<String>> task) {
+                        System.out.println("FOLLOWING " + task.getResult());
+                    }
+                });
+            }
+        });
+
+        /*repo.followOrganizer("cde").addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                repo.getFollowing().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<String>> task) {
+                        System.out.println("FOLLOWING " + task.getResult());
+                    }
+                });
+            }
+        });*/
     }
 
     private void test() {

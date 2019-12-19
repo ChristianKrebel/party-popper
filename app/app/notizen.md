@@ -30,6 +30,7 @@
  https://github.com/futurice/android-best-practices 
  
  
+firebase deploy --only functions
  
  FireStore
  - Max Dokumenten Größe 1 MiB (1.048.576 bytes) => 1.048.576 UTF-8 Zeichen pro Dokument

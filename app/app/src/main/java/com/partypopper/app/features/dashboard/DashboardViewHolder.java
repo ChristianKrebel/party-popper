@@ -1,6 +1,5 @@
 package com.partypopper.app.features.dashboard;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,12 +11,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class DashboardViewHolder extends RecyclerView.ViewHolder {
 
-    View mView;
+    private View mView;
+    private EventClickListener mEventClickListener;
 
     public DashboardViewHolder(View itemView) {
         super(itemView);
 
         mView = itemView;
+
+        // Item click
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEventClickListener.onItemClick(v, getAdapterPosition());
+            }
+        });
+        // Item long click
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mEventClickListener.onItemLongClick(v, getAdapterPosition());
+                return true;
+            }
+        });
     }
 
     public void setDetails(String title, String date, String image, String organizer, long visitorCount) {
@@ -35,5 +51,9 @@ public class DashboardViewHolder extends RecyclerView.ViewHolder {
         mDateTv.setText(date);
         mOrganizerTv.setText(organizer);
         mVisitorCountTv.setText(Long.toString(visitorCount) + " Attendees");
+    }
+
+    public void setOnClickListener(EventClickListener eventClickListener) {
+        this.mEventClickListener = eventClickListener;
     }
 }

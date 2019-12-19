@@ -1,18 +1,21 @@
 package com.partypopper.app.features.dashboard;
 
-import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,18 +29,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.partypopper.app.R;
+import com.partypopper.app.utils.BaseActivity;
 
-public class DashboardActivity extends AppCompatActivity {
+import java.io.ByteArrayOutputStream;
 
-    RecyclerView mRecyclerView;
-    FirebaseDatabase mFirebaseDatabase;
-    DatabaseReference mDatabaseReference;
+public class DashboardActivity extends BaseActivity {
+
+    private final int COMPRESSION_QUALITY = 98;
+
+    private RecyclerView mRecyclerView;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
+    private FirebaseRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.edToolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -73,7 +82,7 @@ public class DashboardActivity extends AppCompatActivity {
                         .setQuery(query, DashboardModel.class)
                         .build();
 
-        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<DashboardModel, DashboardViewHolder>(options) {
+        adapter = new FirebaseRecyclerAdapter<DashboardModel, DashboardViewHolder>(options) {
             @Override
             public DashboardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
@@ -88,11 +97,55 @@ public class DashboardActivity extends AppCompatActivity {
             protected void onBindViewHolder(DashboardViewHolder holder, int position, DashboardModel model) {
                 holder.setDetails(model.getTitle(), model.getDate(), model.getImage(),
                         model.getOrganizer(), model.getVisitor_count());
+                holder.setOnClickListener(new EventClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        // Views
+                        ImageView mBannerIv = view.findViewById(R.id.rBannerIv);
+                        TextView mTitleTv = view.findViewById(R.id.rTitleTv);
+                        TextView mDateTv = view.findViewById(R.id.rDateTv);
+                        TextView mOrganizerTv = view.findViewById(R.id.rOrganizerTv);
+                        TextView mVisitorCountTv = view.findViewById(R.id.rVisitorCountTv);
+
+                        // get data from views
+                        Drawable mBannerDrawable = mBannerIv.getDrawable();
+                        Bitmap mBanner = ((BitmapDrawable) mBannerDrawable).getBitmap();
+                        String mTitle = mTitleTv.getText().toString();
+                        String mDate = mDateTv.getText().toString();
+                        String mOrganizer = mOrganizerTv.getText().toString();
+                        String mVisitorCount = mVisitorCountTv.getText().toString();
+
+                        // pass data to new activity
+                        Intent intent = new Intent(view.getContext(), DashboardActivity.class);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
+                        byte[] bytes = stream.toByteArray();
+                        intent.putExtra("image", bytes);
+                        intent.putExtra("title", mTitle);
+                        intent.putExtra("date", mDate);
+                        intent.putExtra("organizer", mOrganizer);
+                        intent.putExtra("visitor_count", mVisitorCount);
+
+                        // finally start the activity
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onItemLongClick(View view, int position) {
+                        // TODO
+                    }
+                });
             }
         };
         adapter.startListening();
         mRecyclerView.setAdapter(adapter);
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     /**

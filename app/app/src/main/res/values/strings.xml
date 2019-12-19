@@ -13,4 +13,6 @@
     <string name="auth_login_button">Login</string>
 
     <string name="separator_point">\u2022</string>
+
+    <string name="public_information_business">Public Information</string>
 </resources>

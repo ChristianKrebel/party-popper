@@ -17,7 +17,7 @@
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Public Information" />
+        android:text="@string/public_information_business" />
 
     <View
         android:id="@+id/view"

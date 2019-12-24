@@ -18,8 +18,10 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".features.dashboard.EventDetailActivity"
-            android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".features.organizer.OrganizerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".features.splash.SplashActivity"
             android:theme="@style/SplashTheme">

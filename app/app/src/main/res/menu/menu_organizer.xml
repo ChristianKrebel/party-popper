@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.partypopper.app.features.organizer.OrganizerActivity">
+    <item
+        android:id="@+id/action_organizer_fav"
+        android:orderInCategory="100"
+        android:title="@string/action_organizer_fav"
+        app:showAsAction="ifRoom" />
+</menu>

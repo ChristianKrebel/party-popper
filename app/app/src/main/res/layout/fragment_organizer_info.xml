@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".features.organizer.ui.main.OrganizerInfoFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/oOrganizerNameTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/text_margin_2"
+                android:text="X Herford"
+                android:textSize="@dimen/title_h5"
+                android:textColor="@color/colorWhite"/>
+
+            <RatingBar
+                android:id="@+id/oOrganizerRb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/RatingBar"
+                style="?android:attr/ratingBarStyleSmall"
+                android:numStars="5"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:rating="2"
+                android:stepSize="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="@dimen/button_margin">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/oOrganizerFavBt"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    app:icon="@drawable/ic_favorite_border_white_trans30_24dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/text_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fav_organizer"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="1"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/oOrganizerRateBt"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                    app:strokeColor="@color/white_trans70"
+                    app:icon="@drawable/ic_star_half_white_trans30_24dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/text_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rate_organizer"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:layout_marginStart="@dimen/button_margin"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/HorizontalLine" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/event_text"
+                android:layout_margin="@dimen/text_margin"/>
+
+            <LinearLayout
+                style="@style/HorizontalLine" />
+
+            <include layout="@layout/content_organizer_info" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

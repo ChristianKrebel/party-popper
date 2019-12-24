@@ -21,6 +21,10 @@
 | 14.12.19 | 5h    | Add EventDetailActivity                                      |
 | 15.12.19 | 8h    | Add EventDetailActivity                                      |
 | 16.12.19 | 8h    | Add EventDetailActivity                                      |
+| 18.12.19 | 5h    | Add OrganizerActivity and its Fragments                      |
+| 20.12.19 | 4h    | Add OrganizerActivity and its Fragments                      |
+| 21.12.19 | 3h    | Add OrganizerActivity and its Fragments                      |
+| 23.12.19 | 5h    | Add OrganizerActivity and its Fragments                      |
 |          |       |                                                              |
 | Total    |       |                                                              |
-|          | 58,5h |                                                              |
+|          | 75,5h |                                                              |

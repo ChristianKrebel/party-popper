@@ -1,13 +1,9 @@
 package com.partypopper.app.features.dashboard;
 
 import android.animation.ValueAnimator;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -15,15 +11,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -48,7 +41,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     private TextView mTitleTv, mDateTv, mOrganizerTv, mVisitorCountTv;
     private ImageView mBannerIv;
     private boolean isOrganizerInfoExpanded, isOrganizerFavored;
-    private MaterialButton expandBt, favBt;
+    private MaterialButton expandBt, favBt, blockOrganizerBt;
     private LinearLayout organizerInfoLl;
     private AppBarLayout appBarLayout;
     private MapFragment organizerLocationMf;
@@ -115,9 +108,10 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
         // Set the color of the tool bar and button to one of the image
         final Button attendEventBt = findViewById(R.id.edAttendEventBt);
-        final TextView organizerLinkTv = findViewById(R.id.edOrganizerLinkTv);
-        final TextView organizerPhoneTv = findViewById(R.id.edOrganizerPhoneTv);
-        final MaterialButton blockOrganizerBt = findViewById(R.id.edBlockOrganizerBt);
+        final TextView organizerLinkTv = findViewById(R.id.coOrganizerLinkTv);
+        final TextView organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
+        final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
+        final MaterialButton blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),    // TODO change to fetching images
                 R.drawable.testevent);
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
@@ -150,11 +144,26 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         favBt = findViewById(R.id.edOrganizerFavBt);
 
 
+        // need for listener for fragment clicks
+        organizerAddressTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOrganizerAddressTextViewClick(v);
+            }
+        });
+
+        blockOrganizerBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBlockOrganizerButtonClick(v);
+            }
+        });
+
 
         // map
         // get MapFragment
         organizerLocationMf = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.edOrganizerLocationMf);
+                .findFragmentById(R.id.coOrganizerLocationMf);
         organizerLocationMf.getMapAsync(this);
 
 

@@ -9,6 +9,7 @@ import com.google.firebase.auth.GetTokenResult;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.features.dashboard.EventDetailActivity;
+import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 public class SplashActivity extends BaseActivity {

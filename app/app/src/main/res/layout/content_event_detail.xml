@@ -74,7 +74,7 @@
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
                 android:onClick="onAttendEventButtonClick"
-                android:text="Attend" />
+                android:text="@string/attend_to_event" />
 
             <TextView
                 android:id="@+id/edEventAttendersTv"
@@ -87,13 +87,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/widget_horizontal_black_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/white_trans90"
-            android:layout_marginBottom="@dimen/horizontal_line_margin"
-            android:orientation="horizontal" >
-        </LinearLayout>
+            style="@style/HorizontalLine" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -178,145 +172,10 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/edOrganizerInfoLl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:animateLayoutChanges="true" >
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/text_margin_3"
-                android:layout_marginBottom="@dimen/text_margin">
-
-                <TextView
-                    android:id="@+id/edLinkIconTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin_3"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-                    android:drawableStart="@drawable/ic_link_white_trans30_24dp" />
-
-                <TextView
-                    android:id="@+id/edOrganizerLinkTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin"
-                    android:layout_marginEnd="@dimen/text_margin"
-                    android:layout_toEndOf="@id/edLinkIconTv"
-                    android:layout_centerInParent="true"
-                    android:autoLink="web"
-                    android:text="https://x-herford.de/" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin">
-
-                <TextView
-                    android:id="@+id/edPhoneIconTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin_3"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-                    android:drawableStart="@drawable/ic_local_phone_white_trans30_24dp" />
-
-                <TextView
-                    android:id="@+id/edOrganizerPhoneTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin"
-                    android:layout_marginEnd="@dimen/text_margin"
-                    android:layout_toEndOf="@id/edPhoneIconTv"
-                    android:layout_centerInParent="true"
-                    android:autoLink="phone"
-                    android:text="01234-1234567" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin">
-
-                <TextView
-                    android:id="@+id/edLocationIconTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin_3"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-                    android:drawableStart="@drawable/ic_place_white_trans30_24dp" />
-
-                <TextView
-                    android:id="@+id/edOrganizerAddressTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin"
-                    android:layout_marginEnd="@dimen/text_margin"
-                    android:layout_toEndOf="@id/edLocationIconTv"
-                    android:layout_centerInParent="true"
-                    android:autoLink="map"
-                    android:text="X-HERFORD\nBünderstr. 82-86\n32051 Herford"
-                    android:onClick="onOrganizerAddressTextViewClick" />
-
-            </RelativeLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:layout_marginStart="@dimen/text_margin_3"
-                android:layout_marginEnd="@dimen/text_margin_3"
-                app:cardCornerRadius="@dimen/organizer_map_corner_radius">
-
-                <fragment
-                    android:id="@+id/edOrganizerLocationMf"
-                    android:name="com.google.android.gms.maps.MapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/organizer_map_height" />
-
-            </androidx.cardview.widget.CardView>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edBlockOrganizerBt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginStart="@dimen/text_margin_3"
-                android:layout_marginBottom="@dimen/text_margin_2"
-                android:text="@string/block_organizer"
-                app:strokeColor="@color/white_trans70"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                app:icon="@drawable/ic_block_red_24dp"
-                android:onClick="onBlockOrganizerButtonClick" />
-
-        </LinearLayout>
+        <include layout="@layout/content_organizer_info" />
 
         <LinearLayout
-            android:id="@+id/widget_horizontal_black_bar_2"
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/white_trans90"
-            android:layout_marginBottom="@dimen/horizontal_line_margin"
-            android:layout_marginTop="@dimen/horizontal_line_margin"
-            android:orientation="horizontal" >
-        </LinearLayout>
+            style="@style/HorizontalLine" />
 
         <TextView
             android:id="@+id/edEventDescriptionTv"

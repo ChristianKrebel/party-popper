@@ -9,6 +9,7 @@ import com.google.firebase.auth.GetTokenResult;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.features.dashboard.EventDetailActivity;
+import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 public class SplashActivity extends BaseActivity {
@@ -40,7 +41,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void showUserUI() {
-        Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
+        Intent intent = new Intent(SplashActivity.this, OrganizerActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

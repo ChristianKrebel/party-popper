@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/edOrganizerInfoLl"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/text_margin_3"
+        android:layout_marginBottom="@dimen/text_margin">
+
+        <TextView
+            android:id="@+id/coLinkIconTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin_3"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:drawableStart="@drawable/ic_link_white_trans30_24dp" />
+
+        <TextView
+            android:id="@+id/coOrganizerLinkTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_toEndOf="@id/coLinkIconTv"
+            android:layout_centerInParent="true"
+            android:autoLink="web"
+            android:text="https://x-herford.de/" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginBottom="@dimen/text_margin">
+
+        <TextView
+            android:id="@+id/coPhoneIconTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin_3"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:drawableStart="@drawable/ic_local_phone_white_trans30_24dp" />
+
+        <TextView
+            android:id="@+id/coOrganizerPhoneTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_toEndOf="@id/coPhoneIconTv"
+            android:layout_centerInParent="true"
+            android:autoLink="phone"
+            android:text="01234-1234567" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginBottom="@dimen/text_margin">
+
+        <TextView
+            android:id="@+id/coLocationIconTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin_3"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:drawableStart="@drawable/ic_place_white_trans30_24dp" />
+
+        <TextView
+            android:id="@+id/coOrganizerAddressTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_toEndOf="@id/coLocationIconTv"
+            android:layout_centerInParent="true"
+            android:autoLink="map"
+            android:text="X-HERFORD\nBünderstr. 82-86\n32051 Herford" />
+
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginBottom="@dimen/text_margin"
+        android:layout_marginStart="@dimen/text_margin_3"
+        android:layout_marginEnd="@dimen/text_margin_3"
+        app:cardCornerRadius="@dimen/organizer_map_corner_radius">
+
+        <fragment
+            android:id="@+id/coOrganizerLocationMf"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/organizer_map_height" />
+
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/coBlockOrganizerBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginStart="@dimen/text_margin_3"
+        android:layout_marginBottom="@dimen/text_margin_2"
+        android:text="@string/block_organizer"
+        app:strokeColor="@color/white_trans70"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        app:icon="@drawable/ic_block_red_24dp" />
+
+</LinearLayout>

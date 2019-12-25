@@ -1,3 +1,5 @@
+const functions = require("firebase-functions");
+
 exports.errorIfNotAuthenticated = function(context) {
   if (!context.auth) {
     throw new functions.https.HttpsError(

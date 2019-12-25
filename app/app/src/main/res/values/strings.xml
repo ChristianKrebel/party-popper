@@ -15,6 +15,20 @@
     <string name="separator_point">\u2022</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="block_organizer">Block organizer</string>
+    <string name="attend_to_event">Attend</string>
+
+    <string name="organizer_tab_text_1">Info</string>
+    <string name="organizer_tab_text_2">Current Events</string>
+    <string name="fav_organizer">Follow</string>
+    <string name="unfav_organizer">Followed</string>
+    <string name="rate_organizer">Rate</string>
+    <string name="organizer_rate_dialog_title">Rate</string>
+    <string name="organizer_rate_dialog_tag">Rate dialog</string>
+
+    <string name="dialog_negative_button">Cancel</string>
+    <string name="organizer_rate_dialog_positive_button">Send</string>
+
+    <string name="action_organizer_fav">Follow</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

@@ -14,7 +14,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/pubUpdateBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/button_margin"
@@ -39,7 +39,7 @@
         android:textSize="@dimen/title_h5" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/pubTitlePt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/text_margin"
@@ -52,7 +52,7 @@
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/pubDateD"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/text_margin"
@@ -65,7 +65,7 @@
         android:inputType="date" />
 
     <EditText
-        android:id="@+id/editText5"
+        android:id="@+id/pubTimeT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/text_margin"
@@ -95,7 +95,7 @@
         android:textSize="@dimen/title_h5" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/pubDescriptionMt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/text_margin"

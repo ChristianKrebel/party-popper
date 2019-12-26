@@ -18,10 +18,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".features.dashboard.EventDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".features.organizer.OrganizerActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".features.splash.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -41,13 +39,6 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".features.organizer.BusinessActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".features.organizer.PublishEventActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

@@ -139,6 +139,22 @@
     <string name="action_event_open_image">action_event_open_image</string>
     <string name="action_event_share">action_event_share</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="logo_business">Business Logo</string>
+    <string name="upload_image_business">update image</string>
+    <string name="public_information_business">Public Information</string>
+    <string name="name_business">Business Name</string>
+    <string name="website_business">Website</string>
+    <string name="phone_business">Phone Number</string>
+    <string name="address_business">Address</string>
+    <string name="private_information_business">Private Information</string>
+    <string name="description_business">Add your description here</string>
+    <string name="email_business">E-Mail</string>
+    <string name="request_business">Request</string>
+
+    <string name="information_publish">Information</string>
+    <string name="title_publish">Title</string>
+    <string name="date_publish">Date</string>
+    <string name="time_publish">Time</string>
+    <string name="description_publish">Description</string>
+    <string name="description_hint_publish">Type in your description here</string>
 </resources>

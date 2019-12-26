@@ -46,7 +46,8 @@
         android:layout_marginTop="@dimen/text_margin"
         android:layout_marginRight="@dimen/text_margin"
         android:layout_marginBottom="@dimen/text_margin"
-        android:drawableStart="@drawable/ic_keyboard_arrow_up_white_trans30_24dp"
+        android:drawableStart="@drawable/ic_title_black_24dp"
+        android:drawablePadding="@dimen/drawable_padding"
         android:ems="10"
         android:hint="@string/title_publish"
         android:inputType="textPersonName" />
@@ -60,6 +61,7 @@
         android:layout_marginRight="@dimen/text_margin"
         android:layout_marginBottom="@dimen/text_margin"
         android:drawableStart="@drawable/ic_today_white_trans30_24dp"
+        android:drawablePadding="@dimen/drawable_padding"
         android:ems="10"
         android:hint="@string/date_publish"
         android:inputType="date" />
@@ -73,6 +75,7 @@
         android:layout_marginRight="@dimen/text_margin"
         android:layout_marginBottom="@dimen/text_margin"
         android:drawableStart="@drawable/ic_access_time_white_trans30_24dp"
+        android:drawablePadding="@dimen/drawable_padding"
         android:ems="10"
         android:hint="@string/time_publish"
         android:inputType="time" />

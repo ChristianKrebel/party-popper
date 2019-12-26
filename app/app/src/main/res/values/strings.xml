@@ -140,13 +140,14 @@
     <string name="action_event_share">action_event_share</string>
 
     <string name="logo_business">Business Logo</string>
-    <string name="upload_image_business">update</string>
+    <string name="upload_image_business">update image</string>
     <string name="public_information_business">Public Information</string>
     <string name="name_business">Business Name</string>
     <string name="website_business">Website</string>
     <string name="phone_business">Phone Number</string>
     <string name="address_business">Address</string>
     <string name="private_information_business">Private Information</string>
+    <string name="description_business">Add your description here</string>
     <string name="email_business">E-Mail</string>
     <string name="request_business">Request</string>
 

@@ -8,52 +8,61 @@ import com.partypopper.app.R;
 import com.squareup.picasso.Picasso;
 
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 public class DashboardViewHolder extends RecyclerView.ViewHolder {
 
     private View mView;
-    private EventClickListener mEventClickListener;
+    @Getter
+    @Setter
+    private TextView mTitleTv, mDateTv, mOrganizerTv, mVisitorCountTv;
+    @Getter
+    @Setter
+    private ImageView mBannerIv;
+    private ClickListener mClickListener;
 
     public DashboardViewHolder(View itemView) {
         super(itemView);
 
         mView = itemView;
 
+
         // Item click
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEventClickListener.onItemClick(v, getAdapterPosition());
+                mClickListener.onItemClick(v, getAdapterPosition());
             }
         });
         // Item long click
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                mEventClickListener.onItemLongClick(v, getAdapterPosition());
+                mClickListener.onItemLongClick(v, getAdapterPosition());
                 return true;
             }
         });
+
+        // initialize views
+        mBannerIv = mView.findViewById(R.id.rBannerIv);
+        mTitleTv = mView.findViewById(R.id.rTitleTv);
+        mDateTv = mView.findViewById(R.id.rDateTv);
+        mOrganizerTv = mView.findViewById(R.id.rOrganizerTv);
+        mVisitorCountTv = mView.findViewById(R.id.rVisitorCountTv);
     }
 
-    public void setDetails(String title, String date, String image, String organizer, long visitorCount) {
-        // Views
-        ImageView mBannerIv = mView.findViewById(R.id.rBannerIv);
-        TextView mTitleTv = mView.findViewById(R.id.rTitleTv);
-        TextView mDateTv = mView.findViewById(R.id.rDateTv);
-        TextView mOrganizerTv = mView.findViewById(R.id.rOrganizerTv);
-        TextView mVisitorCountTv = mView.findViewById(R.id.rVisitorCountTv);
 
-        // set data to views
-        Picasso.get().load(image).into(mBannerIv);
-
-        mTitleTv.setText(title);
-        mDateTv.setText(date);
-        mOrganizerTv.setText(organizer);
-        mVisitorCountTv.setText(Long.toString(visitorCount) + " Attendees");
+    // Interface for click listener
+    public interface ClickListener {
+        void onItemClick(View view, int position);
+        void onItemLongClick(View view, int position);
     }
 
-    public void setOnClickListener(EventClickListener eventClickListener) {
-        this.mEventClickListener = eventClickListener;
+    public void setOnClickListener(DashboardViewHolder.ClickListener clickListener) {
+        this.mClickListener = clickListener;
     }
+
+
 }

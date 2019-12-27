@@ -25,6 +25,8 @@
 | 20.12.19 | 4h    | Add OrganizerActivity and its Fragments                      |
 | 21.12.19 | 3h    | Add OrganizerActivity and its Fragments                      |
 | 23.12.19 | 5h    | Add OrganizerActivity and its Fragments                      |
+| 24.12.19 | 2h    | Read about Firestore                                         |
+| 26.12.19 | 5h    | Implement new adapter, viewholder, activity logic for dashboard |
 |          |       |                                                              |
 | Total    |       |                                                              |
-|          | 75,5h |                                                              |
+|          | 82,5h |                                                              |

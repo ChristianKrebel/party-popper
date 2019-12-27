@@ -4,6 +4,8 @@ import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -38,7 +40,7 @@ import com.partypopper.app.utils.BaseActivity;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
-    private TextView mTitleTv, mDateTv, mOrganizerTv, mVisitorCountTv;
+    private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv;
     private ImageView mBannerIv;
     private boolean isOrganizerInfoExpanded, isOrganizerFavored;
     private MaterialButton expandBt, favBt, blockOrganizerBt;
@@ -63,6 +65,28 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);  // set back button
         actionBar.setDisplayShowHomeEnabled(true);
+
+
+
+        // get data from intent and set them to the views
+        mTitleTv = findViewById(R.id.edEventTitleTv);
+        mTitleTv.setText(getIntent().getStringExtra("name"));
+
+        mVisitorCountTv = findViewById(R.id.edEventAttendersTv);
+        mVisitorCountTv.setText(getIntent().getIntExtra("going", 0) + " " + getString(R.string.are_attending));
+
+        mOrganizerTv = findViewById(R.id.edOrganizerNameTv);
+        mOrganizerTv.setText(getIntent().getStringExtra("organizer"));
+
+        // TODO date and time
+
+        mBannerIv = findViewById(R.id.edBannerIv);
+        byte[] bytes = getIntent().getByteArrayExtra("image");
+        mBannerIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+
+        mDescriptionTv = findViewById(R.id.edEventDescriptionTv);
+        mDescriptionTv.setText(getIntent().getStringExtra("description"));
+
 
 
 
@@ -95,7 +119,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
                 if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle("Rebellion - the Rockfuckingpartynight");
+                    collapsingToolbarLayout.setTitle(mTitleTv.getText());
                     isShow = true;
                 } else if(isShow) {
                     collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
@@ -112,17 +136,17 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         final TextView organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
         final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
         final MaterialButton blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),    // TODO change to fetching images
-                R.drawable.testevent);
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+        Drawable mBannerDrawable = mBannerIv.getDrawable();
+        Bitmap mBannerBm = ((BitmapDrawable) mBannerDrawable).getBitmap();
+        Palette.from(mBannerBm).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
                 int imageColor = palette.getMutedColor(R.attr.colorPrimary);
 
                 collapsingToolbarLayout.setContentScrimColor(imageColor);
                 attendEventBt.getBackground().setColorFilter(imageColor, PorterDuff.Mode.SRC);
-                organizerLinkTv.setLinkTextColor(changeValueOfColor(imageColor, 1.2f));
-                organizerPhoneTv.setLinkTextColor(changeValueOfColor(imageColor, 1.2f));
+                organizerLinkTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
+                organizerPhoneTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
 
                 // Set status bar color
                 getWindow().setStatusBarColor(changeValueOfColor(imageColor, 0.8f));

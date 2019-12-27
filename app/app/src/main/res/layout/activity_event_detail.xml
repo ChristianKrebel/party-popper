@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:src="@drawable/testevent"
+                android:src="@drawable/loading"
                 android:scaleType="centerCrop"
                 android:contentDescription="test"
                 android:onClick="onBannerImageViewClick"

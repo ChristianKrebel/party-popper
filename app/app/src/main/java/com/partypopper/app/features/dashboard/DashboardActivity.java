@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,24 +24,36 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.Timestamp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Event;
 import com.partypopper.app.utils.BaseActivity;
+import com.partypopper.app.database.repository.*;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardActivity extends BaseActivity {
 
-    private final int COMPRESSION_QUALITY = 98;
-
     private RecyclerView mRecyclerView;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
-    private FirebaseRecyclerAdapter adapter;
+    private List<Event> modelList = new ArrayList<>();
+
+    private FirebaseFirestore db;
+
+    DashboardAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,92 +77,52 @@ public class DashboardActivity extends BaseActivity {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // send query to Firebase
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseDatabase.getReference("Data");
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+        showData();
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        Query query = FirebaseDatabase.getInstance()
-                .getReference()
-                .child("Data")
-                .limitToLast(50);
-        FirebaseRecyclerOptions<DashboardModel> options =
-                new FirebaseRecyclerOptions.Builder<DashboardModel>()
-                        .setQuery(query, DashboardModel.class)
-                        .build();
-
-        adapter = new FirebaseRecyclerAdapter<DashboardModel, DashboardViewHolder>(options) {
-            @Override
-            public DashboardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.row_dashboard for each item
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.row_dashboard, parent, false);
-
-                return new DashboardViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(DashboardViewHolder holder, int position, DashboardModel model) {
-                holder.setDetails(model.getTitle(), model.getDate(), model.getImage(),
-                        model.getOrganizer(), model.getVisitor_count());
-                holder.setOnClickListener(new EventClickListener() {
+    private void showData() {
+        db.collection("events")
+                .orderBy("startDate", Query.Direction.ASCENDING)
+                .limit(50)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onItemClick(View view, int position) {
-                        // Views
-                        ImageView mBannerIv = view.findViewById(R.id.rBannerIv);
-                        TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                        TextView mDateTv = view.findViewById(R.id.rDateTv);
-                        TextView mOrganizerTv = view.findViewById(R.id.rOrganizerTv);
-                        TextView mVisitorCountTv = view.findViewById(R.id.rVisitorCountTv);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for (DocumentSnapshot documentSnapshot: task.getResult()) {
+                            Event event = new Event();
 
-                        // get data from views
-                        Drawable mBannerDrawable = mBannerIv.getDrawable();
-                        Bitmap mBanner = ((BitmapDrawable) mBannerDrawable).getBitmap();
-                        String mTitle = mTitleTv.getText().toString();
-                        String mDate = mDateTv.getText().toString();
-                        String mOrganizer = mOrganizerTv.getText().toString();
-                        String mVisitorCount = mVisitorCountTv.getText().toString();
+                            event.setDescription(documentSnapshot.getString("description"));
+                            event.setEndDate(((Timestamp) documentSnapshot.getData().get("endDate")).toDate());
+                            event.setGoing(documentSnapshot.getLong("going").intValue());
+                            event.setName(documentSnapshot.getString("name"));
+                            event.setOrganizer(documentSnapshot.getString("organizer"));
+                            event.setStartDate(((Timestamp) documentSnapshot.getData().get("startDate")).toDate());
+                            event.setImage(documentSnapshot.getString("image"));
 
-                        // pass data to new activity
-                        Intent intent = new Intent(view.getContext(), DashboardActivity.class);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
-                        byte[] bytes = stream.toByteArray();
-                        intent.putExtra("image", bytes);
-                        intent.putExtra("title", mTitle);
-                        intent.putExtra("date", mDate);
-                        intent.putExtra("organizer", mOrganizer);
-                        intent.putExtra("visitor_count", mVisitorCount);
+                            modelList.add(event);
+                        }
 
-                        // finally start the activity
-                        startActivity(intent);
+                        //adapter
+                        adapter = new DashboardAdapter(DashboardActivity.this, modelList, getApplicationContext());
+                        // set adapter to recyclerview
+                        mRecyclerView.setAdapter(adapter);
                     }
-
+                })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onItemLongClick(View view, int position) {
-                        // TODO
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-            }
-        };
-        adapter.startListening();
-        mRecyclerView.setAdapter(adapter);
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        adapter.stopListening();
     }
 
     /**
      * Inflate the menu; this adds items to the action bar if it is present.
+     *
      * @param menu
      * @return if succeeded
      */
@@ -176,18 +149,16 @@ public class DashboardActivity extends BaseActivity {
 
     /**
      * Handle item selection of the menu
+     *
      * @param item
      * @return if succeeded or with item on default
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        CharSequence text;
         switch (item.getItemId()) {
             case R.id.action_settings:
-                text = "Settings";
-                testToast(text);
                 return true;
-                // TODO more cases
+            // TODO more cases
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -195,13 +166,14 @@ public class DashboardActivity extends BaseActivity {
 
     /**
      * Query a String to the Firebase database and get results in the recyclerview
+     *
      * @param searchText
      */
     private void firebaseSearch(String searchText) {
         // Different query than the one in the onStart method
         // TODO shorten redundant code?
         // TODO exchange with Elastic Search for 'contains'-ability and no case sensitivity
-        Query firebaseSearchQuery = mDatabaseReference.orderByChild("title")
+        /*Query firebaseSearchQuery = mDatabaseReference.orderByChild("title")
                 .startAt(searchText)
                 .endAt(searchText + "\uf8ff"); // High point unicode character, called Escape
         FirebaseRecyclerOptions<DashboardModel> options =
@@ -227,18 +199,6 @@ public class DashboardActivity extends BaseActivity {
             }
         };
         adapter.startListening();
-        mRecyclerView.setAdapter(adapter);
-    }
-
-    /**
-     * Print a toast for testing purposes
-     * @param text
-     */
-    protected void testToast(CharSequence text) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        mRecyclerView.setAdapter(adapter);*/
     }
 }

@@ -28,6 +28,8 @@
     <string name="dialog_negative_button">Cancel</string>
     <string name="organizer_rate_dialog_positive_button">Send</string>
 
+    <string name="attendees">attendees</string>
+
     <string name="action_organizer_fav">Follow</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

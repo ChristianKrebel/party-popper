@@ -15,9 +15,9 @@
             <ImageView
                 android:id="@+id/rBannerIv"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="@dimen/dashboard_event_height"
                 android:adjustViewBounds="true"
-                android:background="@drawable/loading"
+                android:src="@drawable/loading"
                 android:scaleType="centerCrop"
                 android:contentDescription="test"
                 />

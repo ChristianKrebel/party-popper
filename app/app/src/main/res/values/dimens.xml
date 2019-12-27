@@ -17,4 +17,5 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="dashboard_event_height">300dp</dimen>
+    <dimen name="drawable_padding">8dp</dimen>
 </resources>

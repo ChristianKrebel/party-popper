@@ -48,8 +48,6 @@ import java.util.List;
 
 public class DashboardActivity extends BaseActivity {
 
-    private final int COMPRESSION_QUALITY = 98;
-
     private RecyclerView mRecyclerView;
     private List<Event> modelList = new ArrayList<>();
 
@@ -109,7 +107,7 @@ public class DashboardActivity extends BaseActivity {
                         }
 
                         //adapter
-                        adapter = new DashboardAdapter(DashboardActivity.this, modelList);
+                        adapter = new DashboardAdapter(DashboardActivity.this, modelList, getApplicationContext());
                         // set adapter to recyclerview
                         mRecyclerView.setAdapter(adapter);
                     }

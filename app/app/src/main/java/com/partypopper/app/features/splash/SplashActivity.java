@@ -42,7 +42,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void showUserUI() {
-        Intent intent = new Intent(SplashActivity.this, BusinessActivity.class);
+        Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

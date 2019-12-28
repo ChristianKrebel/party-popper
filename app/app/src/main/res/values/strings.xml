@@ -6,6 +6,7 @@
     <string name="action_sort_nearest">Nearest</string>
     <string name="action_sort_favorites">Favorites</string>
     <string name="action_sort_alphabetical">A-Z</string>
+    <string name="action_open_business_activity">Become organizer</string>
 
     <string name="auth_login_head">Login to your Account</string>
     <string name="auth_email">Email</string>

@@ -6,9 +6,9 @@
         android:id="@+id/action_search"
         android:orderInCategory="101"
         android:title="@string/action_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.SearchView"/>
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
@@ -33,5 +33,10 @@
         android:id="@+id/action_sort_alphabetical"
         android:orderInCategory="96"
         android:title="@string/action_sort_alphabetical"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_open_business_activity"
+        android:orderInCategory="95"
+        android:title="@string/action_open_business_activity"
         app:showAsAction="never" />
 </menu>

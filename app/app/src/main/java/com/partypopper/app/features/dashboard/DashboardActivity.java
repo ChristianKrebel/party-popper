@@ -12,11 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +39,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
+import com.partypopper.app.features.organizer.BusinessActivity;
+import com.partypopper.app.features.organizer.PublishEventActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.database.repository.*;
 
@@ -66,8 +68,7 @@ public class DashboardActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(getApplicationContext(), PublishEventActivity.class));
             }
         });
 
@@ -81,7 +82,6 @@ public class DashboardActivity extends BaseActivity {
         db = FirebaseFirestore.getInstance();
 
         showData();
-
     }
 
     private void showData() {
@@ -130,7 +130,7 @@ public class DashboardActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem((R.id.action_search));
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem); //TODO use not deprecated method
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -159,6 +159,9 @@ public class DashboardActivity extends BaseActivity {
             case R.id.action_settings:
                 return true;
             // TODO more cases
+            case R.id.action_open_business_activity:
+                startActivity(new Intent(this, BusinessActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

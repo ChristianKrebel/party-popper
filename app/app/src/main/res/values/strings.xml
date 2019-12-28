@@ -161,4 +161,5 @@
     <string name="time_publish">Time</string>
     <string name="description_publish">Description</string>
     <string name="description_hint_publish">Type in your description here</string>
+    <string name="publish_event_button_publish">Publish event</string>
 </resources>

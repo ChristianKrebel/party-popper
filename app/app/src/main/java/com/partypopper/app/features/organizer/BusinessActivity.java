@@ -8,35 +8,34 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.partypopper.app.R;
+import com.partypopper.app.utils.BaseActivity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class BusinessActivity extends AppCompatActivity {
+public class BusinessActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_business);
+        Toolbar toolbar = findViewById(R.id.bsToolbar);
+        setSupportActionBar(toolbar);
+
+
+        // Action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);  // set back button
+        actionBar.setDisplayShowHomeEnabled(true);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    /**
-     * Print a toast for testing purposes
-     * @param text
-     */
-    protected void testToast(CharSequence text) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
     }
 
     public void sendRequest(View btn){
@@ -56,5 +55,9 @@ public class BusinessActivity extends AppCompatActivity {
         // TODO sending post request?
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

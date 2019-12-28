@@ -11,6 +11,7 @@ import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.features.dashboard.EventDetailActivity;
 import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.features.organizer.OrganizerActivity;
+import com.partypopper.app.features.organizer.PublishEventActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 public class SplashActivity extends BaseActivity {

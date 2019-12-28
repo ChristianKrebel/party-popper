@@ -4,7 +4,7 @@ const admin = require("firebase-admin");
 const db = admin.firestore();
 const helper = require("./functions");
 
-exports.follow = functions.https.onCall(async (data, context) => {
+exports.followOrganizer = functions.https.onCall(async (data, context) => {
   helper.errorIfEmpty(data.orgId);
   helper.errorIfNotAuthenticated(context);
 
@@ -58,10 +58,32 @@ exports.follow = functions.https.onCall(async (data, context) => {
   return false;
 });
 
-exports.unfollow = functions.https.onCall(async (data, context) => {
+exports.unfollowOrganizer = functions.https.onCall(async (data, context) => {
   helper.errorIfEmpty(data.orgId);
   helper.errorIfNotAuthenticated(context);
 
+  return await unfollow(data, context);
+});
+
+exports.blockOrganizer = functions.https.onCall(async (data, context) => {
+  helper.errorIfEmpty(data.orgId);
+  helper.errorIfNotAuthenticated(context);
+
+  const promises = [];
+
+  try {
+    promises.push(unfollow(data, context));
+
+
+  } catch (err) {
+    console.log(err);
+    throw new functions.https.HttpsError(
+      "internal",
+      "An internal Error occured"
+    );
+});
+
+async function unfollow(data, context) {
   const uid = context.auth.uid;
   const orgDoc = db.collection("organizer").doc(data.orgId);
   const followerDoc = orgDoc.collection("follower").doc("1");
@@ -110,4 +132,4 @@ exports.unfollow = functions.https.onCall(async (data, context) => {
     );
   }
   return false;
-});
+}

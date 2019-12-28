@@ -22,8 +22,7 @@ public class OrganizerRepository {
     }
 
     public Task<Void> createEvent(Event event) {
-        repo.create(event, false);
-        return null;
+        return repo.create(event, false);
     }
 
     public Task<Void> deleteEvent(String id) {

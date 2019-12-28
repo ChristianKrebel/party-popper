@@ -86,6 +86,26 @@ public class DashboardActivity extends BaseActivity {
     }
 
     private void showData() {
+        EventsRepository eventsRepository = EventsRepository.getInstance();
+
+        eventsRepository.getFiftyEvents().addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Event>> task) {
+                if(task.getResult() != null) {
+                    List<Event> events = task.getResult();
+
+                    adapter = new DashboardAdapter(DashboardActivity.this, events, getApplicationContext());
+                    mRecyclerView.setAdapter(adapter);
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
         db.collection("events")
                 .orderBy("startDate", Query.Direction.ASCENDING)
                 .limit(50)

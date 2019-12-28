@@ -18,6 +18,7 @@ public class Event extends Identifiable {
     private Date endDate;
     private int going;
     private String name;
+    private String lowercaseName;
     private String organizer;
     private Date startDate;
     private String image;

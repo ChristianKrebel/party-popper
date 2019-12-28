@@ -64,13 +64,18 @@ public class DashboardActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.edToolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        // FAB
+        final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), PublishEventActivity.class));
             }
         });
+
+        if (true) { // TODO change to check for organizer status
+            fab.show();
+        }
 
         // RecyclerView
         mRecyclerView = findViewById(R.id.eventRv);

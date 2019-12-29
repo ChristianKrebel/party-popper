@@ -1,6 +1,7 @@
 package com.partypopper.app.features.organizer;
 
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
@@ -37,5 +38,16 @@ public class PublishEventActivity extends BaseActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void onPublishClick() {
+        EditText publisheventTitleWdg = findViewById(R.id.pubTitlePt);
+        String eventTitle = publisheventTitleWdg.getText().toString();
+        EditText publisheventDateWdg = findViewById(R.id.pubDateD);
+        String eventDate = publisheventDateWdg.getText().toString();
+        EditText publisheventTimeWdg = findViewById(R.id.pubTimeT);
+        String eventTime = publisheventTimeWdg.getText().toString();
+        EditText publisheventDescriptionWdg = findViewById(R.id.pubDescriptionMt);
+        String eventDescription = publisheventDescriptionWdg.getText().toString();
     }
 }

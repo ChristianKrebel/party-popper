@@ -68,7 +68,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardViewHolder> 
                 intent.putExtra("description", event.getDescription());
                 intent.putExtra("endDate", event.getEndDate());
                 intent.putExtra("going", event.getGoing());
-                intent.putExtra("organizer", event.getOrganizer());
+                intent.putExtra("organizer", eventsAndOrganizerNames.get(event));
                 intent.putExtra("startDate", event.getStartDate());
 
                 ImageView mBannerIv = viewHolder.getMBannerIv();

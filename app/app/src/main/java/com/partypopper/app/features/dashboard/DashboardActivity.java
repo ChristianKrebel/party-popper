@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.Setter;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -39,6 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
+import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.features.organizer.PublishEventActivity;
 import com.partypopper.app.utils.BaseActivity;
@@ -46,7 +48,9 @@ import com.partypopper.app.database.repository.*;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DashboardActivity extends BaseActivity {
 
@@ -73,7 +77,7 @@ public class DashboardActivity extends BaseActivity {
             }
         });
 
-        if (true) { // TODO change to check for organizer status
+        if (true) {     // TODO just for testing, exchange with isOrganizer() later!
             fab.show();
         }
 
@@ -86,20 +90,44 @@ public class DashboardActivity extends BaseActivity {
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
-        showData();
+        showData(new eventsAndOrganizerNamesCallback() {
+            @Override
+            public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+                adapter = new DashboardAdapter(DashboardActivity.this, events, eventsAndOrganizerNames, getApplicationContext());
+                mRecyclerView.setAdapter(adapter);
+            }
+        });
     }
 
-    private void showData() {
+    private void showData(final eventsAndOrganizerNamesCallback dbCallback) {
         EventsRepository eventsRepository = EventsRepository.getInstance();
+        final OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
 
         eventsRepository.getFiftyEvents().addOnCompleteListener(new OnCompleteListener<List<Event>>() {
             @Override
             public void onComplete(@NonNull Task<List<Event>> task) {
                 if(task.getResult() != null) {
-                    List<Event> events = task.getResult();
+                    final List<Event> events = task.getResult();
+                    final Map<Event, String> eventsAndOrganizerNames = new LinkedHashMap<>();
 
-                    adapter = new DashboardAdapter(DashboardActivity.this, events, getApplicationContext());
-                    mRecyclerView.setAdapter(adapter);
+                    for (int a = 0; a < events.size(); a++) {
+                        final Event event = events.get(a);
+                        final int b = a;
+
+                        organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Organizer> task) {
+                                if (task.isSuccessful()) {
+                                    eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                    if (b == (events.size()-1)) {
+                                        dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+
 
                 }
             }
@@ -110,7 +138,7 @@ public class DashboardActivity extends BaseActivity {
             }
         });
 
-        db.collection("events")
+        /*db.collection("events")
                 .orderBy("startDate", Query.Direction.ASCENDING)
                 .limit(50)
                 .get()
@@ -142,7 +170,7 @@ public class DashboardActivity extends BaseActivity {
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
     }
 
     /**

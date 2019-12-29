@@ -5,20 +5,29 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.core.Tag;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
+import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.OrganizerRepository;
+import com.partypopper.app.features.organizer.ui.main.OrganizerRateDialog;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,11 +38,13 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardViewHolder> 
 
     DashboardActivity dashboardActivity;
     List<Event> modelList;
+    Map<Event, String> eventsAndOrganizerNames;
     Context context;
 
-    public DashboardAdapter(DashboardActivity dashboardActivity, List<Event> modelList, Context context) {
+    public DashboardAdapter(DashboardActivity dashboardActivity, List<Event> modelList, Map<Event, String> eventsAndOrganizerNames, Context context) {
         this.dashboardActivity = dashboardActivity;
         this.modelList = modelList;
+        this.eventsAndOrganizerNames = eventsAndOrganizerNames;
         this.context = context;
     }
 
@@ -85,13 +96,20 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull DashboardViewHolder holder, int position) {
         // Bind views / set data
-        holder.getMTitleTv().setText(modelList.get(position).getName());
-        Date date = modelList.get(position).getStartDate();
-        holder.getMDateTv().setText(DateFormat.getDateInstance(DateFormat.SHORT).format(date));
-        holder.getMOrganizerTv().setText((modelList.get(position).getOrganizer()));
-        holder.getMVisitorCountTv().setText(modelList.get(position).getGoing() + " " + context.getString(R.string.attendees));
+        Event model = modelList.get(position);
 
-        Picasso.get().load(modelList.get(position).getImage()).into(holder.getMBannerIv());
+        holder.getMTitleTv().setText(model.getName());
+        Date date = model.getStartDate();
+
+        holder.getMDateTv().setText(DateFormat.getDateInstance(DateFormat.SHORT).format(date));
+
+        holder.getMOrganizerTv().setText(eventsAndOrganizerNames.get(model));
+        holder.getMVisitorCountTv().setText(model.getGoing() + " " + context.getString(R.string.attendees));
+
+        Picasso.get().load(model.getImage()).into(holder.getMBannerIv());
+
+        Log.d("DashboardAdapter", model.getName() + " - " + model.getOrganizer()
+                + " - " + eventsAndOrganizerNames.get(model));
     }
 
     @Override

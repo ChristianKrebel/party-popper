@@ -9,6 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import lombok.Getter;
+import lombok.Setter;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +22,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static final FirebaseFunctions mFunctions;
     public static final FirebaseAuth mAuth;
     public static final FirebaseFirestore mFireStore;
+    @Setter
+    @Getter
+    private static boolean isOrganizer = false;
 
     static {
         mFunctions = FirebaseFunctions.getInstance();

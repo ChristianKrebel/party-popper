@@ -77,6 +77,7 @@ public class SplashActivity extends BaseActivity {
 
     private void showOrganizerUI() {
         System.out.println("Is Organizer");
+        DashboardActivity.setOrganizer(true);
     }
 
     private void showUserUI() {

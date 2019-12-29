@@ -27,6 +27,9 @@
 | 23.12.19 | 5h    | Add OrganizerActivity and its Fragments                      |
 | 24.12.19 | 2h    | Read about Firestore                                         |
 | 26.12.19 | 5h    | Implement new adapter, viewholder, activity logic for dashboard |
+| 27.12.19 | 5h    | Use repos and get organizer names by second query through their id |
+| 28.12.19 | 6h    | Use repos and get organizer names by second query through their id |
+| 29.12.19 | 5h    | Use repos and get organizer names by second query through their id |
 |          |       |                                                              |
 | Total    |       |                                                              |
-|          | 82,5h |                                                              |
+|          | 98,5h |                                                              |

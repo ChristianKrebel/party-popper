@@ -69,18 +69,57 @@ exports.blockOrganizer = functions.https.onCall(async (data, context) => {
   helper.errorIfEmpty(data.orgId);
   helper.errorIfNotAuthenticated(context);
 
-  const promises = [];
-
   try {
+    const uid = context.auth.uid;
+    const blockedRef = db
+      .collection("users")
+      .doc(uid)
+      .collection("blocked")
+      .doc(data.orgId);
+    const promises = [];
+
     promises.push(unfollow(data, context));
 
+    promises.push(
+      blockedRef.set({
+        blockedAt: admin.firestore.FieldValue.serverTimestamp()
+      })
+    );
 
+    await Promise.all(promises);
+    return true;
   } catch (err) {
     console.log(err);
     throw new functions.https.HttpsError(
       "internal",
       "An internal Error occured"
     );
+  }
+
+  return false;
+});
+
+exports.unblockOrganizer = functions.https.onCall(async (data, context) => {
+  helper.errorIfEmpty(data.orgId);
+  helper.errorIfNotAuthenticated(context);
+
+  try {
+    const uid = context.auth.uid;
+    const blockedRef = db
+      .collection("users")
+      .doc(uid)
+      .collection("blocked")
+      .doc(data.orgId);
+
+    await blockedRef.delete();
+    return true;
+  } catch (err) {
+    console.log(err);
+    throw new functions.https.HttpsError(
+      "internal",
+      "An internal Error occured"
+    );
+  }
 });
 
 async function unfollow(data, context) {

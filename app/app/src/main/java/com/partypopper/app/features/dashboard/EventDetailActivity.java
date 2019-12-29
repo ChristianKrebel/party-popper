@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -35,8 +37,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -322,6 +329,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         // Add a marker
         TextView titleTv = findViewById(R.id.edOrganizerNameTv);
         LatLng coords = new LatLng(52.131, 8.666); // TODO get real coords
+
         googleMap.addMarker(new MarkerOptions().position(coords)
                 .title(titleTv.getText().toString()));
 

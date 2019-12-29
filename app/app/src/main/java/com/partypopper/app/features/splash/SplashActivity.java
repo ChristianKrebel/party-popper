@@ -15,6 +15,7 @@ import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
+import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 import java.util.Date;
@@ -80,7 +81,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void showUserUI() {
-        Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
+        Intent intent = new Intent(SplashActivity.this, BusinessActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

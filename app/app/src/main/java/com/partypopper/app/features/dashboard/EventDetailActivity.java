@@ -38,6 +38,10 @@ import com.google.android.material.button.MaterialButton;
 import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
     private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv;
@@ -78,7 +82,22 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         mOrganizerTv = findViewById(R.id.edOrganizerNameTv);
         mOrganizerTv.setText(getIntent().getStringExtra("organizer"));
 
-        // TODO date and time
+        mDateTv = findViewById(R.id.edEventDateTv);
+        mTimeTv = findViewById(R.id.edEventTimeTv);
+
+        Date startDate = (Date) getIntent().getSerializableExtra("startDate");
+        Date endDate = (Date) getIntent().getSerializableExtra("endDate");
+
+        String startDayStr = android.text.format.DateFormat.format("EE", startDate).toString();
+        String endDayStr = android.text.format.DateFormat.format("EE", endDate).toString();
+        String startDateStr = DateFormat.getDateInstance(DateFormat.SHORT).format(startDate);
+        String endDateStr = DateFormat.getDateInstance(DateFormat.SHORT).format(endDate);
+        mDateTv.setText(startDayStr + ", " + startDateStr + " - " + endDayStr + ", " + endDateStr);
+
+        String startTimeStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(startDate);
+        String endTimeStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(endDate);
+        mTimeTv.setText(startTimeStr + " - " + endTimeStr);
+
 
         mBannerIv = findViewById(R.id.edBannerIv);
         byte[] bytes = getIntent().getByteArrayExtra("image");

@@ -17,7 +17,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dashboard_event_height"
                 android:adjustViewBounds="true"
-                android:src="@drawable/loading"
                 android:scaleType="centerCrop"
                 android:contentDescription="test"
                 />

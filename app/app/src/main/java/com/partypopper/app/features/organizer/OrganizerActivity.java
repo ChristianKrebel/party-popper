@@ -9,6 +9,7 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
+import lombok.Getter;
 
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -21,14 +22,13 @@ import com.partypopper.app.utils.BaseActivity;
 
 public class OrganizerActivity extends BaseActivity implements OrganizerRateDialog.OrganizerRateDialogListener {
 
-
-    private RatingBar organizerRb;
+    private String organizerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getIntent().getStringExtra("organizerId"));
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
@@ -66,7 +66,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
             }
         });
 
-        organizerRb = findViewById(R.id.oOrganizerRb);
+
 
     }
 
@@ -80,5 +80,6 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
     public void applyRating(float rating) {
         Toast.makeText(getApplicationContext(), Float.toString(rating), Toast.LENGTH_SHORT).show();
     }
+
 
 }

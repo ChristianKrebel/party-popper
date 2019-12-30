@@ -5,27 +5,48 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import lombok.Setter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.utils.BaseActivity;
+import com.squareup.picasso.Picasso;
 
 
 public class OrganizerInfoFragment extends Fragment implements View.OnClickListener {
 
     private boolean isOrganizerFavored;
     private MaterialButton organizerFavBt, organizerRateBt, organizerBlockBt;
-    private TextView organizerAddressTv;
     private RatingBar organizerRb;
+    private static final String ARG_ORGANIZER_ID = "organizer_id";
+    @Setter
+    private String organizerId;
+
+    private TextView mOrganizerTv, organizerWebsiteTv, organizerPhoneTv, organizerAddressTv, organizerDescriptionTv;
+    private ImageView organizerIv;
+    private MapFragment organizerLocationMf;
+    private LatLng coords;
 
     public OrganizerInfoFragment() {
         // Required empty public constructor
@@ -38,13 +59,20 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
      * @return A new instance of fragment OrganizerInfoFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static OrganizerInfoFragment newInstance() {
-        return new OrganizerInfoFragment();
+    public static OrganizerInfoFragment newInstance(String organizerId) {
+        OrganizerInfoFragment fragment = new OrganizerInfoFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_ORGANIZER_ID, organizerId);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            organizerId = getArguments().getString(ARG_ORGANIZER_ID);
+        }
     }
 
     @Override
@@ -60,12 +88,50 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         organizerRb = v.findViewById(R.id.oOrganizerRb);
         organizerBlockBt = v.findViewById(R.id.coBlockOrganizerBt);
         organizerBlockBt.setOnClickListener(this);
-        organizerAddressTv = v.findViewById(R.id.coOrganizerAddressTv);
-        organizerAddressTv.setOnClickListener(this);
 
         isOrganizerFavored = false;
 
+        showData();
+
         return v;
+    }
+
+    public void showData() {
+        Toast.makeText(getContext(), organizerId, Toast.LENGTH_SHORT).show();
+
+        OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
+        organizerRepository.getOrganizerById(organizerId).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+            @Override
+            public void onComplete(@NonNull Task<Organizer> task) {
+                if (task.isSuccessful()) {
+                    Organizer organizer = task.getResult();
+
+                    mOrganizerTv = getActivity().findViewById(R.id.oOrganizerNameTv);
+                    mOrganizerTv.setText(organizer.getName());
+
+                    organizerRb.setRating(organizer.getRating());
+
+                    organizerIv = getActivity().findViewById(R.id.oBannerIv);
+                    Picasso.get().load(organizer.getImage()).into(organizerIv);
+
+                    organizerDescriptionTv = getActivity().findViewById(R.id.oOrganizerDescriptionTv);
+                    organizerDescriptionTv.setText(organizer.getDescription());
+
+                    organizerWebsiteTv = getActivity().findViewById(R.id.coOrganizerLinkTv);
+                    organizerWebsiteTv.setText(organizer.getWebsite());
+
+                    organizerPhoneTv = getActivity().findViewById(R.id.coOrganizerPhoneTv);
+                    organizerPhoneTv.setText(organizer.getPhone());
+
+                    organizerAddressTv = getActivity().findViewById(R.id.coOrganizerAddressTv);
+                    organizerAddressTv.setText(organizer.getAdress());
+
+                    /*GeoPoint geoPoint = organizer.getCoordinates();
+                    coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                    organizerLocationMf.getMapAsync(onMapReadyCallback);*/
+                }
+            }
+        });
     }
 
     @Override

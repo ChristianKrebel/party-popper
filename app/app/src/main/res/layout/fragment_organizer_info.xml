@@ -36,8 +36,7 @@
                 android:numStars="5"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginEnd="@dimen/text_margin"
-                android:rating="2"
-                android:stepSize="1" />
+                android:stepSize="0.2" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -81,9 +80,9 @@
                 style="@style/HorizontalLine" />
 
             <TextView
+                android:id="@+id/oOrganizerDescriptionTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/event_text"
                 android:layout_margin="@dimen/text_margin"/>
 
             <LinearLayout

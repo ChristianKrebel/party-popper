@@ -68,16 +68,18 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardViewHolder> 
                 intent.putExtra("description", event.getDescription());
                 intent.putExtra("endDate", event.getEndDate());
                 intent.putExtra("going", event.getGoing());
-                intent.putExtra("organizer", eventsAndOrganizerNames.get(event));
+                intent.putExtra("organizer", event.getOrganizer());
                 intent.putExtra("startDate", event.getStartDate());
 
                 ImageView mBannerIv = viewHolder.getMBannerIv();
                 Drawable mBannerDrawable = mBannerIv.getDrawable();
-                Bitmap mBanner = ((BitmapDrawable) mBannerDrawable).getBitmap();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
-                byte[] bytes = stream.toByteArray();
-                intent.putExtra("image", bytes);
+                if (mBannerDrawable != null) {
+                    Bitmap mBanner = ((BitmapDrawable) mBannerDrawable).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
+                    byte[] bytes = stream.toByteArray();
+                    intent.putExtra("image", bytes);
+                }
 
                 view.getContext().startActivity(intent);
             }

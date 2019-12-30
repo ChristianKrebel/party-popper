@@ -7,6 +7,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.partypopper.app.R;
 
@@ -19,10 +20,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.organizer_tab_text_1, R.string.organizer_tab_text_2};
     private final Context mContext;
+    private final String organizerId;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm, String organizerId) {
         super(fm);
         mContext = context;
+        this.organizerId = organizerId;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = OrganizerInfoFragment.newInstance();
+                fragment = OrganizerInfoFragment.newInstance(organizerId);
                 break;
             case 1:
                 fragment = OrganizerEventsFragment.newInstance();

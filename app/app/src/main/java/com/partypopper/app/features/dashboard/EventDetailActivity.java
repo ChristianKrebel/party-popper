@@ -1,6 +1,7 @@
 package com.partypopper.app.features.dashboard;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -16,9 +17,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -32,25 +36,34 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.OrganizerRepository;
+import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
-    private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv;
-    private ImageView mBannerIv;
+    private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv,
+            organizerWebsiteTv, organizerPhoneTv, organizerAddressTv;
+    private ImageView mBannerIv, organizerIv;
     private boolean isOrganizerInfoExpanded, isOrganizerFavored;
     private MaterialButton expandBt, favBt, blockOrganizerBt;
     private LinearLayout organizerInfoLl;
     private AppBarLayout appBarLayout;
     private MapFragment organizerLocationMf;
+    private RatingBar mOrganizerRatingRb;
+    private LatLng coords;
+    private String organizerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +86,13 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
 
         // get data from intent and set them to the views
+        organizerId = getIntent().getStringExtra("organizer");
+
         mTitleTv = findViewById(R.id.edEventTitleTv);
         mTitleTv.setText(getIntent().getStringExtra("name"));
 
         mVisitorCountTv = findViewById(R.id.edEventAttendersTv);
         mVisitorCountTv.setText(getIntent().getIntExtra("going", 0) + " " + getString(R.string.are_attending));
-
-        mOrganizerTv = findViewById(R.id.edOrganizerNameTv);
-        mOrganizerTv.setText(getIntent().getStringExtra("organizer"));
 
         mDateTv = findViewById(R.id.edEventDateTv);
         mTimeTv = findViewById(R.id.edEventTimeTv);
@@ -106,11 +118,14 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
 
         mBannerIv = findViewById(R.id.edBannerIv);
-        byte[] bytes = getIntent().getByteArrayExtra("image");
-        mBannerIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        if (getIntent().hasExtra("image")) {
+            byte[] bytes = getIntent().getByteArrayExtra("image");
+            mBannerIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        }
 
         mDescriptionTv = findViewById(R.id.edEventDescriptionTv);
         mDescriptionTv.setText(getIntent().getStringExtra("description"));
+
 
 
 
@@ -162,28 +177,31 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
         final MaterialButton blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
         Drawable mBannerDrawable = mBannerIv.getDrawable();
-        Bitmap mBannerBm = ((BitmapDrawable) mBannerDrawable).getBitmap();
-        Palette.from(mBannerBm).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                int imageColor = palette.getMutedColor(R.attr.colorPrimary);
+        if (getIntent().hasExtra("image")) {
+            Bitmap mBannerBm = ((BitmapDrawable) mBannerDrawable).getBitmap();
+            Palette.from(mBannerBm).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+                    int imageColor = palette.getMutedColor(R.attr.colorPrimary);
 
-                collapsingToolbarLayout.setContentScrimColor(imageColor);
-                attendEventBt.getBackground().setColorFilter(imageColor, PorterDuff.Mode.SRC);
-                organizerLinkTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
-                organizerPhoneTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
+                    collapsingToolbarLayout.setContentScrimColor(imageColor);
+                    attendEventBt.getBackground().setColorFilter(imageColor, PorterDuff.Mode.SRC);
+                    organizerLinkTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
+                    organizerPhoneTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
 
-                // Set status bar color
-                getWindow().setStatusBarColor(changeValueOfColor(imageColor, 0.8f));
+                    // Set status bar color
+                    getWindow().setStatusBarColor(changeValueOfColor(imageColor, 0.8f));
 
 
-            }
-        });
+                }
+            });
+        }
 
         // Organizer info is not expanded by default
         isOrganizerInfoExpanded = false;
 
         isOrganizerFavored = false;
+
 
         // no need for listener because of onClick in XML
         expandBt = findViewById(R.id.edOrganizerExpandBt);
@@ -210,28 +228,49 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
 
         // map
+        // default coords
+        coords = new LatLng(0,0);
         // get MapFragment
         organizerLocationMf = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.coOrganizerLocationMf);
-        organizerLocationMf.getMapAsync(this);
 
 
-        /*
-        // Views
-        mBannerIv = findViewById(R.id.edBannerIv);
-        mTitleTv = findViewById(R.id.titleTv);
-        mDateTv = findViewById(R.id.dateTv);
-        mOrganizerTv = findViewById(R.id.organizerTv);
-        mVisitorCountTv = findViewById(R.id.visitorCountTv);
+        // get and set organizer data
+        showData(organizerId, this);
+    }
 
-        // get data from intent and set them to the views
-        byte[] bytes = getIntent().getByteArrayExtra("image");
-        mBannerIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-        mTitleTv.setText(getIntent().getStringExtra("title"));
-        mDateTv.setText(getIntent().getStringExtra("date"));
-        mOrganizerTv.setText(getIntent().getStringExtra("organizer"));
-        mVisitorCountTv.setText(getIntent().getStringExtra("visitor_count"));
-        */
+    private void showData(final String organizerId, final OnMapReadyCallback onMapReadyCallback) {
+        OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
+        organizerRepository.getOrganizerById(organizerId).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+            @Override
+            public void onComplete(@NonNull Task<Organizer> task) {
+                if (task.isSuccessful()) {
+                    Organizer organizer = task.getResult();
+
+                    mOrganizerTv = findViewById(R.id.edOrganizerNameTv);
+                    mOrganizerTv.setText(organizer.getName());
+
+                    mOrganizerRatingRb = findViewById(R.id.edOrganizerRb);
+                    mOrganizerRatingRb.setRating(organizer.getRating());
+
+                    organizerIv = findViewById(R.id.edOrganizerIv);
+                    Picasso.get().load(organizer.getImage()).into(organizerIv);
+
+                    organizerWebsiteTv = findViewById(R.id.coOrganizerLinkTv);
+                    organizerWebsiteTv.setText(organizer.getWebsite());
+
+                    organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
+                    organizerPhoneTv.setText(organizer.getPhone());
+
+                    organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
+                    organizerAddressTv.setText(organizer.getAdress());
+
+                    GeoPoint geoPoint = organizer.getCoordinates();
+                    coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                    organizerLocationMf.getMapAsync(onMapReadyCallback);
+                }
+            }
+        });
     }
 
     /**
@@ -290,7 +329,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onOrganizerClick(View view) {
-        showText("onOrganizerClick");
+        Intent intent = new Intent(view.getContext(), OrganizerActivity.class);
+        intent.putExtra("organizerId", organizerId);
+        startActivity(intent);
     }
 
     public void onOrganizerFavButtonClick(View view) {
@@ -346,7 +387,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker
         TextView titleTv = findViewById(R.id.edOrganizerNameTv);
-        LatLng coords = new LatLng(52.131, 8.666); // TODO get real coords
         googleMap.addMarker(new MarkerOptions().position(coords)
                 .title(titleTv.getText().toString()));
 

@@ -27,7 +27,7 @@ import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
 
 public class OrganizerActivity extends BaseActivity implements OrganizerRateDialog.OrganizerRateDialogListener {
-    
+
     private ImageView logoIv;
     private String name;
 
@@ -86,8 +86,6 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
             }
         });
 
-
-
     }
 
     @Override
@@ -98,7 +96,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
 
     @Override
     public void applyRating(float rating) {
-        Toast.makeText(getApplicationContext(), Float.toString(rating), Toast.LENGTH_SHORT).show();
+        showText(Float.toString(rating));
     }
 
 

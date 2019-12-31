@@ -3,6 +3,7 @@ package com.partypopper.app.utils;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -87,8 +88,8 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param label explaining the text
      * @param text
      */
-    public void copyTextToClipboard(String label, CharSequence text) {
-        ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+    public static void copyTextToClipboard(String label, CharSequence text, Context context) {
+        ClipboardManager manager = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
         ClipData clipData = ClipData.newPlainText(label, text);
         manager.setPrimaryClip(clipData);
     }

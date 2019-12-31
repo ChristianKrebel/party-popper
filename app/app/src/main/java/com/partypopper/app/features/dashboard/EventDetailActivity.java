@@ -371,10 +371,10 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onOrganizerAddressTextViewClick(View view) {
-        showText("onOrganizerAddressTextViewClick");
+        showText(getString(R.string.copied_address));
 
         TextView textView = (TextView) view;
-        copyTextToClipboard("Address", textView.getText());
+        copyTextToClipboard("Address", textView.getText(), view.getContext());
     }
 
     public void onBlockOrganizerButtonClick(View view) {

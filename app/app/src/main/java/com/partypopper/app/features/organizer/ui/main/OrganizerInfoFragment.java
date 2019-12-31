@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +36,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.OrganizerRepository;
+import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.squareup.picasso.Picasso;
 
@@ -105,6 +105,7 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         // get data from intent and set them to the views
         addressTv = v.findViewById(R.id.coOrganizerAddressTv);
         addressTv.setText(organizerAddress);
+        addressTv.setOnClickListener(this);
 
         descriptionTv = v.findViewById(R.id.oOrganizerDescriptionTv);
         descriptionTv.setText(organizerDescription);
@@ -157,12 +158,12 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
             organizerFavBt.setIconResource(R.drawable.ic_favorite_white_trans30_24dp);
             organizerFavBt.setText(R.string.unfav_organizer);
 
-            Toast.makeText(view.getContext(), "Fav", Toast.LENGTH_SHORT).show();
+            ((OrganizerActivity)getActivity()).showText("Fav");
         } else {
             organizerFavBt.setIconResource(R.drawable.ic_favorite_border_white_trans30_24dp);
             organizerFavBt.setText(R.string.fav_organizer);
 
-            Toast.makeText(view.getContext(), "Unfav", Toast.LENGTH_SHORT).show();
+            ((OrganizerActivity)getActivity()).showText("Unfav");
         }
 
         isOrganizerFavored = !isOrganizerFavored;
@@ -174,11 +175,14 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     }
 
     public void onOrganizerAddressTextViewClick(View view) {
-        Toast.makeText(view.getContext(), "Address", Toast.LENGTH_SHORT).show();
+        ((OrganizerActivity)getActivity()).showText(getString(R.string.copied_address));
+
+        TextView textView = (TextView) view;
+        BaseActivity.copyTextToClipboard("Address", textView.getText(), view.getContext());
     }
 
     public void onBlockOrganizerButtonClick(View view) {
-        Toast.makeText(view.getContext(), "Block", Toast.LENGTH_SHORT).show();
+        ((OrganizerActivity)getActivity()).showText("Block");
     }
 
     /**

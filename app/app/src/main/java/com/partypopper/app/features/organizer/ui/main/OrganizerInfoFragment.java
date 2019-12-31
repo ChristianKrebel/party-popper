@@ -20,8 +20,15 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
@@ -34,7 +41,7 @@ import com.partypopper.app.utils.BaseActivity;
 import com.squareup.picasso.Picasso;
 
 
-public class OrganizerInfoFragment extends Fragment implements View.OnClickListener {
+public class OrganizerInfoFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
 
     private boolean isOrganizerFavored;
     private MaterialButton organizerFavBt, organizerRateBt, organizerBlockBt;
@@ -43,7 +50,7 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     private double organizerCoordsLat, organizerCoordsLng;
     private float organizerRating;
     private TextView addressTv, descriptionTv, nameTv, phoneTv, websiteTv;
-    private MapFragment organizerLocationMf;
+    private SupportMapFragment organizerLocationMf;
     private LatLng coords;
 
     public OrganizerInfoFragment() {
@@ -116,6 +123,13 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         organizerRb = v.findViewById(R.id.oOrganizerRb);
         organizerRb.setRating(organizerRating);
 
+
+        // map
+        // get MapFragment
+        organizerLocationMf = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.coOrganizerLocationMf);
+        organizerLocationMf.getMapAsync(this);
+
         return v;
     }
 
@@ -167,5 +181,22 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         Toast.makeText(view.getContext(), "Block", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * When the map is loaded set a marker and move and zoom its camera to the marker
+     * @param googleMap
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        // Add a marker
+        googleMap.addMarker(new MarkerOptions().position(coords)
+                .title(organizerName));
 
+        // move the map's camera to the same location and zoom
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.moveCamera(cameraUpdate);
+
+        // Set zoom controls
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+    }
 }

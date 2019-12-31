@@ -3,7 +3,9 @@ package com.partypopper.app.utils;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.ColorInt;
@@ -16,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
+import com.partypopper.app.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -79,9 +82,47 @@ public abstract class BaseActivity extends AppCompatActivity {
         return Color.HSVToColor(hsv);
     }
 
+    /**
+     * Copies text to the clipboard
+     * @param label explaining the text
+     * @param text
+     */
     public void copyTextToClipboard(String label, CharSequence text) {
         ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         ClipData clipData = ClipData.newPlainText(label, text);
         manager.setPrimaryClip(clipData);
+    }
+
+    /**
+     * Share data via a share sheet
+     * @param type
+     * @param title
+     * @param text
+     */
+    public void share(String type, String title, String text) {
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType(type);
+
+        // (Optional) Here we're setting the title of the content
+        sendIntent.putExtra(Intent.EXTRA_TITLE, title);
+
+        // Show the Sharesheet
+        startActivity(Intent.createChooser(sendIntent, null));
+    }
+
+    /**
+     * Opens an url in the default browser app
+     * @param url
+     */
+    public void openUrl(String url) {
+        try {
+            Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        } catch (Exception e) {
+            showText(getString(R.string.wrong_url));
+        }
+
     }
 }

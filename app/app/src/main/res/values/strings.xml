@@ -34,6 +34,8 @@
 
     <string name="placeholder">-</string>
 
+    <string name="wrong_url">Cannot open the URL, something is wrong with it</string>
+
     <string name="action_organizer_fav">Follow</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

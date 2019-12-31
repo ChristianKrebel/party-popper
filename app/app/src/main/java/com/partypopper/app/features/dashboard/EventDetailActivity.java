@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -14,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -63,10 +65,10 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     private MaterialButton expandBt, favBt, blockOrganizerBt;
     private LinearLayout organizerInfoLl;
     private AppBarLayout appBarLayout;
-    private MapFragment organizerLocationMf;
+    private SupportMapFragment organizerLocationMf;
     private RatingBar mOrganizerRatingRb;
     private LatLng coords;
-    private String organizerId;
+    private String organizerId, eventUrl;
     private Organizer organizer;
 
     @Override
@@ -120,6 +122,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         String endTimeStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(endDate);
         mTimeTv.setText(startTimeStr + " - " + endTimeStr);
 
+        eventUrl = getIntent().getStringExtra("eventUrl");
 
         mBannerIv = findViewById(R.id.edBannerIv);
         if (getIntent().hasExtra("image")) {
@@ -235,7 +238,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         // default coords
         coords = new LatLng(0,0);
         // get MapFragment
-        organizerLocationMf = (MapFragment) getFragmentManager()
+        organizerLocationMf = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.coOrganizerLocationMf);
 
 
@@ -297,10 +300,10 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_event_open_event_link:
-                showText("action_event_open_event_link");
+                openUrl(eventUrl);
                 return true;
             case R.id.action_event_share:
-                showText("action_event_share");
+                share("text/html", mTitleTv.getText().toString(), eventUrl);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -408,9 +411,8 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker
-        TextView titleTv = findViewById(R.id.edOrganizerNameTv);
         googleMap.addMarker(new MarkerOptions().position(coords)
-                .title(titleTv.getText().toString()));
+                .title(mOrganizerTv.getText().toString()));
 
         // move the map's camera to the same location and zoom
         CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();

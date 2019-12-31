@@ -39,12 +39,10 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     private boolean isOrganizerFavored;
     private MaterialButton organizerFavBt, organizerRateBt, organizerBlockBt;
     private RatingBar organizerRb;
-    private static final String ARG_ORGANIZER_ID = "organizer_id";
-    @Setter
-    private String organizerId;
-
-    private TextView mOrganizerTv, organizerWebsiteTv, organizerPhoneTv, organizerAddressTv, organizerDescriptionTv;
-    private ImageView organizerIv;
+    private String organizerId, organizerAddress, organizerDescription, organizerName, organizerPhone, organizerWebsite;
+    private double organizerCoordsLat, organizerCoordsLng;
+    private float organizerRating;
+    private TextView addressTv, descriptionTv, nameTv, phoneTv, websiteTv;
     private MapFragment organizerLocationMf;
     private LatLng coords;
 
@@ -59,11 +57,9 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
      * @return A new instance of fragment OrganizerInfoFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static OrganizerInfoFragment newInstance(String organizerId) {
+    public static OrganizerInfoFragment newInstance(Bundle organizerBundle) {
         OrganizerInfoFragment fragment = new OrganizerInfoFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(ARG_ORGANIZER_ID, organizerId);
-        fragment.setArguments(bundle);
+        fragment.setArguments(organizerBundle);
         return fragment;
     }
 
@@ -71,7 +67,15 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            organizerId = getArguments().getString(ARG_ORGANIZER_ID);
+            organizerId = getArguments().getString("organizerId");
+            organizerAddress = getArguments().getString("organizerAddress");
+            organizerDescription = getArguments().getString("organizerDescription");
+            organizerName = getArguments().getString("organizerName");
+            organizerPhone = getArguments().getString("organizerPhone");
+            organizerWebsite = getArguments().getString("organizerWebsite");
+            organizerCoordsLat = getArguments().getDouble("organizerCoordsLat");
+            organizerCoordsLng = getArguments().getDouble("organizerCoordsLng");
+            organizerRating = getArguments().getFloat("organizerRating");
         }
     }
 
@@ -91,47 +95,28 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
 
         isOrganizerFavored = false;
 
-        showData();
+        // get data from intent and set them to the views
+        addressTv = v.findViewById(R.id.coOrganizerAddressTv);
+        addressTv.setText(organizerAddress);
+
+        descriptionTv = v.findViewById(R.id.oOrganizerDescriptionTv);
+        descriptionTv.setText(organizerDescription);
+
+        nameTv = v.findViewById(R.id.oOrganizerNameTv);
+        nameTv.setText(organizerName);
+
+        phoneTv = v.findViewById(R.id.coOrganizerPhoneTv);
+        phoneTv.setText(organizerPhone);
+
+        websiteTv = v.findViewById(R.id.coOrganizerLinkTv);
+        websiteTv.setText(organizerWebsite);
+
+        coords = new LatLng(organizerCoordsLat, organizerCoordsLng);
+
+        organizerRb = v.findViewById(R.id.oOrganizerRb);
+        organizerRb.setRating(organizerRating);
 
         return v;
-    }
-
-    public void showData() {
-        Toast.makeText(getContext(), organizerId, Toast.LENGTH_SHORT).show();
-
-        OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
-        organizerRepository.getOrganizerById(organizerId).addOnCompleteListener(new OnCompleteListener<Organizer>() {
-            @Override
-            public void onComplete(@NonNull Task<Organizer> task) {
-                if (task.isSuccessful()) {
-                    Organizer organizer = task.getResult();
-
-                    mOrganizerTv = getActivity().findViewById(R.id.oOrganizerNameTv);
-                    mOrganizerTv.setText(organizer.getName());
-
-                    organizerRb.setRating(organizer.getRating());
-
-                    organizerIv = getActivity().findViewById(R.id.oBannerIv);
-                    Picasso.get().load(organizer.getImage()).into(organizerIv);
-
-                    organizerDescriptionTv = getActivity().findViewById(R.id.oOrganizerDescriptionTv);
-                    organizerDescriptionTv.setText(organizer.getDescription());
-
-                    organizerWebsiteTv = getActivity().findViewById(R.id.coOrganizerLinkTv);
-                    organizerWebsiteTv.setText(organizer.getWebsite());
-
-                    organizerPhoneTv = getActivity().findViewById(R.id.coOrganizerPhoneTv);
-                    organizerPhoneTv.setText(organizer.getPhone());
-
-                    organizerAddressTv = getActivity().findViewById(R.id.coOrganizerAddressTv);
-                    organizerAddressTv.setText(organizer.getAdress());
-
-                    /*GeoPoint geoPoint = organizer.getCoordinates();
-                    coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
-                    organizerLocationMf.getMapAsync(onMapReadyCallback);*/
-                }
-            }
-        });
     }
 
     @Override

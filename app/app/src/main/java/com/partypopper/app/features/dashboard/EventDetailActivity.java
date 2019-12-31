@@ -48,10 +48,13 @@ import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Date;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
+
+    private final int COMPRESSION_QUALITY = 98;
 
     private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv,
             organizerWebsiteTv, organizerPhoneTv, organizerAddressTv;
@@ -64,6 +67,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     private RatingBar mOrganizerRatingRb;
     private LatLng coords;
     private String organizerId;
+    private Organizer organizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,7 +249,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
             @Override
             public void onComplete(@NonNull Task<Organizer> task) {
                 if (task.isSuccessful()) {
-                    Organizer organizer = task.getResult();
+                    organizer = task.getResult();
 
                     mOrganizerTv = findViewById(R.id.edOrganizerNameTv);
                     mOrganizerTv.setText(organizer.getName());
@@ -331,6 +335,24 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     public void onOrganizerClick(View view) {
         Intent intent = new Intent(view.getContext(), OrganizerActivity.class);
         intent.putExtra("organizerId", organizerId);
+        intent.putExtra("organizerAddress", organizer.getAdress());
+        intent.putExtra("organizerDescription", organizer.getDescription());
+        intent.putExtra("organizerName", organizer.getName());
+        intent.putExtra("organizerPhone", organizer.getPhone());
+        intent.putExtra("organizerRating", organizer.getRating());
+        intent.putExtra("organizerWebsite", organizer.getWebsite());
+        intent.putExtra("organizerCoordsLat", coords.latitude);
+        intent.putExtra("organizerCoordsLng", coords.longitude);
+
+        Drawable organizerIvDrawable = organizerIv.getDrawable();
+        if (organizerIvDrawable != null) {
+            Bitmap mBanner = ((BitmapDrawable) organizerIvDrawable).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
+            byte[] bytes = stream.toByteArray();
+            intent.putExtra("organizerImage", bytes);
+        }
+
         startActivity(intent);
     }
 

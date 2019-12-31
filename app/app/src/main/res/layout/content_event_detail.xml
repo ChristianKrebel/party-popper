@@ -21,8 +21,8 @@
             android:layout_marginTop="@dimen/text_margin"
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginBottom="@dimen/text_margin_2"
-            android:text="Rebellion - the Rockfuckinpartynight"
             android:textSize="@dimen/title_h5"
+            android:text="@string/placeholder"
             android:textColor="@color/colorWhite"/>
 
         <LinearLayout
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/text_margin_2"
                 android:layout_marginBottom="@dimen/text_margin"
-                android:text="Saturday, 2.11.19" />
+                android:text="@string/placeholder" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
                 android:layout_marginStart="@dimen/text_margin_2"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
-                android:text="10 pm - open end" />
+                android:text="@string/placeholder" />
 
         </LinearLayout>
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
-                android:text="42 people are attending" />
+                android:text="@string/placeholder" />
 
         </LinearLayout>
 
@@ -109,7 +109,6 @@
                     android:id="@+id/edOrganizerIv"
                     android:layout_width="@dimen/organizer_profile_pic"
                     android:layout_height="@dimen/organizer_profile_pic"
-                    android:src="@drawable/testlogo"
                     android:scaleType="centerCrop"
                     android:onClick="onOrganizerClick" />
 
@@ -130,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/text_margin"
                     android:layout_marginEnd="@dimen/text_margin"
-                    android:text="Club"
+                    android:text="@string/placeholder"
                     android:onClick="onOrganizerClick"/>
 
                 <RatingBar
@@ -182,7 +181,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
-            android:text="@string/event_text" />
+            android:text="@string/placeholder" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

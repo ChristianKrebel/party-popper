@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -96,8 +96,8 @@
                 android:drawableStart="@drawable/ic_today_white_trans30_24dp"
                 android:drawablePadding="@dimen/drawable_padding"
                 android:editable="false"
-                android:focusable="false"
                 android:ems="10"
+                android:focusable="false"
                 android:hint="@string/date_publish"
                 android:inputType="date"
                 android:onClick="dateClick" />

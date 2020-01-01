@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -53,6 +52,10 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Date;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 

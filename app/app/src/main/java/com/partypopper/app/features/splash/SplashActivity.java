@@ -15,6 +15,7 @@ import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
+import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 import java.util.Date;

@@ -10,4 +10,6 @@
     <color name="black_trans80">#33000000</color>
     <color name="white_trans70">#4DFFFFFF</color>
     <color name="white70">#B3B3B3</color>
+    <color name="scrim_topdown">#AA000000</color>
+    <color name="scrim_topdown_reset">#66000000</color>
 </resources>

@@ -1,18 +1,17 @@
-package com.partypopper.app.features.dashboard;
+package com.partypopper.app.features.events;
 
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.partypopper.app.R;
-import com.squareup.picasso.Picasso;
 
 import androidx.recyclerview.widget.RecyclerView;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-public class DashboardViewHolder extends RecyclerView.ViewHolder {
+public class EventsViewHolder extends RecyclerView.ViewHolder {
 
     private View mView;
     @Getter
@@ -21,9 +20,12 @@ public class DashboardViewHolder extends RecyclerView.ViewHolder {
     @Getter
     @Setter
     private ImageView mBannerIv;
+    @Getter
+    @Setter
+    private FrameLayout mGradientFl;
     private ClickListener mClickListener;
 
-    public DashboardViewHolder(View itemView) {
+    public EventsViewHolder(View itemView) {
         super(itemView);
 
         mView = itemView;
@@ -51,6 +53,7 @@ public class DashboardViewHolder extends RecyclerView.ViewHolder {
         mDateTv = mView.findViewById(R.id.rDateTv);
         mOrganizerTv = mView.findViewById(R.id.rOrganizerTv);
         mVisitorCountTv = mView.findViewById(R.id.rVisitorCountTv);
+        mGradientFl = mView.findViewById(R.id.rGradientFl);
     }
 
 
@@ -60,7 +63,7 @@ public class DashboardViewHolder extends RecyclerView.ViewHolder {
         void onItemLongClick(View view, int position);
     }
 
-    public void setOnClickListener(DashboardViewHolder.ClickListener clickListener) {
+    public void setOnClickListener(EventsViewHolder.ClickListener clickListener) {
         this.mClickListener = clickListener;
     }
 

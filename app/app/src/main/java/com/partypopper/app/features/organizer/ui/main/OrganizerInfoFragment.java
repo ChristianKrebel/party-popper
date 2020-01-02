@@ -63,7 +63,6 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
      *
      * @return A new instance of fragment OrganizerInfoFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static OrganizerInfoFragment newInstance(Bundle organizerBundle) {
         OrganizerInfoFragment fragment = new OrganizerInfoFragment();
         fragment.setArguments(organizerBundle);

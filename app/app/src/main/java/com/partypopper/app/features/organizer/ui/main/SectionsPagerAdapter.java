@@ -38,7 +38,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 fragment = OrganizerInfoFragment.newInstance(organizerBundle);
                 break;
             case 1:
-                fragment = OrganizerEventsFragment.newInstance();
+                fragment = OrganizerEventsFragment.newInstance(organizerBundle.getString("organizerId"));
                 break;
         }
         return fragment;

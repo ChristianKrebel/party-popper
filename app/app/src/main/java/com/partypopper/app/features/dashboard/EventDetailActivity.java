@@ -28,6 +28,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.palette.graphics.Palette;
 
 import android.view.Menu;
@@ -47,6 +48,9 @@ import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
+
+import static com.partypopper.app.utils.Constants.*;
+
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -58,8 +62,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
-
-    private final int COMPRESSION_QUALITY = 98;
 
     private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv,
             organizerWebsiteTv, organizerPhoneTv, organizerAddressTv;
@@ -186,6 +188,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         final TextView organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
         final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
         final MaterialButton blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
+        final View gradientV = findViewById(R.id.edGradientV);
         Drawable mBannerDrawable = mBannerIv.getDrawable();
         if (getIntent().hasExtra("image")) {
             Bitmap mBannerBm = ((BitmapDrawable) mBannerDrawable).getBitmap();
@@ -201,6 +204,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
                     // Set status bar color
                     getWindow().setStatusBarColor(changeValueOfColor(imageColor, 0.8f));
+
+                    // Set scrim color
+                    Drawable unwrappedDrawable = gradientV.getBackground();
+                    final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                    DrawableCompat.setTint(wrappedDrawable, changeValueOfColor(imageColor, 0.6f));
 
 
                 }

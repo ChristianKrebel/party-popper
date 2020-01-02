@@ -1,6 +1,7 @@
 package com.partypopper.app.features.organizer;
 
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.MapFragment;
@@ -11,9 +12,12 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.viewpager.widget.ViewPager;
 import lombok.Getter;
 
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -85,6 +89,12 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
                 }
             }
         });
+
+        // Reset scrim's color
+        final View gradientV = findViewById(R.id.oGradientV);
+        Drawable unwrappedDrawable = gradientV.getBackground();
+        final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(getBaseContext(), R.color.scrim_topdown_reset));
 
     }
 

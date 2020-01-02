@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static final FirebaseFirestore mFireStore;
     @Setter
     @Getter
-    private static boolean isOrganizer = false;
+    protected static boolean isOrganizer = false;
 
     static {
         mFunctions = FirebaseFunctions.getInstance();

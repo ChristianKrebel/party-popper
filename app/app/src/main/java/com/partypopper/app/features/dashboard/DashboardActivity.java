@@ -1,53 +1,33 @@
 package com.partypopper.app.features.dashboard;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import lombok.Setter;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.Timestamp;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.features.events.EventsAdapter;
 import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.features.organizer.PublishEventActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.database.repository.*;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import static com.partypopper.app.utils.Constants.*;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +35,8 @@ import java.util.Map;
 public class DashboardActivity extends BaseActivity {
 
     private RecyclerView mRecyclerView;
-    private List<Event> modelList = new ArrayList<>();
 
-    private FirebaseFirestore db;
-
-    DashboardAdapter adapter;
+    private EventsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +44,8 @@ public class DashboardActivity extends BaseActivity {
         setContentView(R.layout.activity_dashboard);
         Toolbar toolbar = findViewById(R.id.edToolbar);
         setSupportActionBar(toolbar);
+
+
 
         // FAB
         final FloatingActionButton fab = findViewById(R.id.fab);
@@ -87,13 +66,15 @@ public class DashboardActivity extends BaseActivity {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
 
         showData(new eventsAndOrganizerNamesCallback() {
             @Override
             public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
-                adapter = new DashboardAdapter(DashboardActivity.this, events, eventsAndOrganizerNames, getApplicationContext());
+                adapter = new EventsAdapter(DashboardActivity.this,
+                        events,
+                        eventsAndOrganizerNames,
+                        getApplicationContext(),
+                        R.layout.row_events_dashboard);
                 mRecyclerView.setAdapter(adapter);
             }
         });
@@ -103,7 +84,7 @@ public class DashboardActivity extends BaseActivity {
         EventsRepository eventsRepository = EventsRepository.getInstance();
         final OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
 
-        eventsRepository.getFiftyEvents().addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+        eventsRepository.getEvents(EVENTS_AMOUNT).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
             @Override
             public void onComplete(@NonNull Task<List<Event>> task) {
                 if(task.getResult() != null) {
@@ -160,7 +141,7 @@ public class DashboardActivity extends BaseActivity {
                         }
 
                         //adapter
-                        adapter = new DashboardAdapter(DashboardActivity.this, modelList, getApplicationContext());
+                        adapter = new EventsAdapter(DashboardActivity.this, modelList, getApplicationContext());
                         // set adapter to recyclerview
                         mRecyclerView.setAdapter(adapter);
                     }
@@ -237,19 +218,19 @@ public class DashboardActivity extends BaseActivity {
                         .setQuery(firebaseSearchQuery, DashboardModel.class)
                         .build();
 
-        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<DashboardModel, DashboardViewHolder>(options) {
+        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<DashboardModel, EventsViewHolder>(options) {
             @Override
-            public DashboardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public EventsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.row_dashboard for each item
+                // layout called R.layout.row_events_dashboard for each item
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.row_dashboard, parent, false);
+                        .inflate(R.layout.row_events_dashboard, parent, false);
 
-                return new DashboardViewHolder(view);
+                return new EventsViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(DashboardViewHolder holder, int position, DashboardModel model) {
+            protected void onBindViewHolder(EventsViewHolder holder, int position, DashboardModel model) {
                 holder.setDetails(model.getTitle(), model.getDate(), model.getImage(),
                         model.getOrganizer(), model.getVisitor_count());
             }

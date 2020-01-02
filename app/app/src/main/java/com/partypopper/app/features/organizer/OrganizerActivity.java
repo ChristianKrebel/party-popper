@@ -34,6 +34,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
 
     private ImageView logoIv;
     private String name;
+    private AppBarLayout appBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         getSupportActionBar().setElevation(0);
 
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.oToolbarLayout);
-        AppBarLayout appBarLayout = findViewById(R.id.oAppBarLayout);
+        appBarLayout = findViewById(R.id.oAppBarLayout);
 
 
         // Set the title to only be visible when the tool bar is collapsed
@@ -107,6 +108,10 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
     @Override
     public void applyRating(float rating) {
         showText(Float.toString(rating));
+    }
+
+    public void onBannerImageViewClick(View view) {
+        setAppBarOffset(0, appBarLayout);
     }
 
 

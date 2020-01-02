@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -55,6 +56,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import java.io.IOException;
@@ -94,8 +96,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         actionBar.setDisplayHomeAsUpEnabled(true);  // set back button
         actionBar.setDisplayShowHomeEnabled(true);
 
-
-
         // get data from intent and set them to the views
         organizerId = getIntent().getStringExtra("organizer");
 
@@ -130,6 +130,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         eventUrl = getIntent().getStringExtra("eventUrl");
 
         mBannerIv = findViewById(R.id.edBannerIv);
+
         if (getIntent().hasExtra("image")) {
             byte[] bytes = getIntent().getByteArrayExtra("image");
             mBannerIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
@@ -149,13 +150,12 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         appBarLayout.post(new Runnable() {
             @Override
             public void run() {
-                ImageView bannerIv = findViewById(R.id.edBannerIv);
-                int heightPx = bannerIv.getHeight();
-                int widthPx = bannerIv.getWidth();
+                int heightPx = mBannerIv.getHeight();
+                int widthPx = mBannerIv.getWidth();
                 float ratio = widthPx / heightPx;
                 // only collapse if image has bigger height than width
                 if (ratio < 1.0f) {
-                    setAppBarOffset(heightPx / 2);
+                    setAppBarOffset(heightPx / 2, appBarLayout);
                 }
             }
         });
@@ -339,7 +339,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onBannerImageViewClick(View view) {
-        showText("onBannerImageViewClick");
+        setAppBarOffset(0, appBarLayout);
     }
 
     public void onAttendEventButtonClick(View view) {
@@ -390,29 +390,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
     public void onBlockOrganizerButtonClick(View view) {
         showText("onBlockOrganizerButtonClick");
-    }
-
-    /**
-     * Sets an offset for the appbar (how much of the imageView is shown) and animates it
-     * @param offset
-     */
-    private void setAppBarOffset(int offset) {
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-        final AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-        if (behavior != null) {
-            ValueAnimator valueAnimator = ValueAnimator.ofInt();
-            valueAnimator.setInterpolator(new DecelerateInterpolator());
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    behavior.setTopAndBottomOffset((Integer) animation.getAnimatedValue());
-                    appBarLayout.requestLayout();
-                }
-            });
-            valueAnimator.setIntValues(0, -offset);
-            valueAnimator.setDuration(400);
-            valueAnimator.start();
-        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.partypopper.app.utils;
 
+import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -8,13 +9,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -129,5 +133,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             showText(getString(R.string.wrong_url));
         }
 
+    }
+
+    /**
+     * Sets an offset for the appbar with CollapsingToolbarLayout
+     * (how much of the imageView is shown) and animates it
+     * @param offset
+     */
+    public void setAppBarOffset(int offset, final AppBarLayout appBarLayout) {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        final AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+        if (behavior != null) {
+            ValueAnimator valueAnimator = ValueAnimator.ofInt();
+            valueAnimator.setInterpolator(new DecelerateInterpolator());
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    behavior.setTopAndBottomOffset((Integer) animation.getAnimatedValue());
+                    appBarLayout.requestLayout();
+                }
+            });
+            valueAnimator.setIntValues(behavior.getTopAndBottomOffset(), -offset);
+            valueAnimator.setDuration(400);
+            valueAnimator.start();
+        }
     }
 }

@@ -21,8 +21,12 @@ public class EventsRepository {
         this.eventSimpleMapper = new SimpleMapper<>(Event.class);
     }
 
-    public Task<List<Event>> getFiftyEvents() {
-        return eventSimpleMapper.mapEntities(db.collection("events").orderBy("startDate", Query.Direction.ASCENDING).limit(50).get());
+    public Task<List<Event>> getEvents(int amount) {
+        return eventSimpleMapper.mapEntities(db.collection("events").orderBy("startDate", Query.Direction.ASCENDING).limit(amount).get());
+    }
+
+    public Task<List<Event>> getEventsByOrganizerId(String organizerId, int amount) {
+        return eventSimpleMapper.mapEntities(db.collection("events").whereEqualTo("organizer", organizerId).orderBy("startDate", Query.Direction.ASCENDING).limit(amount).get());
     }
 
     public Task<List<Event>> searchByName(String name) {

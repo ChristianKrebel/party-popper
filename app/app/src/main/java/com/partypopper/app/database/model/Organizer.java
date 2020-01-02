@@ -2,6 +2,7 @@ package com.partypopper.app.database.model;
 
 
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
+import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.database.util.Identifiable;
 
 import lombok.AllArgsConstructor;
@@ -17,4 +18,7 @@ public class Organizer extends Identifiable {
     private String website;
     private String adress;
     private String phone;
+    private float rating;
+    private String image;
+    private GeoPoint coordinates;
 }

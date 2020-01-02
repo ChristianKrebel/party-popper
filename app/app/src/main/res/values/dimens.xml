@@ -12,11 +12,12 @@
     <dimen name="organizer_profile_pic">40dp</dimen>
     <dimen name="corner_radius_material_button">24dp</dimen>
     <dimen name="organizer_map_height">250dp</dimen>
-    <dimen name="organizer_map_corner_radius">6dp</dimen>
+    <dimen name="card_view_corner_radius">6dp</dimen>
     <dimen name="app_bar_margin">16dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="dashboard_event_height">300dp</dimen>
     <dimen name="drawable_padding">8dp</dimen>
     <dimen name="cardview_image_corner">5000dp</dimen>
+    <dimen name="scrim_topdown_height">100dp</dimen>
 </resources>

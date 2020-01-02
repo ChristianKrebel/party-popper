@@ -22,5 +22,5 @@ public class Event extends Identifiable {
     private String organizer;
     private Date startDate;
     private String image;
-
+    private String eventUrl;
 }

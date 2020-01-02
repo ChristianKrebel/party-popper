@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="0dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     app:cardCornerRadius="0dp" >
 
     <RelativeLayout
@@ -17,11 +20,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dashboard_event_height"
                 android:adjustViewBounds="true"
-                android:src="@drawable/loading"
                 android:scaleType="centerCrop"
-                android:contentDescription="test"
+                android:contentDescription="@string/placeholder"
                 />
             <FrameLayout
+                android:id="@+id/rGradientFl"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/gradient_bg" />

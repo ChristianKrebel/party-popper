@@ -40,7 +40,7 @@
                 app:cardCornerRadius="@dimen/cardview_image_corner">
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/publisheventImageWdg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:srcCompat="@tools:sample/avatars" />
@@ -84,8 +84,19 @@
                 android:hint="@string/title_publish"
                 android:inputType="textPersonName" />
 
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:text="@string/information_duration"
+                android:textSize="@dimen/title_h5" />
+
             <EditText
-                android:id="@+id/pubDateD"
+                android:id="@+id/pubStartdateD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/text_margin"
@@ -98,23 +109,39 @@
                 android:editable="false"
                 android:ems="10"
                 android:focusable="false"
-                android:hint="@string/date_publish"
+                android:hint="@string/startdate_publish"
                 android:inputType="date"
                 android:onClick="dateClick" />
 
+            <TimePicker
+                android:id="@+id/pubStarttimeT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:timePickerMode="spinner"/>
+
             <EditText
-                android:id="@+id/pubTimeT"
+                android:id="@+id/pubEnddateD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/text_margin"
                 android:layout_marginTop="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
-                android:drawableStart="@drawable/ic_access_time_white_trans30_24dp"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_today_white_trans30_24dp"
                 android:drawablePadding="@dimen/drawable_padding"
+                android:editable="false"
                 android:ems="10"
-                android:hint="@string/time_publish"
-                android:inputType="time" />
+                android:focusable="false"
+                android:hint="@string/enddate_publish"
+                android:inputType="date"
+                android:onClick="dateClick" />
+
+            <TimePicker
+                android:id="@+id/pubEndtimeT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:timePickerMode="spinner" />
 
             <View
                 android:id="@+id/view3"
@@ -155,6 +182,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginBottom="@dimen/button_margin"
+                android:onClick="onPublishClick"
                 android:text="@string/publish_event_button_publish" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -163,9 +163,12 @@
     <string name="request_business">Request</string>
 
     <string name="information_publish">Information</string>
+    <string name="information_duration">Duration</string>
     <string name="title_publish">Title</string>
-    <string name="date_publish">Date</string>
-    <string name="time_publish">Time</string>
+    <string name="startdate_publish">Start date</string>
+    <string name="starttime_publish">Start Time</string>
+    <string name="enddate_publish">End date</string>
+    <string name="endtime_publish">End Time</string>
     <string name="description_publish">Description</string>
     <string name="description_hint_publish">Type in your description here</string>
     <string name="publish_event_button_publish">Publish event</string>

@@ -15,6 +15,7 @@ public class Organizer extends Identifiable {
 
     private String name;
     private String description;
+    private String email;
     private String website;
     private String adress;
     private String phone;

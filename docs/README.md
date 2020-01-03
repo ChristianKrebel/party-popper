@@ -7,6 +7,8 @@
 * Test und Usability
 * Zusammenfassung
 
+![Bewertungskriterien](markdown/images/bewertungskriterien.JPG)
+
 
 # party-popper
 App for finding and exploring nearby events and parties 🎉

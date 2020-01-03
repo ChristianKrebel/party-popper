@@ -24,8 +24,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Event;
+import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.utils.BaseActivity;
 
 import androidx.annotation.NonNull;
@@ -37,10 +42,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class BusinessActivity extends BaseActivity implements OnMapReadyCallback {
+    private EditText businessNameWdg;
+    private EditText businessWebsiteWdg;
+    private EditText businessPhoneWdg;
+    private EditText businessAddressWdg;
+    private EditText businessDescriptionWdg;
+    private EditText businessEmailWdg;
+
     private String businessAddress = "";
     private ImageView imageView;
     private Button btnUpload;
-    private EditText businessAddressWdg;
     private MapFragment organizerLocationMf;
     private GoogleMap map;
     private LatLng addressPoint;
@@ -70,17 +81,12 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
         btnUpload = findViewById(R.id.bsUpdateBtn);
         imageView = findViewById(R.id.bsLogoImg);
 
-        EditText businessNameWdg = findViewById(R.id.bsBusinessnamePt);
-        String businessName = businessNameWdg.getText().toString();
-        EditText businessWebsiteWdg = findViewById(R.id.bsBusinesswebsitePt);
-        String businessWebsite = businessWebsiteWdg.getText().toString();
-        EditText businessPhoneWdg = findViewById(R.id.bsBusinessphoneP);
-        String businessTelephone = businessPhoneWdg.getText().toString();
+        businessNameWdg = findViewById(R.id.bsBusinessnamePt);
+        businessWebsiteWdg = findViewById(R.id.bsBusinesswebsitePt);
+        businessPhoneWdg = findViewById(R.id.bsBusinessphoneP);
         businessAddressWdg = findViewById(R.id.bsBusinessaddressPa);
-        EditText businessDescriptionWdg = findViewById(R.id.bsDescriptionMt);
-        String businessDescription = businessDescriptionWdg.getText().toString();
-        EditText businessEmailWdg = findViewById(R.id.bsBusinessmailE);
-        String businessEmail = businessEmailWdg.getText().toString();
+        businessDescriptionWdg = findViewById(R.id.bsDescriptionMt);
+        businessEmailWdg = findViewById(R.id.bsBusinessmailE);
 
         businessAddressWdg.addTextChangedListener(new TextWatcher() {
 
@@ -111,10 +117,41 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     public void onRequestClick(View btn){
-        addressPoint = getLocationFromAddress(this, businessAddress);
+        //TODO include image
 
-        showText("Latitude: " + addressPoint.latitude + ", Longtitude: " + addressPoint.longitude);
-        // TODO sending post request?
+        String businessName = businessNameWdg.getText().toString();
+        String businessWebsite = businessWebsiteWdg.getText().toString();
+        String businessTelephone = businessPhoneWdg.getText().toString();
+        String businessDescription = businessDescriptionWdg.getText().toString();
+        String businessEmail = businessEmailWdg.getText().toString();
+
+        Organizer organizer = new Organizer();
+        organizer.setName(businessName);
+        organizer.setWebsite(businessWebsite);
+        organizer.setPhone(businessTelephone);
+        organizer.setDescription(businessDescription);
+        organizer.setEmail(businessEmail);
+
+        /*OrganizerRepository repo = OrganizerRepository.getInstance();
+
+        repo.createEvent(organizer).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                System.out.println("EVENT created");
+            }
+        });*/
+
+        /*EventsRepository repo = EventsRepository.getInstance();
+        repo.searchByName("bla").addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Event>> task) {
+                if(task.getResult() != null) {
+                    List<Event> list = task.getResult();
+
+                    System.out.println(list);
+                }
+            }
+        });*/
     }
 
     @Override
@@ -184,20 +221,6 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     /**
-     * Defining Implicit Intent to mobile gallery
-     */
-    private void selectImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(
-                Intent.createChooser(
-                        intent,
-                        "Select Image from here..."),
-                PICK_IMAGE_REQUEST);
-    }
-
-    /**
      * Override onActivityResult method to check request code and result code and to set image into the image view
      * @param requestCode
      * @param resultCode
@@ -226,6 +249,20 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Defining Implicit Intent to mobile gallery
+     */
+    private void selectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(
+                        intent,
+                        "Select Image from here..."),
+                PICK_IMAGE_REQUEST);
     }
 
     /**

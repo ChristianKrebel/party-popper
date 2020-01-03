@@ -53,8 +53,16 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="MaterialCardView" parent="Widget.MaterialComponents.CardView">
+    <style name="OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <item name="strokeColor">@color/white_trans70</item>
+    </style>
 
+    <style name="FilledTextField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/textfield_background</item>
+    </style>
+
+    <style name="FilledTextFieldDense" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        <item name="boxBackgroundColor">@color/textfield_background</item>
     </style>
 
 </resources>

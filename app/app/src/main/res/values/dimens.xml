@@ -21,4 +21,5 @@
     <dimen name="cardview_image_corner">5000dp</dimen>
     <dimen name="scrim_topdown_height">100dp</dimen>
     <dimen name="app_icon_inset">25dp</dimen>
+    <dimen name="auth_Iv_size">100dp</dimen>
 </resources>

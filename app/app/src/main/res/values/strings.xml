@@ -12,6 +12,8 @@
     <string name="auth_email">Email</string>
     <string name="auth_password">Password</string>
     <string name="auth_login_button">Login</string>
+    <string name="auth_register_button">Register</string>
+    <string name="auth_forgot_password">Forgot password</string>
 
     <string name="separator_point">\u2022</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>

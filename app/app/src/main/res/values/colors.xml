@@ -13,4 +13,5 @@
     <color name="white70">#B3B3B3</color>
     <color name="scrim_topdown">#AA000000</color>
     <color name="scrim_topdown_reset">#66000000</color>
+    <color name="textfield_background">#08FFFFFF</color>
 </resources>

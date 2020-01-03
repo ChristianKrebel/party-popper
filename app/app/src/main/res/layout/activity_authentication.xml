@@ -92,7 +92,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginBottom="@dimen/text_margin"
-        android:text="OR" />
+        android:text="@string/auth_or" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/auth_google_login_button"

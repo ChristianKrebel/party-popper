@@ -45,7 +45,7 @@ public class SplashActivity extends BaseActivity {
                     if(result.getClaims().get("organizer") != null) {
                         System.out.println("Is Organizer");
 
-                        FollowRepository repo = FollowRepository.getInstance();
+                        /*FollowRepository repo = FollowRepository.getInstance();
 
                         repo.rateOrganizer("De9bYKy9v2cfzlDht0LKCNHLzYE3", 5).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
                             @Override
@@ -57,7 +57,7 @@ public class SplashActivity extends BaseActivity {
                             public void onFailure(@NonNull Exception e) {
                                 System.out.println(e.getMessage());
                             }
-                        });
+                        });*/
 
                         /*Event event = new Event();
                         event.setName("Bla bla bla");

@@ -4,6 +4,7 @@
     <color name="colorPrimary">#424242</color>
     <color name="colorPrimaryDark">#212121</color>
     <color name="colorAccent">#F4511E</color>
+    <color name="background_dark">#FF303030</color>
     <color name="transparent">#00000000</color>
     <color name="black_trans90">#1A000000</color>
     <color name="white_trans90">#1AFFFFFF</color>
@@ -12,4 +13,5 @@
     <color name="white70">#B3B3B3</color>
     <color name="scrim_topdown">#AA000000</color>
     <color name="scrim_topdown_reset">#66000000</color>
+    <color name="textfield_background">#08FFFFFF</color>
 </resources>

@@ -12,5 +12,6 @@ module.exports = {
   ...require("./userCreate.js"),
   ...require("./organizer.js"),
   ...require("./follower.js"),
-  ...require("./events.js")
+  ...require("./events.js"),
+  ...require("./rateOrganizer.js")
 };

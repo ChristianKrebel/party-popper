@@ -1,17 +1,14 @@
 package com.partypopper.app.database.model;
 
-
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.partypopper.app.database.util.Identifiable;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Event extends Identifiable {
 
     private String description;

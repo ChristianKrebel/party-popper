@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
-exports.createUser = functions.auth.user().onCreate(async user => {
+module.exports.createUser = functions.auth.user().onCreate(async user => {
   const uid = user.uid;
 
   const userRef = db.collection("users").doc(uid);

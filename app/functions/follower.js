@@ -5,11 +5,11 @@ const db = admin.firestore();
 const helper = require("./functions");
 
 exports.followOrganizer = functions.https.onCall(async (data, context) => {
-  helper.errorIfEmpty(data.orgId);
+  helper.errorIfEmpty(data.organizerId);
   helper.errorIfNotAuthenticated(context);
 
   const uid = context.auth.uid;
-  const orgDoc = db.collection("organizer").doc(data.orgId);
+  const orgDoc = db.collection("organizer").doc(data.organizerId);
   const followerDoc = orgDoc.collection("follower").doc("1");
   const userDoc = db.collection("users").doc(uid);
   const followingDoc = userDoc.collection("following").doc("1");
@@ -36,7 +36,7 @@ exports.followOrganizer = functions.https.onCall(async (data, context) => {
       promises.push(
         followingDoc.update(
           "following",
-          admin.firestore.FieldValue.arrayUnion(data.orgId)
+          admin.firestore.FieldValue.arrayUnion(data.organizerId)
         )
       );
 
@@ -59,14 +59,14 @@ exports.followOrganizer = functions.https.onCall(async (data, context) => {
 });
 
 exports.unfollowOrganizer = functions.https.onCall(async (data, context) => {
-  helper.errorIfEmpty(data.orgId);
+  helper.errorIfEmpty(data.organizerId);
   helper.errorIfNotAuthenticated(context);
 
   return await unfollow(data, context);
 });
 
 exports.blockOrganizer = functions.https.onCall(async (data, context) => {
-  helper.errorIfEmpty(data.orgId);
+  helper.errorIfEmpty(data.organizerId);
   helper.errorIfNotAuthenticated(context);
 
   try {
@@ -75,7 +75,7 @@ exports.blockOrganizer = functions.https.onCall(async (data, context) => {
       .collection("users")
       .doc(uid)
       .collection("blocked")
-      .doc(data.orgId);
+      .doc(data.organizerId);
     const promises = [];
 
     promises.push(unfollow(data, context));
@@ -95,12 +95,10 @@ exports.blockOrganizer = functions.https.onCall(async (data, context) => {
       "An internal Error occured"
     );
   }
-
-  return false;
 });
 
 exports.unblockOrganizer = functions.https.onCall(async (data, context) => {
-  helper.errorIfEmpty(data.orgId);
+  helper.errorIfEmpty(data.organizerId);
   helper.errorIfNotAuthenticated(context);
 
   try {
@@ -109,7 +107,7 @@ exports.unblockOrganizer = functions.https.onCall(async (data, context) => {
       .collection("users")
       .doc(uid)
       .collection("blocked")
-      .doc(data.orgId);
+      .doc(data.organizerId);
 
     await blockedRef.delete();
     return true;
@@ -124,7 +122,7 @@ exports.unblockOrganizer = functions.https.onCall(async (data, context) => {
 
 async function unfollow(data, context) {
   const uid = context.auth.uid;
-  const orgDoc = db.collection("organizer").doc(data.orgId);
+  const orgDoc = db.collection("organizer").doc(data.organizerId);
   const followerDoc = orgDoc.collection("follower").doc("1");
   const userDoc = db.collection("users").doc(uid);
   const followingDoc = userDoc.collection("following").doc("1");
@@ -151,7 +149,7 @@ async function unfollow(data, context) {
       promises.push(
         followingDoc.update(
           "following",
-          admin.firestore.FieldValue.arrayRemove(data.orgId)
+          admin.firestore.FieldValue.arrayRemove(data.organizerId)
         )
       );
 

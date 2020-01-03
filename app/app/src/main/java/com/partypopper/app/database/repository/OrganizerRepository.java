@@ -1,43 +1,44 @@
 package com.partypopper.app.database.repository;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 
 import java.util.List;
-import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 public class OrganizerRepository {
 
     private static OrganizerRepository instance;
 
     private final FirebaseFirestore db;
-    private final FirestoreRepository<Event> repo;
+    private final FirestoreRepository<Event> eventRepo;
     private final SimpleMapper<Event> eventSimpleMapper;
-    private final FirestoreRepository<Organizer> repoOrganizer;
+    private final FirestoreRepository<Organizer> organizerRepo;
+
+    private final FirebaseFunctions mFunctions;
 
     private OrganizerRepository() {
         this.db = FirebaseFirestore.getInstance();
-        this.repo = new FirestoreRepository<>(Event.class, "events");
+        this.eventRepo = new FirestoreRepository<>(Event.class, "events");
         this.eventSimpleMapper = new SimpleMapper<>(Event.class);
-        this.repoOrganizer = new FirestoreRepository<>(Organizer.class, "organizer");
+        this.organizerRepo = new FirestoreRepository<>(Organizer.class, "organizer");
+        this.mFunctions = FirebaseFunctions.getInstance();
     }
 
     public Task<Void> createEvent(Event event) {
-        return repo.create(event, false);
+        return eventRepo.create(event, false);
     }
 
     public Task<Void> deleteEvent(String id) {
-        return repo.delete(id);
+        return eventRepo.delete(id);
     }
 
     public Task<Void> updateEvent(Event event) {
-        return repo.update(event);
+        return eventRepo.update(event);
     }
 
     public Task<List<Event>> getNextEvent() {
@@ -45,18 +46,21 @@ public class OrganizerRepository {
     }
 
     public Task<Organizer> getOrganizerById(String id) {
-        return repoOrganizer.get(id);
+        return organizerRepo.get(id);
+    }
+
+    // WICHTIG! Im OnComplete den Nutzer ausloggen FirebaseAuth.getInstance().signOut()
+    // Und ihn auch auf die Login Activity weiterleiten.
+    public Task<HttpsCallableResult> singUpOrganizer(Organizer organizer) {
+        return mFunctions.getHttpsCallable("signUpOrganizer").call(organizer.toMap());
     }
 
     public static OrganizerRepository getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new OrganizerRepository();
         }
         return instance;
     }
-
-
-
 
     /*public Task<List<Event>> getUpcomingEvent(int limit) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

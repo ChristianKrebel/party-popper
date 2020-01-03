@@ -9,30 +9,38 @@ exports.signUpOrganizer = functions.https.onCall(async (data, context) => {
   helper.errorIfNotAuthenticated(context);
 
   const user = await admin.auth().getUser(context.auth.uid);
-  const orgDoc = db.collection("organizer").doc(user.uid);
+  const orgRef = db.collection("organizer").doc(user.uid);
 
   if (user.customClaims && user.customClaims.organizer) {
     console.log(user.uid, "is already a Orgranizer");
     return false;
   }
 
-  const promises = [];
+  data.avgRating = 0;
+  data.followCount = 0;
+  data.numRatings = 0;
 
-  promises.push(
-    admin.auth().setCustomUserClaims(user.uid, {
-      organizer: true
-    })
-  );
+  try {
+    const promises = [];
 
-  promises.push(orgDoc.set(data));
+    promises.push(orgRef.set(data));
 
-  promises.push(
-    orgDoc
-      .collection("follower")
-      .doc("1")
-      .set({ follower: [] })
-  );
+    promises.push(
+      orgRef
+        .collection("follower")
+        .doc("1")
+        .set({ follower: [] })
+    );
 
-  await Promise.all(promises);
+    await Promise.all(promises);
+  } catch (err) {
+    console.log(err);
+    throw new functions.https.HttpsError(
+      "internal",
+      "An internal Error occured"
+    );
+  }
+
+  await admin.auth().setCustomUserClaims(user.uid, { organizer: true });
   return true;
 });

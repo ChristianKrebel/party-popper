@@ -122,8 +122,7 @@
         android:layout_marginStart="@dimen/text_margin_3"
         android:layout_marginBottom="@dimen/text_margin_2"
         android:text="@string/block_organizer"
-        app:strokeColor="@color/white_trans70"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        style="@style/OutlinedButton"
         app:icon="@drawable/ic_block_red_24dp" />
 
 </LinearLayout>

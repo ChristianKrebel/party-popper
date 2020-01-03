@@ -1,19 +1,16 @@
 package com.partypopper.app.features.dashboard;
 
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -28,14 +25,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.palette.graphics.Palette;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,12 +51,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -269,7 +259,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                     mOrganizerTv.setText(organizer.getName());
 
                     mOrganizerRatingRb = findViewById(R.id.edOrganizerRb);
-                    mOrganizerRatingRb.setRating(organizer.getRating());
+                    mOrganizerRatingRb.setRating(organizer.getAvgRating());
 
                     organizerIv = findViewById(R.id.edOrganizerIv);
                     Picasso.get().load(organizer.getImage()).into(organizerIv);
@@ -281,10 +271,10 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                     organizerPhoneTv.setText(organizer.getPhone());
 
                     organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
-                    organizerAddressTv.setText(organizer.getAdress());
+                    organizerAddressTv.setText(organizer.getAddress());
 
-                    GeoPoint geoPoint = organizer.getCoordinates();
-                    coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                    //GeoPoint geoPoint = organizer.getCoordinates();
+                    //coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
                     organizerLocationMf.getMapAsync(onMapReadyCallback);
                 }
             }
@@ -349,11 +339,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     public void onOrganizerClick(View view) {
         Intent intent = new Intent(view.getContext(), OrganizerActivity.class);
         intent.putExtra("organizerId", organizerId);
-        intent.putExtra("organizerAddress", organizer.getAdress());
+        intent.putExtra("organizerAddress", organizer.getAddress());
         intent.putExtra("organizerDescription", organizer.getDescription());
         intent.putExtra("organizerName", organizer.getName());
         intent.putExtra("organizerPhone", organizer.getPhone());
-        intent.putExtra("organizerRating", organizer.getRating());
+        intent.putExtra("organizerRating", organizer.getAvgRating());
         intent.putExtra("organizerWebsite", organizer.getWebsite());
         intent.putExtra("organizerCoordsLat", coords.latitude);
         intent.putExtra("organizerCoordsLng", coords.longitude);

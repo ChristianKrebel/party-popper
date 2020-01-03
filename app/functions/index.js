@@ -8,10 +8,10 @@ admin.initializeApp({
   databaseURL: "https://party-popper-1770a.firebaseio.com"
 });
 
-module.exports = {
-  ...require("./userCreate.js"),
-  ...require("./organizer.js"),
-  ...require("./follower.js"),
-  ...require("./events.js"),
-  ...require("./rateOrganizer.js")
-};
+module.exports = Object.assign(
+  require("./userCreate"),
+  require("./organizer"),
+  require("./follower"),
+  require("./events"),
+  require("./rateOrganizer")
+);

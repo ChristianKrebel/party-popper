@@ -6,6 +6,7 @@
     <string name="action_sort_nearest">Nearest</string>
     <string name="action_sort_favorites">Favorites</string>
     <string name="action_sort_alphabetical">A-Z</string>
+    <string name="action_open_business_activity">Become organizer</string>
 
     <string name="auth_login_head">Login to your Account</string>
     <string name="auth_email">Email</string>
@@ -30,6 +31,13 @@
 
     <string name="attendees">attendees</string>
     <string name="are_attending">are attending</string>
+
+    <string name="placeholder">-</string>
+
+    <string name="wrong_url">Cannot open the URL, something is wrong with it</string>
+
+    <string name="copied">Copied to clipboard</string>
+    <string name="copied_address">Copied the address to clipboard</string>
 
     <string name="action_organizer_fav">Follow</string>
     <string name="large_text">

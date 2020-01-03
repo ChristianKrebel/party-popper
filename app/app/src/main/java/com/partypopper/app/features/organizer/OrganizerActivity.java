@@ -1,18 +1,29 @@
 package com.partypopper.app.features.organizer;
 
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.viewpager.widget.ViewPager;
+import lombok.Getter;
 
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.features.organizer.ui.main.OrganizerRateDialog;
 import com.partypopper.app.features.organizer.ui.main.SectionsPagerAdapter;
 
@@ -21,14 +32,27 @@ import com.partypopper.app.utils.BaseActivity;
 
 public class OrganizerActivity extends BaseActivity implements OrganizerRateDialog.OrganizerRateDialogListener {
 
-
-    private RatingBar organizerRb;
+    private ImageView logoIv;
+    private String name;
+    private AppBarLayout appBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+
+        // get data from intent and set them to the views
+        name = getIntent().getStringExtra("organizerName");
+
+        logoIv = findViewById(R.id.oBannerIv);
+        if (getIntent().hasExtra("organizerImage")) {
+            byte[] bytes = getIntent().getByteArrayExtra("organizerImage");
+            logoIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        }
+
+
+        // Tabs and more
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getIntent().getExtras());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
@@ -44,7 +68,8 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         getSupportActionBar().setElevation(0);
 
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.oToolbarLayout);
-        AppBarLayout appBarLayout = findViewById(R.id.oAppBarLayout);
+        appBarLayout = findViewById(R.id.oAppBarLayout);
+
 
         // Set the title to only be visible when the tool bar is collapsed
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -57,7 +82,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
                 if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle("X Herford");
+                    collapsingToolbarLayout.setTitle(name);
                     isShow = true;
                 } else if(isShow) {
                     collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
@@ -66,7 +91,11 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
             }
         });
 
-        organizerRb = findViewById(R.id.oOrganizerRb);
+        // Reset scrim's color
+        final View gradientV = findViewById(R.id.oGradientV);
+        Drawable unwrappedDrawable = gradientV.getBackground();
+        final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(getBaseContext(), R.color.scrim_topdown_reset));
 
     }
 
@@ -78,7 +107,12 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
 
     @Override
     public void applyRating(float rating) {
-        Toast.makeText(getApplicationContext(), Float.toString(rating), Toast.LENGTH_SHORT).show();
+        showText(Float.toString(rating));
     }
+
+    public void onBannerImageViewClick(View view) {
+        setAppBarOffset(0, appBarLayout);
+    }
+
 
 }

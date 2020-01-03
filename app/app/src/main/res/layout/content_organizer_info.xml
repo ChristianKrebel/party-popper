@@ -33,7 +33,7 @@
             android:layout_toEndOf="@id/coLinkIconTv"
             android:layout_centerInParent="true"
             android:autoLink="web"
-            android:text="https://x-herford.de/" />
+            android:text="@string/placeholder" />
 
     </RelativeLayout>
 
@@ -63,7 +63,7 @@
             android:layout_toEndOf="@id/coPhoneIconTv"
             android:layout_centerInParent="true"
             android:autoLink="phone"
-            android:text="01234-1234567" />
+            android:text="@string/placeholder" />
 
     </RelativeLayout>
 
@@ -93,7 +93,7 @@
             android:layout_toEndOf="@id/coLocationIconTv"
             android:layout_centerInParent="true"
             android:autoLink="map"
-            android:text="X-HERFORD\nBünderstr. 82-86\n32051 Herford" />
+            android:text="@string/placeholder" />
 
     </RelativeLayout>
 
@@ -104,11 +104,11 @@
         android:layout_marginBottom="@dimen/text_margin"
         android:layout_marginStart="@dimen/text_margin_3"
         android:layout_marginEnd="@dimen/text_margin_3"
-        app:cardCornerRadius="@dimen/organizer_map_corner_radius">
+        app:cardCornerRadius="@dimen/card_view_corner_radius">
 
         <fragment
             android:id="@+id/coOrganizerLocationMf"
-            android:name="com.google.android.gms.maps.MapFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="@dimen/organizer_map_height" />
 

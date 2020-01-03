@@ -1,3 +1,13 @@
+# Inhalt
+* Einleitung
+* Stand der Technik
+* Anforderungsdokumentation
+* Architekturbeschreibung
+* Implementierung
+* Test und Usability
+* Zusammenfassung
+
+
 # party-popper
 App for finding and exploring nearby events and parties 🎉
 
@@ -5,7 +15,7 @@ App for finding and exploring nearby events and parties 🎉
 
 ## Idea
 
-A mobile application in which the current events / parties in the surrounding area 
+A mobile application in which the current events / parties in the surrounding area
 are displayed. These events get hotter depending on how many users have agreed to them. The events are created by clubs, bars etc. with their special business accounts. Users can follow one another to see where their friends are celebrating today. In addition, one can rate the organizers or follow them to receive updates and notifications.
 
 ### Must have ...
@@ -29,4 +39,4 @@ are displayed. These events get hotter depending on how many users have agreed t
 ### Won't have ...
 * User tailored views
 * QR code promos
-* Sponsored contributions 
+* Sponsored contributions

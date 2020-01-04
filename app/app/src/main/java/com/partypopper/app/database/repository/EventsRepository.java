@@ -8,6 +8,7 @@ import com.google.firebase.functions.HttpsCallableResult;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +36,30 @@ public class EventsRepository {
         return eventSimpleMapper.mapEntities(db.collection("events").whereEqualTo("organizer", organizerId).orderBy("startDate", Query.Direction.ASCENDING).limit(amount).get());
     }
 
-    public Task<List<Event>> searchByName(String name) {
-        return eventSimpleMapper.mapEntities(db.collection("events").whereGreaterThanOrEqualTo("lowercaseName", name.toLowerCase()).limit(5).get());
+    public Task<List<Event>> searchByName(String name, int amount) {
+        return eventSimpleMapper.mapEntities(db.collection("events")
+                .orderBy("lowercaseName")
+                .startAt(name.toLowerCase())
+                .endAt(name.toLowerCase() + "\uf8ff") // High point unicode character, called Escape.
+                .limit(amount)
+                .get());
+    }
+
+    public Task<List<Event>> searchByDate(Date date, int amount) {
+        return eventSimpleMapper.mapEntities(db.collection("events")
+                .orderBy("startDate", Query.Direction.ASCENDING)
+                .startAt(date)
+                .limit(amount)
+                .get());
+    }
+
+    public Task<List<Event>> searchByAttendees(int att, int amount) {
+        return eventSimpleMapper.mapEntities(db.collection("events")
+                .orderBy("going")
+                .orderBy("startDate", Query.Direction.ASCENDING)
+                .whereGreaterThanOrEqualTo("going",att)
+                .limit(amount)
+                .get());
     }
 
     public Task<HttpsCallableResult> joinEvent(String eventId) {

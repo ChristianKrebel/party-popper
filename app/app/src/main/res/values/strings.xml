@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Party Popper</string>
     <string name="action_search">Search</string>
+    <string name="action_search_events">Events</string>
+    <string name="action_search_organizers">Organizers</string>
+    <string name="action_search_date">Date</string>
+    <string name="action_search_attendees">Attendees</string>
     <string name="action_settings">Settings</string>
     <string name="action_sort_hottest">Hottest</string>
     <string name="action_sort_nearest">Nearest</string>

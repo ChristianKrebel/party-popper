@@ -5,12 +5,12 @@ const db = admin.firestore();
 const helper = require("./functions");
 
 exports.rateOrganizer = functions.https.onCall(async (data, context) => {
-  helper.errorIfEmpty(data.orgId);
+  helper.errorIfEmpty(data.organizerId);
   helper.errorIfEmpty(data.stars);
   helper.errorIfNotAuthenticated(context);
 
   const uid = context.auth.uid;
-  const orgRef = db.collection("organizer").doc(data.orgId);
+  const orgRef = db.collection("organizer").doc(data.organizerId);
   const ratingRef = orgRef.collection("reviews").doc(uid);
 
   try {
@@ -22,8 +22,8 @@ exports.rateOrganizer = functions.https.onCall(async (data, context) => {
         return transaction.get(orgRef).then(orgDoc => {
           var newNumRatings = orgDoc.data().numRatings;
           var starsData = data.stars;
-          var message = data.message == null ? "" : data.message;
-          if (ratingDoc.exists && ratingDoc.data().stars != null) {
+          var message = data.message === null ? "" : data.message;
+          if (ratingDoc.exists && ratingDoc.data().stars !== null) {
             starsData = starsData - ratingDoc.data().stars;
           } else {
             newNumRatings += 1;
@@ -56,6 +56,4 @@ exports.rateOrganizer = functions.https.onCall(async (data, context) => {
       "An internal Error occured"
     );
   }
-
-  return false;
 });

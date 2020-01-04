@@ -32,6 +32,7 @@
 | 29.12.19 | 5h     | Use repos and get organizer names by second query through their id |
 | 30.12.19 | 6h     | Exchange queries with intents, smaller fixes and additions like sharing, inform about geoQueries |
 | 01.01.20 | 9h     | Add RecyclerView in OrganizerActivity, Refactoring, add many additions like getting the color of event's image for its scrim |
+| 03.01.20 | 10h    | Add icon, update Splash screen, fix auth layout, add search with different queries |
 |          |        |                                                              |
 | Total    |        |                                                              |
-|          | 113,5h |                                                              |
+|          | 123,5h |                                                              |

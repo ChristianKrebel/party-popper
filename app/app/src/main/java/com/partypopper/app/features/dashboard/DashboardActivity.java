@@ -2,9 +2,11 @@ package com.partypopper.app.features.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
@@ -28,6 +32,10 @@ import com.partypopper.app.database.repository.*;
 
 import static com.partypopper.app.utils.Constants.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +45,9 @@ public class DashboardActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
 
     private EventsAdapter adapter;
+
+    private HorizontalScrollView mSearchHsv;
+    private ChipGroup mSearchCg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +67,15 @@ public class DashboardActivity extends BaseActivity {
             }
         });
 
-        if (true) {     // TODO just for testing, exchange with isOrganizer() later!
+        if (isOrganizer()) {
             fab.show();
         }
+
+
+        // Chips
+        mSearchHsv = findViewById(R.id.edSearchHsv);
+        mSearchCg = findViewById(R.id.edSearchCg);
+
 
         // RecyclerView
         mRecyclerView = findViewById(R.id.eventRv);
@@ -104,6 +121,11 @@ public class DashboardActivity extends BaseActivity {
                                         dbCallback.onCallback(events, eventsAndOrganizerNames);
                                     }
                                 }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -154,6 +176,165 @@ public class DashboardActivity extends BaseActivity {
                 });*/
     }
 
+    private void searchData(int type, String query, final eventsAndOrganizerNamesCallback dbCallback) {
+        EventsRepository eventsRepository = EventsRepository.getInstance();
+        final OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
+
+        switch (type) {
+            case R.id.edEventsC:
+                eventsRepository.searchByName(query, EVENTS_AMOUNT).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Event>> task) {
+                        if (task.getResult() != null) {
+                            final List<Event> events = task.getResult();
+                            if (events.size() == 0) {
+                                mRecyclerView.setVisibility(View.GONE);
+                            } else {
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                            }
+                            final Map<Event, String> eventsAndOrganizerNames = new LinkedHashMap<>();
+
+                            for (int a = 0; a < events.size(); a++) {
+                                final Event event = events.get(a);
+                                final int b = a;
+
+                                organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Organizer> task) {
+                                        if (task.isSuccessful()) {
+                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                            if (b == (events.size() - 1)) {
+                                                dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                            }
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case R.id.edOrganizersC:
+                // TODO
+                break;
+            case R.id.edDateC:
+                Date startDate = Calendar.getInstance().getTime();
+                try {
+                    startDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(query);
+                } catch (Exception e) {
+                    Log.e(e.toString(), e.getMessage());
+                }
+                eventsRepository.searchByDate(startDate, EVENTS_AMOUNT).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Event>> task) {
+                        if (task.getResult() != null) {
+                            final List<Event> events = task.getResult();
+                            if (events.size() == 0) {
+                                mRecyclerView.setVisibility(View.GONE);
+                            } else {
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                            }
+                            final Map<Event, String> eventsAndOrganizerNames = new LinkedHashMap<>();
+
+                            for (int a = 0; a < events.size(); a++) {
+                                final Event event = events.get(a);
+                                final int b = a;
+
+                                organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Organizer> task) {
+                                        if (task.isSuccessful()) {
+                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                            if (b == (events.size() - 1)) {
+                                                dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                            }
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case R.id.edAttendeesC:
+                int att = 0;
+                try {
+                    att = Integer.parseInt(query);
+                } catch (Exception e) {
+                    Log.e(e.toString(), e.getMessage());
+                }
+                eventsRepository.searchByAttendees(att, EVENTS_AMOUNT).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Event>> task) {
+                        if (task.getResult() != null) {
+                            final List<Event> events = task.getResult();
+                            if (events.size() == 0) {
+                                mRecyclerView.setVisibility(View.GONE);
+                            } else {
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                            }
+                            final Map<Event, String> eventsAndOrganizerNames = new LinkedHashMap<>();
+
+                            for (int a = 0; a < events.size(); a++) {
+                                final Event event = events.get(a);
+                                final int b = a;
+
+                                organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Organizer> task) {
+                                        if (task.isSuccessful()) {
+                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                            if (b == (events.size() - 1)) {
+                                                dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                            }
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+        }
+
+    }
+
     /**
      * Inflate the menu; this adds items to the action bar if it is present.
      *
@@ -165,19 +346,56 @@ public class DashboardActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem((R.id.action_search));
         SearchView searchView = (SearchView) searchItem.getActionView();
+
+        // Search instantly
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                firebaseSearch(query);
+                searchData(mSearchCg.getCheckedChipId(), query, new eventsAndOrganizerNamesCallback() {
+                    @Override
+                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+                        adapter = new EventsAdapter(DashboardActivity.this,
+                                events,
+                                eventsAndOrganizerNames,
+                                getApplicationContext(),
+                                R.layout.row_events_dashboard);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                firebaseSearch(newText);
+                searchData(mSearchCg.getCheckedChipId(), newText, new eventsAndOrganizerNamesCallback() {
+                    @Override
+                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+                        adapter = new EventsAdapter(DashboardActivity.this,
+                                events,
+                                eventsAndOrganizerNames,
+                                getApplicationContext(),
+                                R.layout.row_events_dashboard);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
                 return false;
             }
         });
+
+        // Show and hide the chips when search view is opened or closed
+        searchView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                mSearchHsv.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                mSearchHsv.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 

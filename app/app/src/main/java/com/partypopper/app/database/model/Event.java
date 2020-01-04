@@ -1,5 +1,6 @@
 package com.partypopper.app.database.model;
 
+import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.database.util.Identifiable;
 
 import java.util.Date;
@@ -20,4 +21,5 @@ public class Event extends Identifiable {
     private Date startDate;
     private String image;
     private String eventUrl;
+    private GeoPoint location;
 }

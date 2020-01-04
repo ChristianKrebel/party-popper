@@ -26,6 +26,7 @@ import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class SplashActivity extends BaseActivity {
@@ -87,6 +88,18 @@ public class SplashActivity extends BaseActivity {
 
                                     System.out.println(list);
                                 }
+                            }
+                        });*/
+
+
+                        /*EventsRepository repo = EventsRepository.getInstance();
+
+                        repo.getNearbyEvents(52.023071, 8.533210, 5).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+                            @Override
+                            public void onComplete(@NonNull Task<List<Event>> task) {
+                                List<Event> events = task.getResult();
+
+                                System.out.println(events);
                             }
                         });*/
 

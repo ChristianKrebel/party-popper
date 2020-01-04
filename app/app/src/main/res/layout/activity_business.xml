@@ -33,14 +33,13 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                app:cardCornerRadius="@dimen/cardview_image_corner">
+                android:layout_marginTop="@dimen/activity_vertical_margin">
 
                 <ImageView
                     android:id="@+id/bsLogoImg"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/logo_business"
                     tools:srcCompat="@tools:sample/avatars" />
@@ -58,6 +57,7 @@
                     android:id="@+id/bsUpdateBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="chooseImage"
                     android:text="@string/upload_image_business" />
             </LinearLayout>
 

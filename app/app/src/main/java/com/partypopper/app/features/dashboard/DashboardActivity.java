@@ -67,7 +67,7 @@ public class DashboardActivity extends BaseActivity {
             }
         });
 
-        if (true) {     // TODO just for testing, exchange with isOrganizer() later!
+        if (isOrganizer()) {
             fab.show();
         }
 

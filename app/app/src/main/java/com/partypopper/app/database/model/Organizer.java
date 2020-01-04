@@ -13,6 +13,7 @@ public class Organizer extends Identifiable {
     private String name;
     private String lowercaseName;
     private String description;
+    private String email;
     private String website;
     private String address;
     private String phone;

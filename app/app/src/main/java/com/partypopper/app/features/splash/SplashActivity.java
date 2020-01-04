@@ -44,69 +44,11 @@ public class SplashActivity extends BaseActivity {
                 @Override
                 public void onSuccess(GetTokenResult result) {
                     if(result.getClaims().get("organizer") != null) {
-                        System.out.println("Is Organizer");
-
-                        /*FollowRepository repo = FollowRepository.getInstance();
-
-                        repo.rateOrganizer("De9bYKy9v2cfzlDht0LKCNHLzYE3", 5).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<HttpsCallableResult> task) {
-                                System.out.println("COMPLETE");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                System.out.println(e.getMessage());
-                            }
-                        });*/
-
-                        /*Event event = new Event();
-                        event.setName("Bla bla bla");
-                        event.setOrganizer(currentUser.getUid());
-                        event.setGoing(0);
-                        event.setStartDate(new Date(2019, 12, 31));
-                        event.setEndDate(new Date(2020, 1, 1));
-                        event.setDescription("ASFBjhfsdaghwhzeugw fesdahfewe");
-                        event.setLowercaseName(event.getName().toLowerCase());
-                        event.setImage("https://dgfiugrtherwergt");
-
-                        OrganizerRepository repo = OrganizerRepository.getInstance();
-
-                        repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                System.out.println("EVENT created");
-                            }
-                        });*/
-
-                        /*EventsRepository repo = EventsRepository.getInstance();
-                        repo.searchByName("bla").addOnCompleteListener(new OnCompleteListener<List<Event>>() {
-                            @Override
-                            public void onComplete(@NonNull Task<List<Event>> task) {
-                                if(task.getResult() != null) {
-                                    List<Event> list = task.getResult();
-
-                                    System.out.println(list);
-                                }
-                            }
-                        });*/
-
-
-                        /*EventsRepository repo = EventsRepository.getInstance();
-
-                        repo.getNearbyEvents(52.023071, 8.533210, 5).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
-                            @Override
-                            public void onComplete(@NonNull Task<List<Event>> task) {
-                                List<Event> events = task.getResult();
-
-                                System.out.println(events);
-                            }
-                        });*/
-
                         showOrganizerUI();
-                    } else {
-                        showUserUI();
                     }
+                    Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -121,12 +63,6 @@ public class SplashActivity extends BaseActivity {
     private void showOrganizerUI() {
         System.out.println("Is Organizer");
         DashboardActivity.setOrganizer(true);
-    }
-
-    private void showUserUI() {
-        Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 
     private void showLoginUI() {

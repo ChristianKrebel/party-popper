@@ -26,6 +26,7 @@ import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class SplashActivity extends BaseActivity {

@@ -1,5 +1,6 @@
 package com.partypopper.app.database.model;
 
+import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.database.util.Identifiable;
 
 import lombok.Data;
@@ -19,5 +20,6 @@ public class Organizer extends Identifiable {
     private int numRatings;
     private int followCount;
     private String image;
+    private GeoPoint location;
 
 }

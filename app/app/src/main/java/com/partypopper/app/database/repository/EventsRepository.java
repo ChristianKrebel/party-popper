@@ -2,6 +2,7 @@ package com.partypopper.app.database.repository;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
@@ -72,6 +73,24 @@ public class EventsRepository {
         Map<String, Object> data = new HashMap<>();
         data.put("eventId", eventId);
         return mFunctions.getHttpsCallable("leaveEvent").call(data);
+    }
+
+    public Task<List<Event>> getNearbyEvents(double latitude, double longitude, int distance) {
+
+        // ~1 mile of lat and lon in degrees
+        double lat = 0.0144927536231884;
+        double lng = 0.0181818181818182;
+
+        double lowerLat = latitude - (lat * distance);
+        double lowerLng = longitude - (lng * distance);
+
+        double greaterLat = latitude + (lat * distance);
+        double greaterLng = longitude + (lng * distance);
+
+        GeoPoint lesserGeopoint = new GeoPoint(lowerLat, lowerLng);
+        GeoPoint greaterGeoPoint = new GeoPoint(greaterLat, greaterLng);
+
+        return eventSimpleMapper.mapEntities(db.collection("events").whereGreaterThanOrEqualTo("location", lesserGeopoint).whereLessThanOrEqualTo("location", greaterGeoPoint).limit(5).get());
     }
 
     public static EventsRepository getInstance() {

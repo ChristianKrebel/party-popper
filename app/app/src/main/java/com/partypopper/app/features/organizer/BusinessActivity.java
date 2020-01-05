@@ -29,12 +29,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.dashboard.DashboardActivity;
@@ -45,6 +47,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,6 +72,11 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     private GoogleMap map;
     private LatLng addressPoint;
 
+    private final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+    private String firestoreImagePath;
+    private String firestoreImageRefPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +96,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
         organizerLocationMf.getMapAsync(this);
 
         storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+        storageReference = storage.getInstance().getReference();
 
         btnUpload = findViewById(R.id.bsUpdateBtn);
         imageView = findViewById(R.id.bsLogoImg);
@@ -129,55 +137,88 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     public void onRequestClick(View btn){
-        if(filePath != null && !businessNameWdg.getText().toString().isEmpty()
-                && !businessWebsiteWdg.getText().toString().isEmpty()
-                && !businessPhoneWdg.getText().toString().isEmpty()
+        if(filePath != null && !businessAddressWdg.getText().toString().isEmpty()
                 && !businessDescriptionWdg.getText().toString().isEmpty()
-                && !businessAddressWdg.getText().toString().isEmpty()
-                && !businessEmailWdg.getText().toString().isEmpty()) {
-            uploadImage();
+                && !businessEmailWdg.getText().toString().isEmpty()
+                && !businessNameWdg.getText().toString().isEmpty()
+                && !businessPhoneWdg.getText().toString().isEmpty()
+                && !businessWebsiteWdg.getText().toString().isEmpty()) {
+            if (filePath != null) {
+                final ProgressDialog progressDialog
+                        = new ProgressDialog(this);
+                progressDialog.setTitle("Uploading...");
+                progressDialog.show();
 
-            String businessName = businessNameWdg.getText().toString();
-            String businessWebsite = businessWebsiteWdg.getText().toString();
-            String businessTelephone = businessPhoneWdg.getText().toString();
-            String businessDescription = businessDescriptionWdg.getText().toString();
-            String businessAddress = businessAddressWdg.getText().toString();
-            String businessEmail = businessEmailWdg.getText().toString();
+                final StorageReference ref = storageReference.child("events/"+ UUID.randomUUID().toString() + ".jpg");
+                ref.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
+                                showText("Uploaded");
+                                setFirestoreImageRefPath(ref.getPath().substring(1));
 
-            OrganizerRepository repo = OrganizerRepository.getInstance();
-            Organizer organizer = new Organizer();
-            organizer.setName(businessName);
-            organizer.setAddress(businessAddress);
-            organizer.setEmail(businessEmail);
-            organizer.setAvgRating(0);
-            organizer.setDescription(businessDescription);
-            organizer.setFollowCount(0);
-            organizer.setImage(filePath.toString());
-            organizer.setLowercaseName(organizer.getName().toLowerCase());
-            organizer.setNumRatings(0);
-            organizer.setWebsite(businessWebsite);
-            organizer.setPhone(businessTelephone);
-
-            repo.singUpOrganizer(organizer).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
-                @Override
-                public void onComplete(@NonNull Task<HttpsCallableResult> task) {
-                    // Noch nee Nachricht und Loader undso
-                    FirebaseAuth.getInstance().signOut();
-                    /*Intent intent = new Intent(BusinessActivity.this, DashboardActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);*/
-                    showText("OK");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            });
+                                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String rawFirestoreImagePath = "https://firebasestorage.googleapis.com" + uri.getPath() + "?" + uri.getEncodedQuery();
+                                        firestoreImagePath = rawFirestoreImagePath.replace("events/", "events%2F");
+                                        setFirebaseData();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        showText("Couldn't get Image URL with " + getFirestoreImageRefPath());
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                showText("Upload failed");
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                        .getTotalByteCount());
+                                progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            }
+                        });
+            }
+        } else {
+            showText("Please fill every empty fields");
         }
-        else {
-            showText("Please fill all fields!");
-        }
+    }
+
+    /**
+     * sets up the needed data for events for the firebase
+     */
+    public void setFirebaseData() {
+        String businessWebsite = businessWebsiteWdg.getText().toString();
+        String businessPhone = businessPhoneWdg.getText().toString();
+        String businessName = businessNameWdg.getText().toString();
+        String businessEmail = businessEmailWdg.getText().toString();
+        String businessDescription = businessDescriptionWdg.getText().toString();
+        String businessAddress = businessAddressWdg.getText().toString();
+
+        OrganizerRepository repo = OrganizerRepository.getInstance();
+        Organizer organizer = new Organizer();
+        organizer.setWebsite(businessWebsite);
+        organizer.setPhone(businessPhone);
+        organizer.setName(businessName);
+        organizer.setEmail(businessEmail);
+        organizer.setDescription(businessDescription);
+        organizer.setAddress(businessAddress);
+        /*repo.createEvent(organizer).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                System.out.println("EVENT created");
+            }
+        });*/
     }
 
     @Override
@@ -278,45 +319,11 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
-    /**
-     * Method to upload the chosen image to Firestore
-     */
-    public void uploadImage() {
-        if (filePath != null) {
-            final ProgressDialog progressDialog
-                    = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            StorageReference ref = storageReference.child("organizers/"+ UUID.randomUUID().toString() + ".jpg");
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            showText("Uploaded");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            showText("Upload failed");
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                        }
-                    });
-            showText(ref.getPath());
-        }
+    public String getFirestoreImageRefPath() {
+        return firestoreImageRefPath;
     }
 
-    public LatLng getAddressPoint() {
-        return addressPoint;
+    public void setFirestoreImageRefPath(String firestoreImageRefPath) {
+        this.firestoreImageRefPath = firestoreImageRefPath;
     }
 }

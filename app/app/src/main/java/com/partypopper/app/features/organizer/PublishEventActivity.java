@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -204,7 +205,7 @@ public class PublishEventActivity extends BaseActivity {
         repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                showText("Event created successfully.");
+                Toast.makeText(getApplicationContext(), "Event created successfully.", Toast.LENGTH_SHORT);
             }
         });
     }

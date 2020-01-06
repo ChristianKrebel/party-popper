@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -218,11 +219,11 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
             @Override
             public void onComplete(@NonNull Task<HttpsCallableResult> task) {
                 // Noch nee Nachricht und Loader undso
+                Toast.makeText(getApplicationContext(), "Your account was successfully upgraded. Please log in again.", Toast.LENGTH_SHORT);
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(BusinessActivity.this, AuthenticationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                showText("Your registration was successful.");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

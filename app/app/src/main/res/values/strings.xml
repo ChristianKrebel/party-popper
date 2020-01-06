@@ -42,6 +42,7 @@
     <string name="event_attended">Attending the event</string>
 
     <string name="organizer_rated">Updated your rating of the organizer to </string>
+    <string name="organizer_blocked">Blocked this organizer</string>
 
     <string name="placeholder">-</string>
 

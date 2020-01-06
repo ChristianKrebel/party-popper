@@ -229,7 +229,9 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     }
 
     public void onBlockOrganizerButtonClick(View view) {
-        ((OrganizerActivity)getActivity()).showText("Block");
+        ((OrganizerActivity)getActivity()).showText(getString(R.string.organizer_blocked));
+        FollowRepository followRepository = FollowRepository.getInstance();
+        followRepository.blockOrganizer(organizerId);
     }
 
     /**

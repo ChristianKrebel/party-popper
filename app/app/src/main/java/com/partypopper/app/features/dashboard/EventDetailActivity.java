@@ -413,7 +413,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onBlockOrganizerButtonClick(View view) {
-        showText("onBlockOrganizerButtonClick");
+        showText(getString(R.string.organizer_blocked));
+        FollowRepository followRepository = FollowRepository.getInstance();
+        followRepository.blockOrganizer(organizerId);
     }
 
     /**

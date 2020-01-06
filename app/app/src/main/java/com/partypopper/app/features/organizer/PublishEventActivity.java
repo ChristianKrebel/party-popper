@@ -50,6 +50,7 @@ public class PublishEventActivity extends BaseActivity {
     private StorageReference storageReference;
 
     private EditText publisheventTitleWdg;
+    private EditText publisheventReflinkWdg;
     private EditText publisheventStartdateWdg;
     private EditText publisheventEnddateWdg;
     private TimePicker publisheventStarttimeWdg;
@@ -84,6 +85,7 @@ public class PublishEventActivity extends BaseActivity {
         DatePicker dp2 = new DatePicker(this, R.id.pubEnddateD);
 
         publisheventTitleWdg = findViewById(R.id.pubTitlePt);
+        publisheventReflinkWdg = findViewById(R.id.pubReflinkPt);
         publisheventStartdateWdg = findViewById(R.id.pubStartdateD);
         publisheventEnddateWdg = findViewById(R.id.pubEnddateD);
         publisheventStarttimeWdg = findViewById(R.id.pubStarttimeT);
@@ -122,7 +124,7 @@ public class PublishEventActivity extends BaseActivity {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 progressDialog.dismiss();
-                                showText("Uploaded");
+                                showText("Image uploaded successfully.");
                                 setFirestoreImageRefPath(ref.getPath().substring(1));
 
                                 ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -135,7 +137,7 @@ public class PublishEventActivity extends BaseActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception exception) {
-                                        showText("Couldn't get Image URL with " + getFirestoreImageRefPath());
+                                        showText("Failed to get image URL!");
                                     }
                                 });
                             }
@@ -144,7 +146,7 @@ public class PublishEventActivity extends BaseActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 progressDialog.dismiss();
-                                showText("Upload failed");
+                                showText("Image upload failed! Please try again later.");
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -166,6 +168,7 @@ public class PublishEventActivity extends BaseActivity {
      */
     public void setFirebaseData() {
         String eventTitle = publisheventTitleWdg.getText().toString();
+        String eventReflink = publisheventReflinkWdg.getText().toString();
         String eventStartdate = publisheventStartdateWdg.getText().toString();
         String eventEnddate = publisheventEnddateWdg.getText().toString();
         // Angeblich zu niedriges API Level, obwohl offizielle Android Doku API Level 1 ansagt
@@ -189,6 +192,7 @@ public class PublishEventActivity extends BaseActivity {
         OrganizerRepository repo = OrganizerRepository.getInstance();
         Event event = new Event();
         event.setName(eventTitle);
+        event.setEventUrl(eventReflink);
         event.setOrganizer(currentUser.getUid());
         event.setGoing(0);
         event.setStartDate(new Date(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute));
@@ -196,10 +200,11 @@ public class PublishEventActivity extends BaseActivity {
         event.setDescription(eventDescription);
         event.setLowercaseName(event.getName().toLowerCase());
         event.setImage(firestoreImagePath);
+        event.setLocation(repo.getOrganizerById(currentUser.getUid()).getResult().getLocation());
         repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                System.out.println("EVENT created");
+                showText("Event created successfully.");
             }
         });
     }

@@ -39,6 +39,7 @@ import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.OrganizerRepository;
+import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.utils.BaseActivity;
 
@@ -146,7 +147,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
             if (filePath != null) {
                 final ProgressDialog progressDialog
                         = new ProgressDialog(this);
-                progressDialog.setTitle("Uploading...");
+                progressDialog.setTitle("Uploading image...");
                 progressDialog.show();
 
                 final StorageReference ref = storageReference.child("events/"+ UUID.randomUUID().toString() + ".jpg");
@@ -155,7 +156,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 progressDialog.dismiss();
-                                showText("Uploaded");
+                                showText("Image uploaded.");
                                 setFirestoreImageRefPath(ref.getPath().substring(1));
 
                                 ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -177,7 +178,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 progressDialog.dismiss();
-                                showText("Upload failed");
+                                showText("Image upload failed! Please try again later.");
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -213,12 +214,22 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
         organizer.setEmail(businessEmail);
         organizer.setDescription(businessDescription);
         organizer.setAddress(businessAddress);
-        /*repo.createEvent(organizer).addOnCompleteListener(new OnCompleteListener<Void>() {
+        repo.singUpOrganizer(organizer).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                System.out.println("EVENT created");
+            public void onComplete(@NonNull Task<HttpsCallableResult> task) {
+                // Noch nee Nachricht und Loader undso
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(BusinessActivity.this, AuthenticationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                showText("Your registration was successful.");
             }
-        });*/
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showText("Failure! Please try again later.");
+            }
+        });
     }
 
     @Override

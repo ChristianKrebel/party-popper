@@ -180,6 +180,7 @@
     <string name="information_publish">Information</string>
     <string name="information_duration">Duration</string>
     <string name="title_publish">Title</string>
+    <string name="reflink_publish">Reference link</string>
     <string name="startdate_publish">Start date</string>
     <string name="starttime_publish">Start Time</string>
     <string name="enddate_publish">End date</string>

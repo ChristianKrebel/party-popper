@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -139,8 +140,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
 
 
-
-
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.edToolbarLayout);
         appBarLayout = findViewById(R.id.edAppBarLayout);
 
@@ -242,8 +241,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
 
         // map
-        // default coords
-        coords = new LatLng(0,0);
+        coords = getIntent().getParcelableExtra("location");
         // get MapFragment
         organizerLocationMf = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.coOrganizerLocationMf);
@@ -284,8 +282,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                     organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
                     organizerAddressTv.setText(organizer.getAddress());
 
-                    //GeoPoint geoPoint = organizer.getCoordinates();
-                    //coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
                     organizerLocationMf.getMapAsync(onMapReadyCallback);
                 }
             }
@@ -451,7 +447,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                 .title(mOrganizerTv.getText().toString()));
 
         // move the map's camera to the same location and zoom
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(MAP_ZOOM).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(cameraUpdate);
 

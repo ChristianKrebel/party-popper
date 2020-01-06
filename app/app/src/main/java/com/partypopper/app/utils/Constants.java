@@ -21,6 +21,9 @@ public final class Constants {
     /** How many ms a handler waits */
     public static final int HANDLER_DELAY = 3000;
 
+    /** Standard map zoom */
+    public static final float MAP_ZOOM = 15.0f;
+
     private Constants(){
         //this prevents even the native class from
         //calling this ctor as well :

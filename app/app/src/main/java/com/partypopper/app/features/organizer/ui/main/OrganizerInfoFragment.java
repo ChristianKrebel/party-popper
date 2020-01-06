@@ -43,6 +43,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import static com.partypopper.app.utils.Constants.MAP_ZOOM;
+
 
 public class OrganizerInfoFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
 
@@ -245,7 +247,7 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
                 .title(organizerName));
 
         // move the map's camera to the same location and zoom
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(MAP_ZOOM).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(cameraUpdate);
 

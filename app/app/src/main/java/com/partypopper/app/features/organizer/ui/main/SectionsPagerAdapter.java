@@ -23,6 +23,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.organizer_tab_text_1, R.string.organizer_tab_text_2};
     private final Context mContext;
     private final Bundle organizerBundle;
+    private Fragment one, two;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm, Bundle organizerBundle) {
         super(fm);
@@ -32,16 +33,19 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = OrganizerInfoFragment.newInstance(organizerBundle);
-                break;
+                if (one == null) {
+                    one = OrganizerInfoFragment.newInstance(organizerBundle);
+                }
+                return one;
             case 1:
-                fragment = OrganizerEventsFragment.newInstance(organizerBundle.getString("organizerId"));
-                break;
+                if (two == null) {
+                    two = OrganizerEventsFragment.newInstance(organizerBundle.getString("organizerId"));
+                }
+                return two;
         }
-        return fragment;
+        return null;
     }
 
     @Nullable

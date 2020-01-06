@@ -39,6 +39,11 @@
     <string name="attendees">attendees</string>
     <string name="are_attending">are attending</string>
 
+    <string name="event_attended">Attending the event</string>
+
+    <string name="organizer_rated">Updated your rating of the organizer to </string>
+    <string name="organizer_blocked">Blocked this organizer</string>
+
     <string name="placeholder">-</string>
 
     <string name="wrong_url">Cannot open the URL, something is wrong with it</string>
@@ -47,6 +52,9 @@
     <string name="copied_address">Copied the address to clipboard</string>
 
     <string name="action_organizer_fav">Follow</string>
+
+    <string name="error_location_permission_needed">The application needs the location permission to work!</string>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

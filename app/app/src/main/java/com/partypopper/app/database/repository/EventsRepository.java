@@ -37,6 +37,10 @@ public class EventsRepository {
         return eventSimpleMapper.mapEntities(db.collection("events").whereEqualTo("organizer", organizerId).orderBy("startDate", Query.Direction.ASCENDING).limit(amount).get());
     }
 
+    public Task<Event> getEventByEventId(String id) {
+        return eventSimpleMapper.mapEntity(db.collection("events").document(id).get());
+    }
+
     public Task<List<Event>> searchByName(String name, int amount) {
         return eventSimpleMapper.mapEntities(db.collection("events")
                 .orderBy("lowercaseName")
@@ -75,7 +79,7 @@ public class EventsRepository {
         return mFunctions.getHttpsCallable("leaveEvent").call(data);
     }
 
-    public Task<List<Event>> getNearbyEvents(double latitude, double longitude, int distance) {
+    public Task<List<Event>> getNearbyEvents(double latitude, double longitude, int distance, int amount) {
 
         // ~1 mile of lat and lon in degrees
         double lat = 0.0144927536231884;
@@ -90,7 +94,7 @@ public class EventsRepository {
         GeoPoint lesserGeopoint = new GeoPoint(lowerLat, lowerLng);
         GeoPoint greaterGeoPoint = new GeoPoint(greaterLat, greaterLng);
 
-        return eventSimpleMapper.mapEntities(db.collection("events").whereGreaterThanOrEqualTo("location", lesserGeopoint).whereLessThanOrEqualTo("location", greaterGeoPoint).limit(5).get());
+        return eventSimpleMapper.mapEntities(db.collection("events").whereGreaterThanOrEqualTo("location", lesserGeopoint).whereLessThanOrEqualTo("location", greaterGeoPoint).limit(amount).get());
     }
 
     public static EventsRepository getInstance() {

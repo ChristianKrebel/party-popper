@@ -12,8 +12,17 @@ public final class Constants {
     /** Number of events to get in query. */
     public static final int EVENTS_AMOUNT = 50;
 
+    /** Distance in miles for locating nearby events */
+    public static final int STANDARD_DISTANCE = 50;
+
     /** The quality compression for bitmaps in per cent */
     public static final int COMPRESSION_QUALITY = 98;
+
+    /** How many ms a handler waits */
+    public static final int HANDLER_DELAY = 3000;
+
+    /** Standard map zoom */
+    public static final float MAP_ZOOM = 15.0f;
 
     private Constants(){
         //this prevents even the native class from

@@ -77,6 +77,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
                 intent.putExtra("organizer", event.getOrganizer());
                 intent.putExtra("startDate", event.getStartDate());
                 intent.putExtra("eventUrl", event.getEventUrl());
+                intent.putExtra("eventId", event.getEntityKey());
 
                 ImageView mBannerIv = viewHolder.getMBannerIv();
                 Drawable mBannerDrawable = mBannerIv.getDrawable();

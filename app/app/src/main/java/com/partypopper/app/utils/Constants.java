@@ -15,6 +15,9 @@ public final class Constants {
     /** The quality compression for bitmaps in per cent */
     public static final int COMPRESSION_QUALITY = 98;
 
+    /** How many ms a handler waits */
+    public static final int HANDLER_DELAY = 3000;
+
     private Constants(){
         //this prevents even the native class from
         //calling this ctor as well :

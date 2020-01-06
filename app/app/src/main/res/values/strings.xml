@@ -39,6 +39,10 @@
     <string name="attendees">attendees</string>
     <string name="are_attending">are attending</string>
 
+    <string name="event_attended">Attending the event</string>
+
+    <string name="organizer_rated">Updated your rating of the organizer to </string>
+
     <string name="placeholder">-</string>
 
     <string name="wrong_url">Cannot open the URL, something is wrong with it</string>

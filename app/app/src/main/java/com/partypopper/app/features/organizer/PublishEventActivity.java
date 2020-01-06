@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,9 @@ public class PublishEventActivity extends BaseActivity {
 
     private final FirebaseUser currentUser = mAuth.getCurrentUser();
 
+    private String firestoreImagePath;
+    private String firestoreImageRefPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +78,7 @@ public class PublishEventActivity extends BaseActivity {
         actionBar.setDisplayShowHomeEnabled(true);
 
         storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+        storageReference = storage.getInstance().getReference();
 
         DatePicker dp1 = new DatePicker(this, R.id.pubStartdateD);
         DatePicker dp2 = new DatePicker(this, R.id.pubEnddateD);
@@ -102,51 +106,102 @@ public class PublishEventActivity extends BaseActivity {
     }
 
     public void onPublishClick(View view) {
-        //TODO validate Time Input
         if(filePath != null && !publisheventTitleWdg.getText().toString().isEmpty()
                 && !publisheventStartdateWdg.getText().toString().isEmpty()
                 && !publisheventEnddateWdg.getText().toString().isEmpty()
                 && !publisheventDescriptionWdg.getText().toString().isEmpty()) {
-            uploadImage();
-            String eventTitle = publisheventTitleWdg.getText().toString();
-            String eventStartdate = publisheventStartdateWdg.getText().toString();
-            String eventEnddate = publisheventEnddateWdg.getText().toString();
-            // Angeblich zu niedriges API Level, obwohl offizielle Android Doku API Level 1 ansagt
-            int eventStarttimeHour = publisheventStarttimeWdg.getHour();
-            int eventStarttimeMinute = publisheventStarttimeWdg.getMinute();
-            int eventEndtimeHour = publisheventEndtimeWdg.getHour();
-            int eventEndtimeMinute = publisheventEndtimeWdg.getMinute();
-            String eventDescription = publisheventDescriptionWdg.getText().toString();
+            if (filePath != null) {
+                final ProgressDialog progressDialog
+                        = new ProgressDialog(this);
+                progressDialog.setTitle("Uploading...");
+                progressDialog.show();
 
-            String[] startDateArr = eventStartdate.split("/");
-            int startDateDay = Integer.parseInt(startDateArr[0].trim());
-            int startDateMonth = Integer.parseInt(startDateArr[1].trim());
-            int startDateYear = Integer.parseInt(startDateArr[2].trim());
-            //showText(startDateDay + " " + startDateMonth + " " + startDateYear);
+                final StorageReference ref = storageReference.child("events/"+ UUID.randomUUID().toString() + ".jpg");
+                ref.putFile(filePath)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
+                                showText("Uploaded");
+                                setFirestoreImageRefPath(ref.getPath().substring(1));
 
-            String[] endDateArr = eventEnddate.split("/");
-            int endDateDay = Integer.parseInt(endDateArr[0].trim());
-            int endDateMonth = Integer.parseInt(endDateArr[1].trim());
-            int endDateYear = Integer.parseInt(endDateArr[2].trim());
-
-            OrganizerRepository repo = OrganizerRepository.getInstance();
-            Event event = new Event();
-            event.setName(eventTitle);
-            event.setOrganizer(currentUser.getUid());
-            event.setGoing(0);
-            event.setStartDate(new Date(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute));
-            event.setEndDate(new Date(endDateYear, endDateMonth, endDateDay, eventEndtimeHour, eventEndtimeMinute));
-            event.setDescription(eventDescription);
-            event.setLowercaseName(event.getName().toLowerCase());
-            event.setImage(filePath.toString());
-
-            repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    System.out.println("EVENT created");
-                }
-            });
+                                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String rawFirestoreImagePath = "https://firebasestorage.googleapis.com" + uri.getPath() + "?" + uri.getEncodedQuery();
+                                        firestoreImagePath = rawFirestoreImagePath.replace("events/", "events%2F");
+                                        setFirebaseData();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        showText("Couldn't get Image URL with " + getFirestoreImageRefPath());
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                showText("Upload failed");
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                        .getTotalByteCount());
+                                progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            }
+                        });
+            }
+        } else {
+            showText("Please fill every empty fields");
         }
+    }
+
+    /**
+     * sets up the needed data for events for the firebase
+     */
+    public void setFirebaseData() {
+        String eventTitle = publisheventTitleWdg.getText().toString();
+        String eventStartdate = publisheventStartdateWdg.getText().toString();
+        String eventEnddate = publisheventEnddateWdg.getText().toString();
+        // Angeblich zu niedriges API Level, obwohl offizielle Android Doku API Level 1 ansagt
+        int eventStarttimeHour = publisheventStarttimeWdg.getHour();
+        int eventStarttimeMinute = publisheventStarttimeWdg.getMinute();
+        int eventEndtimeHour = publisheventEndtimeWdg.getHour();
+        int eventEndtimeMinute = publisheventEndtimeWdg.getMinute();
+        String eventDescription = publisheventDescriptionWdg.getText().toString();
+
+        String[] startDateArr = eventStartdate.split("/");
+        int startDateDay = Integer.parseInt(startDateArr[0].trim());
+        int startDateMonth = Integer.parseInt(startDateArr[1].trim());
+        int startDateYear = Integer.parseInt(startDateArr[2].trim());
+        //showText(startDateDay + " " + startDateMonth + " " + startDateYear);
+
+        String[] endDateArr = eventEnddate.split("/");
+        int endDateDay = Integer.parseInt(endDateArr[0].trim());
+        int endDateMonth = Integer.parseInt(endDateArr[1].trim());
+        int endDateYear = Integer.parseInt(endDateArr[2].trim());
+
+        OrganizerRepository repo = OrganizerRepository.getInstance();
+        Event event = new Event();
+        event.setName(eventTitle);
+        event.setOrganizer(currentUser.getUid());
+        event.setGoing(0);
+        event.setStartDate(new Date(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute));
+        event.setEndDate(new Date(endDateYear, endDateMonth, endDateDay, eventEndtimeHour, eventEndtimeMinute));
+        event.setDescription(eventDescription);
+        event.setLowercaseName(event.getName().toLowerCase());
+        event.setImage(firestoreImagePath);
+        repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                System.out.println("EVENT created");
+            }
+        });
     }
 
     /**
@@ -181,41 +236,11 @@ public class PublishEventActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Method to upload the chosen image to Firestore
-     */
-    public void uploadImage() {
-        if (filePath != null) {
-            final ProgressDialog progressDialog
-                    = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
+    public String getFirestoreImageRefPath() {
+        return firestoreImageRefPath;
+    }
 
-            StorageReference ref = storageReference.child("events/"+ UUID.randomUUID().toString() + ".jpg");
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            showText("Uploaded");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            showText("Upload failed");
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                        }
-                    });
-            showText(ref.getPath());
-        }
+    public void setFirestoreImageRefPath(String firestoreImageRefPath) {
+        this.firestoreImageRefPath = firestoreImageRefPath;
     }
 }

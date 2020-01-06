@@ -35,10 +35,15 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import static com.partypopper.app.utils.Constants.MAP_ZOOM;
 
 
 public class OrganizerInfoFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
@@ -99,7 +104,8 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         organizerBlockBt = v.findViewById(R.id.coBlockOrganizerBt);
         organizerBlockBt.setOnClickListener(this);
 
-        isOrganizerFavored = false;
+        // Follows organizer?
+        onResumeSetOrganizerFavoredState();
 
         // get data from intent and set them to the views
         addressTv = v.findViewById(R.id.coOrganizerAddressTv);
@@ -121,7 +127,6 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         coords = new LatLng(organizerCoordsLat, organizerCoordsLng);
 
         organizerRb = v.findViewById(R.id.oOrganizerRb);
-        organizerRb.setRating(organizerRating);
 
 
         // map
@@ -131,6 +136,13 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         organizerLocationMf.getMapAsync(this);
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onResumeSetOrganizerFavoredState();
+        onResumeSetOrganizerRating();
     }
 
     @Override
@@ -152,20 +164,58 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     }
 
     public void onOrganizerFavButtonClick(View view) {
+        FollowRepository followRepository = FollowRepository.getInstance();
+        if (isOrganizerFavored) {
+            followRepository.unfollowOrganizer(organizerId);
+        } else {
+            followRepository.followOrganizer(organizerId);
+        }
+        isOrganizerFavored = !isOrganizerFavored;
+        changeOrganizerFavButtonUIstate(isOrganizerFavored);
+    }
 
-        if (!isOrganizerFavored) {
+    private void changeOrganizerFavButtonUIstate(boolean favor) {
+        if (favor) {
             organizerFavBt.setIconResource(R.drawable.ic_favorite_white_trans30_24dp);
             organizerFavBt.setText(R.string.unfav_organizer);
-
-            ((OrganizerActivity)getActivity()).showText("Fav");
         } else {
             organizerFavBt.setIconResource(R.drawable.ic_favorite_border_white_trans30_24dp);
             organizerFavBt.setText(R.string.fav_organizer);
-
-            ((OrganizerActivity)getActivity()).showText("Unfav");
         }
+    }
 
-        isOrganizerFavored = !isOrganizerFavored;
+    public void onResumeSetOrganizerRating() {
+        OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
+        organizerRepository.getOrganizerById(organizerId).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+            @Override
+            public void onComplete(@NonNull Task<Organizer> task) {
+                if (task.isSuccessful()) {
+                    organizerRating = task.getResult().getAvgRating();
+                    changeOrganizerRatingUIstate(organizerRating);
+                }
+            }
+        });
+    }
+
+    private void changeOrganizerRatingUIstate(float rating) {
+        organizerRb.setRating(rating);
+    }
+
+    private void onResumeSetOrganizerFavoredState() {
+        // Follows organizer?
+        isOrganizerFavored = false;
+        changeOrganizerFavButtonUIstate(isOrganizerFavored);
+        FollowRepository.getInstance().getFollowing().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<String>> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().contains(organizerId)) {
+                        isOrganizerFavored = true;
+                        changeOrganizerFavButtonUIstate(isOrganizerFavored);
+                    }
+                }
+            }
+        });
     }
 
     public void onOrganizerRateClick(View view) {
@@ -181,7 +231,9 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
     }
 
     public void onBlockOrganizerButtonClick(View view) {
-        ((OrganizerActivity)getActivity()).showText("Block");
+        ((OrganizerActivity)getActivity()).showText(getString(R.string.organizer_blocked));
+        FollowRepository followRepository = FollowRepository.getInstance();
+        followRepository.blockOrganizer(organizerId);
     }
 
     /**
@@ -195,7 +247,7 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
                 .title(organizerName));
 
         // move the map's camera to the same location and zoom
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(MAP_ZOOM).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(cameraUpdate);
 

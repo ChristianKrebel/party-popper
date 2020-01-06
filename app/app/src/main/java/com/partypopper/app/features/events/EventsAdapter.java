@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 
@@ -77,6 +78,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
                 intent.putExtra("organizer", event.getOrganizer());
                 intent.putExtra("startDate", event.getStartDate());
                 intent.putExtra("eventUrl", event.getEventUrl());
+                intent.putExtra("eventId", event.getEntityKey());
+                intent.putExtra("location", new LatLng(event.getLocation().getLatitude(), event.getLocation().getLongitude()));
 
                 ImageView mBannerIv = viewHolder.getMBannerIv();
                 Drawable mBannerDrawable = mBannerIv.getDrawable();

@@ -1,7 +1,15 @@
 package com.partypopper.app.features.dashboard;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,9 +20,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.util.LocationService;
 import com.partypopper.app.features.events.EventsAdapter;
 import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.features.organizer.PublishEventActivity;
@@ -40,7 +52,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DashboardActivity extends BaseActivity {
+public class DashboardActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private RecyclerView mRecyclerView;
 
@@ -49,13 +61,16 @@ public class DashboardActivity extends BaseActivity {
     private HorizontalScrollView mSearchHsv;
     private ChipGroup mSearchCg;
 
+
+    private LatLng currentLocation;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         Toolbar toolbar = findViewById(R.id.edToolbar);
         setSupportActionBar(toolbar);
-
 
 
         // FAB
@@ -81,8 +96,40 @@ public class DashboardActivity extends BaseActivity {
         mRecyclerView = findViewById(R.id.eventRv);
         mRecyclerView.setHasFixedSize(true);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        initWithPermission();
+    }
 
+    protected void initWithPermission() {
+
+        // If Version with flexible permissions ask for them
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission
+                    (this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission
+                    (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+                // If permission not granted, request them
+                ActivityCompat.requestPermissions
+                        ( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+                                LocationService.MY_PERMISSION_ACCESS_COARSE_LOCATION );
+                return;
+            } else {    // Permission already granted
+                setCurrentLocation();
+                initRecyclerView();
+            }
+        } else {    // if not flexible permissions, all needed permissions are granted
+            setCurrentLocation();
+            initRecyclerView();
+        }
+    }
+
+    private void setCurrentLocation() {
+        LocationService locationService = LocationService.getLocationManager(this);
+        currentLocation = new LatLng(locationService.latitude, locationService.longitude);
+    }
+
+    private void initRecyclerView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         showData(new eventsAndOrganizerNamesCallback() {
             @Override
@@ -101,7 +148,11 @@ public class DashboardActivity extends BaseActivity {
         EventsRepository eventsRepository = EventsRepository.getInstance();
         final OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
 
-        eventsRepository.getEvents(EVENTS_AMOUNT).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
+        eventsRepository.getNearbyEvents
+                (currentLocation.latitude,
+                currentLocation.longitude,
+                STANDARD_DISTANCE,
+                EVENTS_AMOUNT).addOnCompleteListener(new OnCompleteListener<List<Event>>() {
             @Override
             public void onComplete(@NonNull Task<List<Event>> task) {
                 if(task.getResult() != null) {
@@ -129,9 +180,6 @@ public class DashboardActivity extends BaseActivity {
                             }
                         });
                     }
-
-
-
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -140,40 +188,6 @@ public class DashboardActivity extends BaseActivity {
                 Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        /*db.collection("events")
-                .orderBy("startDate", Query.Direction.ASCENDING)
-                .limit(50)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        for (DocumentSnapshot documentSnapshot: task.getResult()) {
-                            Event event = new Event();
-
-                            event.setDescription(documentSnapshot.getString("description"));
-                            event.setEndDate(((Timestamp) documentSnapshot.getData().get("endDate")).toDate());
-                            event.setGoing(documentSnapshot.getLong("going").intValue());
-                            event.setName(documentSnapshot.getString("name"));
-                            event.setOrganizer(documentSnapshot.getString("organizer"));
-                            event.setStartDate(((Timestamp) documentSnapshot.getData().get("startDate")).toDate());
-                            event.setImage(documentSnapshot.getString("image"));
-
-                            modelList.add(event);
-                        }
-
-                        //adapter
-                        adapter = new EventsAdapter(DashboardActivity.this, modelList, getApplicationContext());
-                        // set adapter to recyclerview
-                        mRecyclerView.setAdapter(adapter);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });*/
     }
 
     private void searchData(int type, String query, final eventsAndOrganizerNamesCallback dbCallback) {
@@ -392,6 +406,9 @@ public class DashboardActivity extends BaseActivity {
             @Override
             public void onViewDetachedFromWindow(View v) {
                 mSearchHsv.setVisibility(View.GONE);
+
+                // Also reset recyclerview
+                initWithPermission();
                 mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
@@ -419,41 +436,41 @@ public class DashboardActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Query a String to the Firebase database and get results in the recyclerview
-     *
-     * @param searchText
-     */
-    private void firebaseSearch(String searchText) {
-        // Different query than the one in the onStart method
-        // TODO shorten redundant code?
-        // TODO exchange with Elastic Search for 'contains'-ability and no case sensitivity
-        /*Query firebaseSearchQuery = mDatabaseReference.orderByChild("title")
-                .startAt(searchText)
-                .endAt(searchText + "\uf8ff"); // High point unicode character, called Escape
-        FirebaseRecyclerOptions<DashboardModel> options =
-                new FirebaseRecyclerOptions.Builder<DashboardModel>()
-                        .setQuery(firebaseSearchQuery, DashboardModel.class)
-                        .build();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LocationService.MY_PERMISSION_ACCESS_COARSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
 
-        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<DashboardModel, EventsViewHolder>(options) {
-            @Override
-            public EventsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.row_events_dashboard for each item
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.row_events_dashboard, parent, false);
+                    setCurrentLocation();
+                    initRecyclerView();
 
-                return new EventsViewHolder(view);
+                } else {
+                    // permission denied, boo!
+                    Toast.makeText(this, getString(R.string.error_location_permission_needed), Toast.LENGTH_LONG).show();
+
+                    // Do not spam the request or message!
+                    final Activity thisActivity = this;
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Request the permission again
+                            ActivityCompat.requestPermissions
+                                    (thisActivity, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+                                            LocationService.MY_PERMISSION_ACCESS_COARSE_LOCATION );
+                        }
+                    }, HANDLER_DELAY);
+                }
+                return;
             }
 
-            @Override
-            protected void onBindViewHolder(EventsViewHolder holder, int position, DashboardModel model) {
-                holder.setDetails(model.getTitle(), model.getDate(), model.getImage(),
-                        model.getOrganizer(), model.getVisitor_count());
-            }
-        };
-        adapter.startListening();
-        mRecyclerView.setAdapter(adapter);*/
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+
     }
 }

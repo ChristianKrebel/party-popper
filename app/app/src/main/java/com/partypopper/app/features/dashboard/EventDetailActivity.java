@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -28,6 +29,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.palette.graphics.Palette;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +42,10 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.EventsRepository;
+import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.organizer.OrganizerActivity;
 import com.partypopper.app.utils.BaseActivity;
@@ -52,6 +57,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -65,8 +71,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     private SupportMapFragment organizerLocationMf;
     private RatingBar mOrganizerRatingRb;
     private LatLng coords;
-    private String organizerId, eventUrl;
+    private String organizerId, eventId, eventUrl;
     private Organizer organizer;
+    private int eventAttending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +95,14 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
         // get data from intent and set them to the views
         organizerId = getIntent().getStringExtra("organizer");
+        eventId = getIntent().getStringExtra("eventId");
 
         mTitleTv = findViewById(R.id.edEventTitleTv);
         mTitleTv.setText(getIntent().getStringExtra("name"));
 
+        eventAttending = getIntent().getIntExtra("going", 0);
         mVisitorCountTv = findViewById(R.id.edEventAttendersTv);
-        mVisitorCountTv.setText(getIntent().getIntExtra("going", 0) + " " + getString(R.string.are_attending));
+        changeAttendingTextViewUIstate();
 
         mDateTv = findViewById(R.id.edEventDateTv);
         mTimeTv = findViewById(R.id.edEventTimeTv);
@@ -128,8 +137,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
         mDescriptionTv = findViewById(R.id.edEventDescriptionTv);
         mDescriptionTv.setText(getIntent().getStringExtra("description"));
-
-
 
 
 
@@ -208,8 +215,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         // Organizer info is not expanded by default
         isOrganizerInfoExpanded = false;
 
-        isOrganizerFavored = false;
-
 
         // no need for listener because of onClick in XML
         expandBt = findViewById(R.id.edOrganizerExpandBt);
@@ -236,15 +241,19 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
 
         // map
-        // default coords
-        coords = new LatLng(0,0);
+        coords = getIntent().getParcelableExtra("location");
         // get MapFragment
         organizerLocationMf = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.coOrganizerLocationMf);
+    }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
         // get and set organizer data
         showData(organizerId, this);
+        onResumeSetOrganizerFavoredState();
+        onResumeSetAttendingNumber();
     }
 
     private void showData(final String organizerId, final OnMapReadyCallback onMapReadyCallback) {
@@ -273,8 +282,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                     organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
                     organizerAddressTv.setText(organizer.getAddress());
 
-                    //GeoPoint geoPoint = organizer.getCoordinates();
-                    //coords = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
                     organizerLocationMf.getMapAsync(onMapReadyCallback);
                 }
             }
@@ -333,7 +340,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onAttendEventButtonClick(View view) {
-        showText("onAttendEventButtonClick");
+        EventsRepository eventsRepository = EventsRepository.getInstance();
+        eventsRepository.joinEvent(eventId);
+        showText(getString(R.string.event_attended));
+        eventAttending++;
+        changeAttendingTextViewUIstate();
     }
 
     public void onOrganizerClick(View view) {
@@ -361,14 +372,55 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onOrganizerFavButtonClick(View view) {
-        showText("onOrganizerFavButtonClick");
-
-        if(isOrganizerFavored) {
-            favBt.setIconResource(R.drawable.ic_favorite_border_white_trans30_24dp);
+        FollowRepository followRepository = FollowRepository.getInstance();
+        if (isOrganizerFavored) {
+            followRepository.unfollowOrganizer(organizerId);
         } else {
-            favBt.setIconResource(R.drawable.ic_favorite_white_trans30_24dp);
+            followRepository.followOrganizer(organizerId);
         }
         isOrganizerFavored = !isOrganizerFavored;
+        changeOrganizerFavButtonUIstate(isOrganizerFavored);
+    }
+
+    private void changeOrganizerFavButtonUIstate(boolean favor) {
+        if(favor) {
+            favBt.setIconResource(R.drawable.ic_favorite_white_trans30_24dp);
+        } else {
+            favBt.setIconResource(R.drawable.ic_favorite_border_white_trans30_24dp);
+        }
+    }
+
+    private void onResumeSetOrganizerFavoredState() {
+        // Follows organizer?
+        isOrganizerFavored = false;
+        changeOrganizerFavButtonUIstate(isOrganizerFavored);
+        FollowRepository.getInstance().getFollowing().addOnCompleteListener(new OnCompleteListener<List<String>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<String>> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().contains(organizerId)) {
+                        isOrganizerFavored = true;
+                        changeOrganizerFavButtonUIstate(isOrganizerFavored);
+                    }
+                }
+            }
+        });
+    }
+
+    private void changeAttendingTextViewUIstate() {
+        mVisitorCountTv.setText(eventAttending + " " + getString(R.string.are_attending));
+    }
+
+    private void onResumeSetAttendingNumber() {
+        EventsRepository.getInstance().getEventByEventId(eventId).addOnCompleteListener(new OnCompleteListener<Event>() {
+            @Override
+            public void onComplete(@NonNull Task<Event> task) {
+                if (task.isSuccessful()) {
+                    eventAttending = task.getResult().getGoing();
+                    changeAttendingTextViewUIstate();
+                }
+            }
+        });
     }
 
     public void onOrganizerAddressTextViewClick(View view) {
@@ -379,7 +431,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onBlockOrganizerButtonClick(View view) {
-        showText("onBlockOrganizerButtonClick");
+        showText(getString(R.string.organizer_blocked));
+        FollowRepository followRepository = FollowRepository.getInstance();
+        followRepository.blockOrganizer(organizerId);
     }
 
     /**
@@ -393,7 +447,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                 .title(mOrganizerTv.getText().toString()));
 
         // move the map's camera to the same location and zoom
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(15.0f).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(MAP_ZOOM).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(cameraUpdate);
 

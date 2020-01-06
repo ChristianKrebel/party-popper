@@ -124,7 +124,7 @@ public class PublishEventActivity extends BaseActivity {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 progressDialog.dismiss();
-                                showText("Uploaded");
+                                showText("Image uploaded successfully.");
                                 setFirestoreImageRefPath(ref.getPath().substring(1));
 
                                 ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -137,7 +137,7 @@ public class PublishEventActivity extends BaseActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception exception) {
-                                        showText("Couldn't get Image URL with " + getFirestoreImageRefPath());
+                                        showText("Failed to get image URL!");
                                     }
                                 });
                             }
@@ -146,7 +146,7 @@ public class PublishEventActivity extends BaseActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 progressDialog.dismiss();
-                                showText("Upload failed");
+                                showText("Image upload failed! Please try again later.");
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -204,7 +204,7 @@ public class PublishEventActivity extends BaseActivity {
         repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                showText("Event created");
+                showText("Event created successfully.");
             }
         });
     }

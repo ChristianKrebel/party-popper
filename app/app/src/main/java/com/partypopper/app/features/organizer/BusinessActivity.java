@@ -147,7 +147,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
             if (filePath != null) {
                 final ProgressDialog progressDialog
                         = new ProgressDialog(this);
-                progressDialog.setTitle("Uploading...");
+                progressDialog.setTitle("Uploading image...");
                 progressDialog.show();
 
                 final StorageReference ref = storageReference.child("events/"+ UUID.randomUUID().toString() + ".jpg");
@@ -156,7 +156,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 progressDialog.dismiss();
-                                showText("Uploaded");
+                                showText("Image uploaded.");
                                 setFirestoreImageRefPath(ref.getPath().substring(1));
 
                                 ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -178,7 +178,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 progressDialog.dismiss();
-                                showText("Upload failed");
+                                showText("Image upload failed! Please try again later.");
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -222,12 +222,12 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                 Intent intent = new Intent(BusinessActivity.this, AuthenticationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                showText("OK");
+                showText("Your registration was successful.");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println(e.getMessage());
+                showText("Failure! Please try again later.");
             }
         });
     }

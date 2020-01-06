@@ -156,7 +156,6 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Do something after ms delay
                 updateOrganizerRatingUIstate(pos, activeFragment);
             }
         }, HANDLER_DELAY);

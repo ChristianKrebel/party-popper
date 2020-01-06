@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.GeoPoint;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.FollowRepository;
@@ -71,6 +72,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     private LatLng coords;
     private String organizerId, eventId, eventUrl;
     private Organizer organizer;
+    private int eventAttending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +99,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         mTitleTv = findViewById(R.id.edEventTitleTv);
         mTitleTv.setText(getIntent().getStringExtra("name"));
 
+        eventAttending = getIntent().getIntExtra("going", 0);
         mVisitorCountTv = findViewById(R.id.edEventAttendersTv);
-        mVisitorCountTv.setText(getIntent().getIntExtra("going", 0) + " " + getString(R.string.are_attending));
+        changeAttendingTextViewUIstate();
 
         mDateTv = findViewById(R.id.edEventDateTv);
         mTimeTv = findViewById(R.id.edEventTimeTv);
@@ -252,6 +255,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         // get and set organizer data
         showData(organizerId, this);
         onResumeSetOrganizerFavoredState();
+        onResumeSetAttendingNumber();
     }
 
     private void showData(final String organizerId, final OnMapReadyCallback onMapReadyCallback) {
@@ -343,6 +347,8 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         EventsRepository eventsRepository = EventsRepository.getInstance();
         eventsRepository.joinEvent(eventId);
         showText(getString(R.string.event_attended));
+        eventAttending++;
+        changeAttendingTextViewUIstate();
     }
 
     public void onOrganizerClick(View view) {
@@ -400,6 +406,22 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                         isOrganizerFavored = true;
                         changeOrganizerFavButtonUIstate(isOrganizerFavored);
                     }
+                }
+            }
+        });
+    }
+
+    private void changeAttendingTextViewUIstate() {
+        mVisitorCountTv.setText(eventAttending + " " + getString(R.string.are_attending));
+    }
+
+    private void onResumeSetAttendingNumber() {
+        EventsRepository.getInstance().getEventByEventId(eventId).addOnCompleteListener(new OnCompleteListener<Event>() {
+            @Override
+            public void onComplete(@NonNull Task<Event> task) {
+                if (task.isSuccessful()) {
+                    eventAttending = task.getResult().getGoing();
+                    changeAttendingTextViewUIstate();
                 }
             }
         });

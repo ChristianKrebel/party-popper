@@ -12,6 +12,9 @@ public final class Constants {
     /** Number of events to get in query. */
     public static final int EVENTS_AMOUNT = 50;
 
+    /** Distance in miles for locating nearby events */
+    public static final int STANDARD_DISTANCE = 50;
+
     /** The quality compression for bitmaps in per cent */
     public static final int COMPRESSION_QUALITY = 98;
 

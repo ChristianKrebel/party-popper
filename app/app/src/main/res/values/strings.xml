@@ -52,6 +52,9 @@
     <string name="copied_address">Copied the address to clipboard</string>
 
     <string name="action_organizer_fav">Follow</string>
+
+    <string name="error_location_permission_needed">The application needs the location permission to work!</string>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

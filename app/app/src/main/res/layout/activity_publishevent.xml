@@ -36,29 +36,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                app:cardCornerRadius="@dimen/cardview_image_corner">
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
 
                 <ImageView
                     android:id="@+id/publisheventImageWdg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:maxHeight="@dimen/event_pic_upload_height"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_pic_sample" />
+
             </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/pubUpdateBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/button_margin"
+                android:layout_marginBottom="@dimen/text_margin"
                 android:onClick="chooseImage"
                 android:text="@string/upload_image_business" />
-
-            <View
-                android:id="@+id/view4"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#494949" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -71,86 +68,106 @@
                 android:text="@string/information_publish"
                 android:textSize="@dimen/title_h5" />
 
-            <EditText
-                android:id="@+id/pubTitlePt"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/FilledTextFieldDense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:drawableStart="@drawable/ic_title_black_24dp"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:ems="10"
                 android:hint="@string/title_publish"
-                android:inputType="textPersonName" />
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/button_margin" >
 
-            <EditText
-                android:id="@+id/pubReflinkPt"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pubTitlePt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_title_black_24dp"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    android:inputType="textPersonName" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/FilledTextFieldDense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:drawableStart="@drawable/ic_link_white_trans30_24dp"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:ems="10"
                 android:hint="@string/reflink_publish"
-                android:inputType="textPersonName" />
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin" >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pubReflinkPt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_link_white_trans30_24dp"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    android:inputType="textPersonName" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginTop="@dimen/text_margin_3"
                 android:layout_marginRight="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
                 android:text="@string/information_duration"
                 android:textSize="@dimen/title_h5" />
 
-            <EditText
-                android:id="@+id/pubStartdateD"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/FilledTextFieldDense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:clickable="true"
-                android:drawableStart="@drawable/ic_today_white_trans30_24dp"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:editable="false"
-                android:ems="10"
-                android:focusable="false"
                 android:hint="@string/startdate_publish"
-                android:inputType="date"
-                android:onClick="dateClick" />
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/button_margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pubStartdateD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:drawableStart="@drawable/ic_today_white_trans30_24dp"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:inputType="date"
+                    android:onClick="dateClick" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TimePicker
                 android:id="@+id/pubStarttimeT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:timePickerMode="spinner"/>
+                android:timePickerMode="spinner"
+                android:layout_marginBottom="@dimen/button_margin"/>
 
-            <EditText
-                android:id="@+id/pubEnddateD"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/FilledTextFieldDense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:clickable="true"
-                android:drawableStart="@drawable/ic_today_white_trans30_24dp"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:editable="false"
-                android:ems="10"
-                android:focusable="false"
                 android:hint="@string/enddate_publish"
-                android:inputType="date"
-                android:onClick="dateClick" />
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/button_margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pubEnddateD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:drawableStart="@drawable/ic_today_white_trans30_24dp"
+                    android:drawablePadding="@dimen/drawable_padding"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:onClick="dateClick"
+                    android:inputType="date" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TimePicker
                 android:id="@+id/pubEndtimeT"
@@ -158,38 +175,36 @@
                 android:layout_height="wrap_content"
                 android:timePickerMode="spinner" />
 
-            <View
-                android:id="@+id/view3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#494949" />
-
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginTop="@dimen/text_margin_4"
                 android:layout_marginRight="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
                 android:text="@string/description_publish"
                 android:textSize="@dimen/title_h5" />
 
-            <EditText
-                android:id="@+id/pubDescriptionMt"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/FilledTextFieldDense"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:layout_marginBottom="@dimen/text_margin"
-                android:ems="10"
-                android:gravity="start|top"
+                android:layout_height="wrap_content"
                 android:hint="@string/description_hint_publish"
-                android:inputType="textMultiLine"
-                android:lines="5"
-                android:maxLines="5"
-                android:minLines="5" />
+                android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:layout_marginTop="@dimen/button_margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pubDescriptionMt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="2"
+                    android:gravity="top|start"
+                    android:maxLines="10"
+                    android:scrollbars="vertical" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/pubPublishBtn"
@@ -198,7 +213,8 @@
                 android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginBottom="@dimen/button_margin"
                 android:onClick="onPublishClick"
-                android:text="@string/publish_event_button_publish" />
+                android:text="@string/publish_event_button_publish"
+                android:layout_margin="@dimen/text_margin"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -35,15 +35,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                app:cardCornerRadius="5000dp">
+                android:layout_marginTop="@dimen/activity_vertical_margin" >
 
                 <ImageView
                     android:id="@+id/bsLogoImg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/logo_business"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:maxHeight="@dimen/organizer_profile_pic_upload_height"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_pic_sample"
+                    android:contentDescription="@string/logo_business" />
+
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
@@ -73,12 +76,6 @@
                 android:text="@string/public_information_business"
                 android:textSize="@dimen/title_h5" />
 
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#494949" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,82 +84,124 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/bsBusinessnamePt"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_title_black_24dp"
-                    android:drawablePadding="@dimen/drawable_padding"
-                    android:ems="10"
-                    android:hint="@string/name_business"
-                    android:inputType="textPersonName" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/bsBusinesswebsitePt"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_link_white_trans30_24dp"
-                    android:drawablePadding="@dimen/drawable_padding"
-                    android:ems="10"
-                    android:hint="@string/website_business"
-                    android:inputType="textPersonName" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/bsBusinessphoneP"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_local_phone_white_trans30_24dp"
-                    android:drawablePadding="@dimen/drawable_padding"
-                    android:hint="@string/phone_business"
-                    android:inputType="phone" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/bsBusinessaddressPa"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/FilledTextFieldDense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_place_white_trans30_24dp"
-                    android:drawablePadding="@dimen/drawable_padding"
-                    android:ems="10"
-                    android:hint="@string/address_business"
-                    android:inputType="textPostalAddress" />
+                    android:hint="@string/name_business" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bsBusinessnamePt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableStart="@drawable/ic_title_black_24dp"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        android:inputType="textPersonName" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
             </LinearLayout>
 
-            <fragment
-                android:id="@+id/bsMapMv"
-                android:name="com.google.android.gms.maps.MapFragment"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/organizer_map_height" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/button_margin"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/FilledTextFieldDense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/website_business" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bsBusinesswebsitePt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableStart="@drawable/ic_link_white_trans30_24dp"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        android:inputType="textPersonName" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/button_margin"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/FilledTextFieldDense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/phone_business" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bsBusinessphoneP"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableStart="@drawable/ic_local_phone_white_trans30_24dp"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        android:inputType="phone" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/button_margin"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/FilledTextFieldDense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/address_business" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bsBusinessaddressPa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableStart="@drawable/ic_place_white_trans30_24dp"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        android:inputType="textPostalAddress" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                app:cardCornerRadius="@dimen/card_view_corner_radius">
+
+                <fragment
+                    android:id="@+id/bsMapMv"
+                    android:name="com.google.android.gms.maps.MapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/organizer_map_height" />
+
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -171,16 +210,25 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/bsDescriptionMt"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/FilledTextFieldDense"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:hint="@string/description_business"
-                    android:inputType="textMultiLine"
-                    android:lines="8" />
+                    android:layout_height="wrap_content"
+                    android:hint="@string/description_business" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bsDescriptionMt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="textMultiLine"
+                        android:minLines="2"
+                        android:gravity="top|start"
+                        android:maxLines="10"
+                        android:scrollbars="vertical" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
             </LinearLayout>
 
             <TextView
@@ -188,17 +236,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/text_margin"
-                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginTop="@dimen/text_margin_3"
                 android:layout_marginRight="@dimen/text_margin"
                 android:layout_marginBottom="@dimen/text_margin"
                 android:text="@string/private_information_business"
                 android:textSize="@dimen/title_h5" />
-
-            <View
-                android:id="@+id/view2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#494949" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -208,25 +250,30 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/bsBusinessmailE"
-                    android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/FilledTextFieldDense"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableStart="@android:drawable/ic_menu_send"
-                    android:drawablePadding="@dimen/drawable_padding"
-                    android:ems="10"
-                    android:hint="@string/email_business"
-                    android:inputType="textEmailAddress" />
+                    android:hint="@string/email_business" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bsBusinessmailE"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableStart="@android:drawable/ic_menu_send"
+                        android:drawablePadding="@dimen/drawable_padding"
+                        android:inputType="textEmailAddress" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
             </LinearLayout>
 
             <Button
                 android:id="@+id/bsRequestBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/button_margin"
-                android:layout_marginTop="@dimen/button_margin"
-                android:layout_marginRight="@dimen/button_margin"
+                android:layout_margin="@dimen/text_margin"
                 android:onClick="onRequestClick"
                 android:text="@string/request_business" />
 

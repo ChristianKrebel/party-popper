@@ -32,10 +32,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.util.LocationService;
+import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.events.EventsAdapter;
 import com.partypopper.app.features.organizer.BusinessActivity;
 import com.partypopper.app.features.organizer.PublishEventActivity;
@@ -425,9 +427,10 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, AuthenticationActivity.class));
                 return true;
-            // TODO more cases
             case R.id.action_open_business_activity:
                 startActivity(new Intent(this, BusinessActivity.class));
                 return true;

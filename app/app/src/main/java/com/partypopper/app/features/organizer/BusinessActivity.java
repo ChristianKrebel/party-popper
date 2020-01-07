@@ -240,30 +240,6 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     /**
-     * returns a Geopoint with latitude and longtitude coordinates, which matches the given address
-     * @param strAddress passed Address which shall be represented as latitude and longtitude
-     * @return GeoPoint
-     */
-    public LatLng getLocationFromAddress(Context context, String strAddress) {
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
-        try {
-            // May throw an IOException
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null || address.size() == 0) {
-                return null;
-            } else {
-                Address location = address.get(0);
-                p1 = new LatLng(location.getLatitude(), location.getLongitude());
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return p1;
-    }
-
-    /**
      * When the map is loaded set a marker and move and zoom its camera to the marker
      * @param googleMap
      */

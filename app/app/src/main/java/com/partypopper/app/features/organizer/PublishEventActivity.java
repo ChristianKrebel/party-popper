@@ -13,12 +13,14 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -29,6 +31,8 @@ import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
+import com.partypopper.app.features.authentication.AuthenticationActivity;
+import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.utils.DatePicker;
 
@@ -168,44 +172,55 @@ public class PublishEventActivity extends BaseActivity {
      * sets up the needed data for events for the firebase
      */
     public void setFirebaseData() {
-        String eventTitle = publisheventTitleWdg.getText().toString();
-        String eventReflink = publisheventReflinkWdg.getText().toString();
-        String eventStartdate = publisheventStartdateWdg.getText().toString();
-        String eventEnddate = publisheventEnddateWdg.getText().toString();
-        // Angeblich zu niedriges API Level, obwohl offizielle Android Doku API Level 1 ansagt
-        int eventStarttimeHour = publisheventStarttimeWdg.getHour();
-        int eventStarttimeMinute = publisheventStarttimeWdg.getMinute();
-        int eventEndtimeHour = publisheventEndtimeWdg.getHour();
-        int eventEndtimeMinute = publisheventEndtimeWdg.getMinute();
-        String eventDescription = publisheventDescriptionWdg.getText().toString();
-
-        String[] startDateArr = eventStartdate.split("/");
-        int startDateDay = Integer.parseInt(startDateArr[0].trim());
-        int startDateMonth = Integer.parseInt(startDateArr[1].trim());
-        int startDateYear = Integer.parseInt(startDateArr[2].trim());
-        //showText(startDateDay + " " + startDateMonth + " " + startDateYear);
-
-        String[] endDateArr = eventEnddate.split("/");
-        int endDateDay = Integer.parseInt(endDateArr[0].trim());
-        int endDateMonth = Integer.parseInt(endDateArr[1].trim());
-        int endDateYear = Integer.parseInt(endDateArr[2].trim());
-
-        OrganizerRepository repo = OrganizerRepository.getInstance();
-        Event event = new Event();
-        event.setName(eventTitle);
-        event.setEventUrl(eventReflink);
-        event.setOrganizer(currentUser.getUid());
-        event.setGoing(0);
-        event.setStartDate(new Date(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute));
-        event.setEndDate(new Date(endDateYear, endDateMonth, endDateDay, eventEndtimeHour, eventEndtimeMinute));
-        event.setDescription(eventDescription);
-        event.setLowercaseName(event.getName().toLowerCase());
-        event.setImage(firestoreImagePath);
-        event.setLocation(repo.getOrganizerById(currentUser.getUid()).getResult().getLocation());
-        repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final OrganizerRepository repo = OrganizerRepository.getInstance();
+        repo.getOrganizerById(currentUser.getUid()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(), "Event created successfully.", Toast.LENGTH_SHORT);
+            public void onComplete(@NonNull Task<Organizer> task) {
+                String eventTitle = publisheventTitleWdg.getText().toString();
+                String eventReflink = publisheventReflinkWdg.getText().toString();
+                String eventStartdate = publisheventStartdateWdg.getText().toString();
+                String eventEnddate = publisheventEnddateWdg.getText().toString();
+                // Angeblich zu niedriges API Level, obwohl offizielle Android Doku API Level 1 ansagt
+                int eventStarttimeHour = publisheventStarttimeWdg.getHour();
+                int eventStarttimeMinute = publisheventStarttimeWdg.getMinute();
+                int eventEndtimeHour = publisheventEndtimeWdg.getHour();
+                int eventEndtimeMinute = publisheventEndtimeWdg.getMinute();
+                String eventDescription = publisheventDescriptionWdg.getText().toString();
+
+                String[] startDateArr = eventStartdate.split("/");
+                int startDateDay = Integer.parseInt(startDateArr[0].trim());
+                int startDateMonth = Integer.parseInt(startDateArr[1].trim());
+                int startDateYear = Integer.parseInt(startDateArr[2].trim());
+                //showText(startDateDay + " " + startDateMonth + " " + startDateYear);
+
+                String[] endDateArr = eventEnddate.split("/");
+                int endDateDay = Integer.parseInt(endDateArr[0].trim());
+                int endDateMonth = Integer.parseInt(endDateArr[1].trim());
+                int endDateYear = Integer.parseInt(endDateArr[2].trim());
+
+                Event event = new Event();
+                event.setName(eventTitle);
+                event.setEventUrl(eventReflink);
+                event.setOrganizer(currentUser.getUid());
+                event.setGoing(0);
+                event.setStartDate(new Date(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute));
+                event.setEndDate(new Date(endDateYear, endDateMonth, endDateDay, eventEndtimeHour, eventEndtimeMinute));
+                event.setDescription(eventDescription);
+                event.setLowercaseName(event.getName().toLowerCase());
+                event.setImage(firestoreImagePath);
+
+                LatLng latlng = getLocationFromAddress(getApplicationContext(), task.getResult().getAddress());
+                GeoPoint gp = new GeoPoint(latlng.latitude, latlng.longitude);
+                event.setLocation(gp);
+                repo.createEvent(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getApplicationContext(), "Your event was created successfully.", Toast.LENGTH_SHORT);
+                        Intent intent = new Intent(PublishEventActivity.this, DashboardActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }

@@ -215,6 +215,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
         organizer.setEmail(businessEmail);
         organizer.setDescription(businessDescription);
         organizer.setAddress(businessAddress);
+        organizer.setImage(firestoreImagePath);
         repo.singUpOrganizer(organizer).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
             @Override
             public void onComplete(@NonNull Task<HttpsCallableResult> task) {

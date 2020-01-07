@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,6 +24,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
@@ -164,5 +167,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             valueAnimator.setDuration(400);
             valueAnimator.start();
         }
+    }
+
+    /**
+     * returns a Geopoint with latitude and longtitude coordinates, which matches the given address
+     * @param strAddress passed Address which shall be represented as latitude and longtitude
+     * @return GeoPoint
+     */
+    public LatLng getLocationFromAddress(Context context, String strAddress) {
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null || address.size() == 0) {
+                return null;
+            } else {
+                Address location = address.get(0);
+                p1 = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return p1;
     }
 }

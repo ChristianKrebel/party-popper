@@ -34,6 +34,7 @@
 | 01.01.20 | 9h    | Add RecyclerView in OrganizerActivity, Refactoring, add many additions like getting the color of event's image for its scrim |
 | 03.01.20 | 10h   | Add icon, update Splash screen, fix auth layout, add search with different queries |
 | 05.01.20 | 11,5h | Bind UI to functions *follow*, *rate*, *attend*, *block*, *map* + add LocationService, ask for permission, get events by location |
+| 07.01.20 | 2h    | Update layouts of some activities                            |
 |          |       |                                                              |
 | Total    |       |                                                              |
-|          | 135h  |                                                              |
+|          | 137h  |                                                              |

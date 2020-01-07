@@ -174,7 +174,7 @@
     <string name="phone_business">Phone Number</string>
     <string name="address_business">Address</string>
     <string name="private_information_business">Private Information</string>
-    <string name="description_business">Add your description here</string>
+    <string name="description_business">Description</string>
     <string name="email_business">E-Mail</string>
     <string name="request_business">Request</string>
 

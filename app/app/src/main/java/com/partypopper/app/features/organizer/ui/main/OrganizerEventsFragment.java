@@ -14,7 +14,7 @@ import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
-import com.partypopper.app.database.repository.eventsAndOrganizerNamesCallback;
+import com.partypopper.app.features.events.eventsAndOrganizerNamesCallback;
 import com.partypopper.app.features.events.EventsAdapter;
 
 import static com.partypopper.app.utils.Constants.*;

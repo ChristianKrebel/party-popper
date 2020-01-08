@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -21,7 +20,7 @@ import com.partypopper.app.database.model.Event;
 
 import static com.partypopper.app.utils.Constants.*;
 
-import com.partypopper.app.features.dashboard.EventDetailActivity;
+import com.partypopper.app.features.eventDetail.EventDetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;

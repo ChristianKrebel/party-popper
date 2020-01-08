@@ -1,11 +1,8 @@
-package com.partypopper.app.features.organizer;
+package com.partypopper.app.features.business;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -37,11 +34,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.partypopper.app.R;
-import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
-import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.utils.BaseActivity;
 
 import androidx.annotation.NonNull;
@@ -49,8 +44,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 public class BusinessActivity extends BaseActivity implements OnMapReadyCallback {

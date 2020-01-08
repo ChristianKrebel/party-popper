@@ -1,4 +1,4 @@
-package com.partypopper.app.features.organizer.ui.main;
+package com.partypopper.app.features.organizer.ui.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

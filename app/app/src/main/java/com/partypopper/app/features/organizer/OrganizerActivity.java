@@ -4,8 +4,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
@@ -16,20 +14,15 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
-import lombok.Getter;
 
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.features.organizer.ui.main.OrganizerInfoFragment;
-import com.partypopper.app.features.organizer.ui.main.OrganizerRateDialog;
-import com.partypopper.app.features.organizer.ui.main.SectionsPagerAdapter;
+import com.partypopper.app.features.organizer.ui.dialog.OrganizerRateDialog;
+import com.partypopper.app.features.organizer.ui.main.OrganizerSectionsPagerAdapter;
 
 import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
@@ -42,7 +35,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
     private String name, organizerId;
     private AppBarLayout appBarLayout;
 
-    private SectionsPagerAdapter sectionsPagerAdapter;
+    private OrganizerSectionsPagerAdapter organizerSectionsPagerAdapter;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
@@ -64,9 +57,9 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
 
 
         // Tabs and more
-        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getIntent().getExtras());
+        organizerSectionsPagerAdapter = new OrganizerSectionsPagerAdapter(this, getSupportFragmentManager(), getIntent().getExtras());
         viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
+        viewPager.setAdapter(organizerSectionsPagerAdapter);
         tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -74,7 +67,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
             public void onTabSelected(TabLayout.Tab tab) {
                 // Get current fragment and position
                 final int pos = viewPager.getCurrentItem();
-                final Fragment activeFragment = sectionsPagerAdapter.getItem(pos);
+                final Fragment activeFragment = organizerSectionsPagerAdapter.getItem(pos);
                 updateOrganizerRatingUIstate(pos, activeFragment);
             }
 
@@ -87,7 +80,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
             public void onTabReselected(TabLayout.Tab tab) {
                 // Get current fragment and position
                 final int pos = viewPager.getCurrentItem();
-                final Fragment activeFragment = sectionsPagerAdapter.getItem(pos);
+                final Fragment activeFragment = organizerSectionsPagerAdapter.getItem(pos);
                 updateOrganizerRatingUIstate(pos, activeFragment);
             }
         });
@@ -149,7 +142,7 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         // Update AVG rating in UI
         // Get current fragment and position
         final int pos = viewPager.getCurrentItem();
-        final Fragment activeFragment = sectionsPagerAdapter.getItem(pos);
+        final Fragment activeFragment = organizerSectionsPagerAdapter.getItem(pos);
 
         // Delay needed because calculation of AVG rating needs time
         final Handler handler = new Handler();

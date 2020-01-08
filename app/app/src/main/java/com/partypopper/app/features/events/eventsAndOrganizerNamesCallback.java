@@ -1,4 +1,4 @@
-package com.partypopper.app.database.repository;
+package com.partypopper.app.features.events;
 
 import com.partypopper.app.database.model.Event;
 

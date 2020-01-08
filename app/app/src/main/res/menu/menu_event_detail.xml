@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.partypopper.app.features.dashboard.EventDetailActivity">
+    tools:context="com.partypopper.app.features.eventDetail.EventDetailActivity">
     <item
         android:id="@+id/action_event_open_event_link"
         android:orderInCategory="100"

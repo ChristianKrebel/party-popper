@@ -17,7 +17,7 @@ import com.partypopper.app.R;
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class OrganizerSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.organizer_tab_text_1, R.string.organizer_tab_text_2};
@@ -25,7 +25,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private final Bundle organizerBundle;
     private Fragment one, two;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm, Bundle organizerBundle) {
+    public OrganizerSectionsPagerAdapter(Context context, FragmentManager fm, Bundle organizerBundle) {
         super(fm);
         mContext = context;
         this.organizerBundle = organizerBundle;

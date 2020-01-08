@@ -1,4 +1,4 @@
-package com.partypopper.app.features.dashboard;
+package com.partypopper.app.features.eventDetail;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

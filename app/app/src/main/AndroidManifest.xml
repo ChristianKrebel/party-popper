@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".features.dashboard.EventDetailActivity"
+            android:name=".features.eventDetail.EventDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".features.organizer.OrganizerActivity"
@@ -47,10 +47,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".features.organizer.BusinessActivity"
+            android:name=".features.business.BusinessActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".features.organizer.PublishEventActivity"
+            android:name=".features.publishEvent.PublishEventActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
 

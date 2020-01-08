@@ -1,4 +1,4 @@
-package com.partypopper.app.utils;
+package com.partypopper.app.utils.ui;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;

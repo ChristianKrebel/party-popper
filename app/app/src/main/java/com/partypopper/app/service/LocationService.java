@@ -1,4 +1,4 @@
-package com.partypopper.app.database.util;
+package com.partypopper.app.service;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -9,10 +9,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 /**

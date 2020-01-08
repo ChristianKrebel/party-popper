@@ -29,9 +29,7 @@ import com.google.firebase.storage.UploadTask;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
-import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
-import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.utils.DatePicker;
@@ -40,10 +38,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 

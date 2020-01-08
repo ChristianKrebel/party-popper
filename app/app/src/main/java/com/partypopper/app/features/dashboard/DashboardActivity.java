@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.features.events.eventsAndOrganizerNamesCallback;
 import com.partypopper.app.service.LocationService;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.events.EventsAdapter;

@@ -65,9 +65,6 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     private Button btnUpload;
     private MapFragment organizerLocationMf;
     private GoogleMap map;
-    private LatLng addressPoint;
-
-    private final FirebaseUser currentUser = mAuth.getCurrentUser();
 
     private String firestoreImagePath;
     private String firestoreImageRefPath;

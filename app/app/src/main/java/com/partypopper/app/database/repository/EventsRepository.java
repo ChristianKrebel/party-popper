@@ -7,7 +7,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.partypopper.app.database.model.Event;
-import com.partypopper.app.database.model.Organizer;
 
 import java.util.Date;
 import java.util.HashMap;

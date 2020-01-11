@@ -31,13 +31,11 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.partypopper.app.R;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 public abstract class BaseActivity extends AppCompatActivity {
 

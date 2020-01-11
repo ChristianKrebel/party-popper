@@ -21,7 +21,7 @@ exports.getNearbyEvents = functions.https.onCall(async (data, context) => {
   const radius = parseInt(data.radius);
   const field = "position";
 
-  const firestoreRef = db.collection("events");
+  const firestoreRef = db.collection("events").where();
   const geoRef = geo.query(firestoreRef);
 
   const query = geoRef.within(center, radius, field);

@@ -113,7 +113,6 @@ public class EventsRepository {
         return eventTask.continueWith(new Continuation<List<Event>, List<Event>>() {
             @Override
             public List<Event> then(@NonNull Task<List<Event>> task) throws Exception {
-                System.out.println(task.getResult());
                 List<Event> events = task.getResult();
                 if(events != null) {
                     for(Event e : events) {

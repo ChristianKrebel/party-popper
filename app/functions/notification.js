@@ -6,30 +6,34 @@ const helper = require("./functions");
 
 exports.onEventCreate = functions.firestore
   .document("events/{eventId}")
-  .onCreate((change, context) => {
+  .onCreate(async (change, context) => {
     const eventId = context.params.eventId;
     const data = change.data();
 
-
     try {
-        const promises = [];
+      console.log(change.data());
+      console.log(change.data().organizer);
 
-        const organizer = await db.collection("organizer").doc(data.organizer).get();
-        const follower = await db.collection("organizer").doc(data.organizer).collection("follower").get();
+      const organizer = await db
+        .collection("organizer")
+        .doc(change.data().organizer)
+        .get();
+      const follower = await db
+        .collection("organizer")
+        .doc(change.data().organizer)
+        .collection("follower")
+        .doc("1")
+        .get();
 
-        console.log("a " + organizer.data());
-        console.log("b " + follower.data());
-        console.log("c " + promises);
-        
+      console.log("a " + organizer.data());
+      console.log("b " + follower.data());
     } catch (err) {
-        console.log(err);
-        throw new functions.https.HttpsError(
-          "internal",
-          "An internal Error occured"
-        );
-      }
-    
-
+      console.log(err);
+      throw new functions.https.HttpsError(
+        "internal",
+        "An internal Error occured"
+      );
+    }
 
     return true;
   });

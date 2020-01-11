@@ -58,6 +58,13 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD9DankaMmQBnMtyUeA83evjw-U5aGCFXs" />
 
+        <service
+            android:name=".service.MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

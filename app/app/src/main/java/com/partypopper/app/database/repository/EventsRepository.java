@@ -1,6 +1,11 @@
 package com.partypopper.app.database.repository;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
@@ -26,6 +31,15 @@ public class EventsRepository {
         this.db = FirebaseFirestore.getInstance();
         this.eventSimpleMapper = new SimpleMapper<>(Event.class);
         this.mFunctions = FirebaseFunctions.getInstance();
+    }
+
+    public Task<Boolean> hasJoined(String eventId) {
+        return db.collection("events").document(eventId).collection("joined").document(FirebaseAuth.getInstance().getUid()).get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
+            @Override
+            public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                return task.getResult() != null;
+            }
+        });
     }
 
     public Task<List<Event>> getEvents(int amount) {
@@ -90,10 +104,27 @@ public class EventsRepository {
         double greaterLat = latitude + (lat * distance);
         double greaterLng = longitude + (lng * distance);
 
-        GeoPoint lesserGeopoint = new GeoPoint(lowerLat, lowerLng);
-        GeoPoint greaterGeoPoint = new GeoPoint(greaterLat, greaterLng);
+        final GeoPoint lesserGeopoint = new GeoPoint(lowerLat, lowerLng);
+        final GeoPoint greaterGeoPoint = new GeoPoint(greaterLat, greaterLng);
 
-        return eventSimpleMapper.mapEntities(db.collection("events").whereGreaterThanOrEqualTo("location", lesserGeopoint).whereLessThanOrEqualTo("location", greaterGeoPoint).limit(amount).get());
+
+
+        Task<List<Event>> eventTask = eventSimpleMapper.mapEntities(db.collection("events").whereGreaterThanOrEqualTo("location", lesserGeopoint).whereLessThanOrEqualTo("location", greaterGeoPoint).limit(amount).get());
+        return eventTask.continueWith(new Continuation<List<Event>, List<Event>>() {
+            @Override
+            public List<Event> then(@NonNull Task<List<Event>> task) throws Exception {
+                System.out.println(task.getResult());
+                List<Event> events = task.getResult();
+                if(events != null) {
+                    for(Event e : events) {
+                        if(lesserGeopoint.compareTo(e.getLocation()) > 0 || e.getLocation().compareTo(greaterGeoPoint) > 0) {
+                            events.remove(e);
+                        }
+                    }
+                }
+                return events;
+            }
+        });
     }
 
     public static EventsRepository getInstance() {

@@ -13,5 +13,6 @@ module.exports = Object.assign(
   require("./organizer"),
   require("./follower"),
   require("./events"),
-  require("./rateOrganizer")
+  require("./rateOrganizer"),
+  require("./notification.js")
 );

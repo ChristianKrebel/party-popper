@@ -5,13 +5,19 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.partypopper.app.database.model.BlockedOrganizer;
+import com.partypopper.app.database.repository.BlockedRepository;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
 import com.partypopper.app.utils.BaseActivity;
+
+import java.util.List;
 
 
 public class SplashActivity extends BaseActivity {

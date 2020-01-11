@@ -65,9 +65,6 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     private Button btnUpload;
     private MapFragment organizerLocationMf;
     private GoogleMap map;
-    private LatLng addressPoint;
-
-    private final FirebaseUser currentUser = mAuth.getCurrentUser();
 
     private String firestoreImagePath;
     private String firestoreImageRefPath;
@@ -144,7 +141,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                 progressDialog.setTitle("Uploading image...");
                 progressDialog.show();
 
-                final StorageReference ref = storageReference.child("events/"+ UUID.randomUUID().toString() + ".jpg");
+                final StorageReference ref = storageReference.child("organizers/"+ UUID.randomUUID().toString() + ".jpg");
                 ref.putFile(filePath)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -157,7 +154,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         String rawFirestoreImagePath = "https://firebasestorage.googleapis.com" + uri.getPath() + "?" + uri.getEncodedQuery();
-                                        firestoreImagePath = rawFirestoreImagePath.replace("events/", "events%2F");
+                                        firestoreImagePath = rawFirestoreImagePath.replace("organizers/", "organizers%2F");
                                         setFirebaseData();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -190,7 +187,7 @@ public class BusinessActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     /**
-     * sets up the needed data for events for the firebase
+     * sets up the needed data for organizers for the firebase
      */
     public void setFirebaseData() {
         String businessWebsite = businessWebsiteWdg.getText().toString();

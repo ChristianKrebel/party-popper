@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,6 +38,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -184,12 +186,14 @@ public class PublishEventActivity extends BaseActivity {
                 String[] startDateArr = eventStartdate.split("/");
                 int startDateDay = Integer.parseInt(startDateArr[0].trim());
                 int startDateMonth = Integer.parseInt(startDateArr[1].trim());
+                startDateMonth--;
                 int startDateYear = Integer.parseInt(startDateArr[2].trim());
                 //showText(startDateDay + " " + startDateMonth + " " + startDateYear);
 
                 String[] endDateArr = eventEnddate.split("/");
                 int endDateDay = Integer.parseInt(endDateArr[0].trim());
                 int endDateMonth = Integer.parseInt(endDateArr[1].trim());
+                endDateMonth--;
                 int endDateYear = Integer.parseInt(endDateArr[2].trim());
 
                 Event event = new Event();
@@ -197,8 +201,14 @@ public class PublishEventActivity extends BaseActivity {
                 event.setEventUrl(eventReflink);
                 event.setOrganizer(currentUser.getUid());
                 event.setGoing(0);
-                event.setStartDate(new Date(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute));
-                event.setEndDate(new Date(endDateYear, endDateMonth, endDateDay, eventEndtimeHour, eventEndtimeMinute));
+                Calendar calStart = Calendar.getInstance();
+                calStart.clear();
+                calStart.set(startDateYear, startDateMonth, startDateDay, eventStarttimeHour, eventStarttimeMinute);
+                Calendar calEnd = Calendar.getInstance();
+                calEnd.clear();
+                calEnd.set(endDateYear, endDateMonth, endDateDay, eventEndtimeHour, eventEndtimeMinute);
+                event.setStartDate(calStart.getTime());
+                event.setEndDate(calEnd.getTime());
                 event.setDescription(eventDescription);
                 event.setLowercaseName(event.getName().toLowerCase());
                 event.setImage(firestoreImagePath);

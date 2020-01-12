@@ -356,6 +356,11 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        
+        if(isOrganizer()) {
+            menu.removeItem(R.id.action_open_business_activity);
+        }
+
         MenuItem searchItem = menu.findItem((R.id.action_search));
         SearchView searchView = (SearchView) searchItem.getActionView();
 

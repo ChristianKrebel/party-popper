@@ -24,7 +24,9 @@
     <string name="separator_point">\u2022</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="block_organizer">Block organizer</string>
+    <string name="blocked_organizer">Blocked organizer</string>
     <string name="attend_to_event">Attend</string>
+    <string name="attending_to_event">Attending</string>
 
     <string name="organizer_tab_text_1">Info</string>
     <string name="organizer_tab_text_2">Current Events</string>
@@ -41,6 +43,7 @@
     <string name="are_attending">are attending</string>
 
     <string name="event_attended">Attending the event</string>
+    <string name="event_left">Not attending the event anymore</string>
 
     <string name="organizer_rated">Updated your rating of the organizer to </string>
     <string name="organizer_blocked">Blocked this organizer</string>

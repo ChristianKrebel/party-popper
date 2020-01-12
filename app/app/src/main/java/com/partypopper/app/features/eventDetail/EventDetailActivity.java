@@ -2,12 +2,9 @@ package com.partypopper.app.features.eventDetail;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -41,10 +38,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.BlockedRepository;
 import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
@@ -55,7 +53,6 @@ import static com.partypopper.app.utils.Constants.*;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -65,8 +62,8 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv,
             organizerWebsiteTv, organizerPhoneTv, organizerAddressTv;
     private ImageView mBannerIv, organizerIv;
-    private boolean isOrganizerInfoExpanded, isOrganizerFavored;
-    private MaterialButton expandBt, favBt, blockOrganizerBt;
+    private boolean isOrganizerInfoExpanded, isOrganizerFavored, isOrganizerBlocked, isAttending;
+    private MaterialButton expandBt, favBt, blockOrganizerBt, attendEventBt;
     private LinearLayout organizerInfoLl;
     private AppBarLayout appBarLayout;
     private SupportMapFragment organizerLocationMf;
@@ -103,7 +100,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
         eventAttending = getIntent().getIntExtra("going", 0);
         mVisitorCountTv = findViewById(R.id.edEventAttendersTv);
-        changeAttendingTextViewUIstate();
 
         mDateTv = findViewById(R.id.edEventDateTv);
         mTimeTv = findViewById(R.id.edEventTimeTv);
@@ -134,7 +130,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.edToolbarLayout);
         appBarLayout = findViewById(R.id.edAppBarLayout);
 
-        final Button attendEventBt = findViewById(R.id.edAttendEventBt);
+        attendEventBt = findViewById(R.id.edAttendEventBt);
         final TextView organizerLinkTv = findViewById(R.id.coOrganizerLinkTv);
         final TextView organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
         final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
@@ -219,7 +215,8 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         // get and set organizer data
         showData(organizerId, this);
         onResumeSetOrganizerFavoredState();
-        onResumeSetAttendingNumber();
+        onResumeSetAttendingState();
+        onResumeSetBlockedOrganizerState();
     }
 
     private void setColorsFromImage(final CollapsingToolbarLayout collapsingToolbarLayout, final Button attendEventBt, final TextView organizerLinkTv, final TextView organizerPhoneTv, final View gradientV) {
@@ -366,11 +363,43 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     public void onAttendEventButtonClick(View view) {
-        EventsRepository eventsRepository = EventsRepository.getInstance();
-        eventsRepository.joinEvent(eventId);
-        showText(getString(R.string.event_attended));
-        eventAttending++;
-        changeAttendingTextViewUIstate();
+        final EventsRepository eventsRepository = EventsRepository.getInstance();
+        eventsRepository.hasJoined(eventId).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if (task.isSuccessful()) {
+                    isAttending = task.getResult();
+                    Log.d("Attend", "ATTENDING????????????????????" + isAttending);
+                    if (isAttending) {
+                        eventsRepository.leaveEvent(eventId).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<HttpsCallableResult> task) {
+                                if (task.isSuccessful()) {
+                                    showText(getString(R.string.event_left));
+                                    eventAttending--;
+                                    isAttending = !isAttending;
+                                    changeAttendingUIstate(isAttending);
+                                    Log.d("Attend", "LEFT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                }
+                            }
+                        });
+                    } else {
+                        eventsRepository.joinEvent(eventId).addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<HttpsCallableResult> task) {
+                                if (task.isSuccessful()) {
+                                    showText(getString(R.string.event_attended));
+                                    eventAttending++;
+                                    isAttending = !isAttending;
+                                    changeAttendingUIstate(isAttending);
+                                    Log.d("Attend", "JOINED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     public void onOrganizerClick(View view) {
@@ -424,17 +453,36 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         });
     }
 
-    private void changeAttendingTextViewUIstate() {
+    private void changeAttendingUIstate(boolean isAttending) {
         mVisitorCountTv.setText(eventAttending + " " + getString(R.string.are_attending));
+        if (isAttending) {
+            attendEventBt.setText(getString(R.string.attending_to_event));
+            Log.d("Attend", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SET TEXT ATTENDING");
+        } else {
+            attendEventBt.setText(getString(R.string.attend_to_event));
+            Log.d("Attend", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SET TEXT ATTEND");
+        }
     }
 
-    private void onResumeSetAttendingNumber() {
-        EventsRepository.getInstance().getEventByEventId(eventId).addOnCompleteListener(new OnCompleteListener<Event>() {
+    private void onResumeSetAttendingState() {
+        final EventsRepository eventsRepository = EventsRepository.getInstance();
+        eventsRepository.getEventByEventId(eventId).addOnCompleteListener(new OnCompleteListener<Event>() {
             @Override
             public void onComplete(@NonNull Task<Event> task) {
                 if (task.isSuccessful()) {
                     eventAttending = task.getResult().getGoing();
-                    changeAttendingTextViewUIstate();
+
+                    // is attending?
+                    eventsRepository.hasJoined(eventId).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Boolean> task) {
+                            if (task.isSuccessful()) {
+                                isAttending = task.getResult();
+                                Log.d("Attend", "ATTENDING????????????????????" + isAttending);
+                                changeAttendingUIstate(isAttending);
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -445,6 +493,18 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
         TextView textView = (TextView) view;
         copyTextToClipboard("Address", textView.getText(), view.getContext());
+    }
+
+    public void onResumeSetBlockedOrganizerState() {
+        final BlockedRepository blockedRepository = BlockedRepository.getInstance();
+        blockedRepository.hasBlocked(organizerId).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if (task.isSuccessful()) {
+                    Log.d("BLOCKED", "Organizer is blocked: " + task.getResult() + "!!!!!!!!!!!!!!!");
+                }
+            }
+        });
     }
 
     public void onBlockOrganizerButtonClick(View view) {

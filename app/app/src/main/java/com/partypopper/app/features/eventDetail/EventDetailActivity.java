@@ -3,6 +3,7 @@ package com.partypopper.app.features.eventDetail;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -130,87 +131,52 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
 
         mBannerIv = findViewById(R.id.edBannerIv);
 
-        if (getIntent().hasExtra("image")) {
-            byte[] bytes = getIntent().getByteArrayExtra("image");
-            mBannerIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-        }
-
-        mDescriptionTv = findViewById(R.id.edEventDescriptionTv);
-        mDescriptionTv.setText(getIntent().getStringExtra("description"));
-
-
-
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.edToolbarLayout);
         appBarLayout = findViewById(R.id.edAppBarLayout);
 
-        // Set start height of image
-        appBarLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                int heightPx = mBannerIv.getHeight();
-                int widthPx = mBannerIv.getWidth();
-                float ratio = widthPx / heightPx;
-                // only collapse if image has bigger height than width
-                if (ratio < 1.0f) {
-                    setAppBarOffset(heightPx / 2, appBarLayout);
-                }
-            }
-        });
-
-        // Set the title to only be visible when the tool bar is collapsed
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle(mTitleTv.getText());
-                    isShow = true;
-                } else if(isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
-                    isShow = false;
-                }
-            }
-        });
-
-
-
-        // Set the color of the tool bar and button to one of the image
         final Button attendEventBt = findViewById(R.id.edAttendEventBt);
         final TextView organizerLinkTv = findViewById(R.id.coOrganizerLinkTv);
         final TextView organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
         final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
         final MaterialButton blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
         final View gradientV = findViewById(R.id.edGradientV);
-        Drawable mBannerDrawable = mBannerIv.getDrawable();
-        if (getIntent().hasExtra("image")) {
-            Bitmap mBannerBm = ((BitmapDrawable) mBannerDrawable).getBitmap();
-            Palette.from(mBannerBm).generate(new Palette.PaletteAsyncListener() {
-                @Override
-                public void onGenerated(Palette palette) {
-                    int imageColor = palette.getMutedColor(R.attr.colorPrimary);
 
-                    collapsingToolbarLayout.setContentScrimColor(imageColor);
-                    attendEventBt.getBackground().setColorFilter(imageColor, PorterDuff.Mode.SRC);
-                    organizerLinkTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
-                    organizerPhoneTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
+        EventsRepository eventsRepository = EventsRepository.getInstance();
+        eventsRepository.getEventByEventId(eventId).addOnCompleteListener(new OnCompleteListener<Event>() {
+            @Override
+            public void onComplete(@NonNull Task<Event> task) {
+                if (task.isSuccessful()) {
+                    Event event = task.getResult();
+                    Picasso.get()
+                        .load(event.getImage())
+                        .into(mBannerIv, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
 
-                    // Set status bar color
-                    getWindow().setStatusBarColor(changeValueOfColor(imageColor, 0.8f));
+                                // Set start height of image
+                                setStartAppBarOffset();
 
-                    // Set scrim color
-                    Drawable unwrappedDrawable = gradientV.getBackground();
-                    final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
-                    DrawableCompat.setTint(wrappedDrawable, changeValueOfColor(imageColor, 0.6f));
+                                // Set the color of the tool bar and button to one of the image
+                                setColorsFromImage(collapsingToolbarLayout, attendEventBt, organizerLinkTv, organizerPhoneTv, gradientV);
 
 
+                                // Set the title to only be visible when the tool bar is collapsed
+                                setTitleVisibilityListener(collapsingToolbarLayout);
+                            }
+
+                            @Override
+                            public void onError(Exception ex) {
+                                Log.e(ex.toString(), ex.getLocalizedMessage());
+                            }
+                        });
                 }
-            });
-        }
+            }
+        });
+
+        mDescriptionTv = findViewById(R.id.edEventDescriptionTv);
+        mDescriptionTv.setText(getIntent().getStringExtra("description"));
+
+
 
         // Organizer info is not expanded by default
         isOrganizerInfoExpanded = false;
@@ -254,6 +220,66 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         showData(organizerId, this);
         onResumeSetOrganizerFavoredState();
         onResumeSetAttendingNumber();
+    }
+
+    private void setColorsFromImage(final CollapsingToolbarLayout collapsingToolbarLayout, final Button attendEventBt, final TextView organizerLinkTv, final TextView organizerPhoneTv, final View gradientV) {
+        Drawable mBannerDrawable = mBannerIv.getDrawable();
+        Bitmap mBannerBm = ((BitmapDrawable) mBannerDrawable).getBitmap();
+        Palette.from(mBannerBm).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                int imageColor = palette.getMutedColor(R.attr.colorPrimary);
+
+                collapsingToolbarLayout.setContentScrimColor(imageColor);
+                attendEventBt.getBackground().setColorFilter(imageColor, PorterDuff.Mode.SRC);
+                organizerLinkTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
+                organizerPhoneTv.setLinkTextColor(changeValueOfColor(imageColor, 1.4f));
+
+                // Set status bar color
+                getWindow().setStatusBarColor(changeValueOfColor(imageColor, 0.8f));
+
+                // Set scrim color
+                Drawable unwrappedDrawable = gradientV.getBackground();
+                final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                DrawableCompat.setTint(wrappedDrawable, changeValueOfColor(imageColor, 0.6f));
+            }
+        });
+    }
+
+    private void setStartAppBarOffset() {
+        appBarLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                int heightPx = mBannerIv.getHeight();
+                int widthPx = mBannerIv.getWidth();
+                float ratio = widthPx / heightPx;
+                // only collapse if image has bigger height than width
+                if (ratio < 1.0f) {
+                    setAppBarOffset(heightPx / 2, appBarLayout);
+                }
+            }
+        });
+    }
+
+    private void setTitleVisibilityListener(final CollapsingToolbarLayout collapsingToolbarLayout) {
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = true;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle(mTitleTv.getText());
+                    isShow = true;
+                } else if(isShow) {
+                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
+                    isShow = false;
+                }
+            }
+        });
     }
 
     private void showData(final String organizerId, final OnMapReadyCallback onMapReadyCallback) {

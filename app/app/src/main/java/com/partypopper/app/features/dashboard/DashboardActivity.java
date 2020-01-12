@@ -59,7 +59,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     private HorizontalScrollView mSearchHsv;
     private ChipGroup mSearchCg;
 
-
+    private LocationService locationService;
     private LatLng currentLocation;
 
 
@@ -113,17 +113,21 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                 return;
             } else {    // Permission already granted
                 setCurrentLocation();
-                initRecyclerView();
             }
         } else {    // if not flexible permissions, all needed permissions are granted
             setCurrentLocation();
-            initRecyclerView();
         }
     }
 
     private void setCurrentLocation() {
-        LocationService locationService = LocationService.getLocationManager(this);
-        currentLocation = new LatLng(locationService.latitude, locationService.longitude);
+        // Use callback to initialize the recyclerView AFTER receiving the current location
+        LocationService.getLocationManager(this,
+                new LocationService.LocationCallback() {
+                    @Override public void onNewLocationAvailable(LocationService.GPSCoordinates location) {
+                        currentLocation = new LatLng(location.latitude, location.longitude);
+                        initRecyclerView();
+                    }
+                });
     }
 
     private void initRecyclerView() {
@@ -356,7 +360,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        
+
         if(isOrganizer()) {
             menu.removeItem(R.id.action_open_business_activity);
         }
@@ -450,7 +454,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                     // permission was granted, yay!
 
                     setCurrentLocation();
-                    initRecyclerView();
 
                 } else {
                     // permission denied, boo!

@@ -385,15 +385,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         intent.putExtra("organizerCoordsLat", coords.latitude);
         intent.putExtra("organizerCoordsLng", coords.longitude);
 
-        Drawable organizerIvDrawable = organizerIv.getDrawable();
-        if (organizerIvDrawable != null) {
-            Bitmap mBanner = ((BitmapDrawable) organizerIvDrawable).getBitmap();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
-            byte[] bytes = stream.toByteArray();
-            intent.putExtra("organizerImage", bytes);
-        }
-
         startActivity(intent);
     }
 

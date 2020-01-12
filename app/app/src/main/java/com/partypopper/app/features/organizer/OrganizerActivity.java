@@ -4,10 +4,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -16,16 +19,22 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.partypopper.app.database.model.Event;
+import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.FollowRepository;
+import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.organizer.ui.main.OrganizerInfoFragment;
 import com.partypopper.app.features.organizer.ui.dialog.OrganizerRateDialog;
 import com.partypopper.app.features.organizer.ui.main.OrganizerSectionsPagerAdapter;
 
 import com.partypopper.app.R;
 import com.partypopper.app.utils.BaseActivity;
+import com.squareup.picasso.Picasso;
 
 import static com.partypopper.app.utils.Constants.HANDLER_DELAY;
 
@@ -44,16 +53,47 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
 
+        // Action bar
+        Toolbar toolbar = findViewById(R.id.oToolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);  // set back button
+        actionBar.setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setElevation(0);
+
+        final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.oToolbarLayout);
+        appBarLayout = findViewById(R.id.oAppBarLayout);
+
         // get data from intent and set them to the views
         name = getIntent().getStringExtra("organizerName");
         organizerId = getIntent().getStringExtra("organizerId");
 
-
         logoIv = findViewById(R.id.oBannerIv);
-        if (getIntent().hasExtra("organizerImage")) {
-            byte[] bytes = getIntent().getByteArrayExtra("organizerImage");
-            logoIv.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-        }
+
+        OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
+        organizerRepository.getOrganizerById(organizerId).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+            @Override
+            public void onComplete(@NonNull Task<Organizer> task) {
+                if (task.isSuccessful()) {
+                    Organizer organizer = task.getResult();
+                    Picasso.get()
+                            .load(organizer.getImage())
+                            .into(logoIv, new com.squareup.picasso.Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    // Set the title to only be visible when the tool bar is collapsed
+                                    setTitleVisibilityListener(collapsingToolbarLayout);
+                                }
+
+                                @Override
+                                public void onError(Exception ex) {
+                                    Log.e(ex.toString(), ex.getLocalizedMessage());
+                                }
+                            });
+                }
+            }
+        });
 
 
         // Tabs and more
@@ -85,20 +125,15 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
             }
         });
 
-        // Action bar
-        Toolbar toolbar = findViewById(R.id.oToolbar);
-        setSupportActionBar(toolbar);
+        // Reset scrim's color
+        final View gradientV = findViewById(R.id.oGradientV);
+        Drawable unwrappedDrawable = gradientV.getBackground();
+        final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(getBaseContext(), R.color.scrim_topdown_reset));
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);  // set back button
-        actionBar.setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setElevation(0);
+    }
 
-        final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.oToolbarLayout);
-        appBarLayout = findViewById(R.id.oAppBarLayout);
-
-
-        // Set the title to only be visible when the tool bar is collapsed
+    private void setTitleVisibilityListener(final CollapsingToolbarLayout collapsingToolbarLayout) {
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = true;
             int scrollRange = -1;
@@ -117,13 +152,6 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
                 }
             }
         });
-
-        // Reset scrim's color
-        final View gradientV = findViewById(R.id.oGradientV);
-        Drawable unwrappedDrawable = gradientV.getBackground();
-        final Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
-        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(getBaseContext(), R.color.scrim_topdown_reset));
-
     }
 
     @Override

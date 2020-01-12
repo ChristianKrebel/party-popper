@@ -10,11 +10,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import androidx.core.content.ContextCompat;
+import lombok.Getter;
 
 /**
  * LocationService to easily handle the user's location.
  * Given by evandrix (https://stackoverflow.com/users/177728/evandrix)
+ * and Ashton Engberg, sroes
+ * https://stackoverflow.com/questions/29657948/get-the-current-location-fast-and-once-in-android)
  * and edited by the Party Popper team.
  */
 
@@ -35,19 +40,25 @@ public class LocationService implements LocationListener {
 
     private LocationManager locationManager;
     public Location location;
-    public double longitude;
-    public double latitude;
+    @Getter
+    private double latitude, longitude;
     private boolean isGPSEnabled, locationServiceAvailable;
     private boolean isNetworkEnabled;
+
+    private LocationCallback callback;
+
+    public static interface LocationCallback {
+        public void onNewLocationAvailable(GPSCoordinates location);
+    }
 
 
     /**
      * Singleton implementation
      * @return
      */
-    public static LocationService getLocationManager(Context context)     {
+    public static LocationService getLocationManager(Context context, LocationCallback callback)     {
         if (instance == null) {
-            instance = new LocationService(context);
+            instance = new LocationService(context, callback);
         }
         return instance;
     }
@@ -55,8 +66,8 @@ public class LocationService implements LocationListener {
     /**
      * Local constructor
      */
-    private LocationService( Context context )     {
-
+    private LocationService( Context context, LocationCallback callback )     {
+        this.callback = callback;
         initLocationService(context);
     }
 
@@ -121,15 +132,13 @@ public class LocationService implements LocationListener {
     }
 
     private void updateCoordinates() {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        callback.onNewLocationAvailable(new GPSCoordinates(location.getLatitude(), location.getLongitude()));
     }
 
 
     @Override
     public void onLocationChanged(Location location)     {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        updateCoordinates();
     }
 
     @Override
@@ -148,4 +157,21 @@ public class LocationService implements LocationListener {
     }
 
 
+    /**
+     * Class to replace Location class for easier initialization
+     */
+    public static class GPSCoordinates {
+        public float longitude = -1;
+        public float latitude = -1;
+
+        public GPSCoordinates(float theLatitude, float theLongitude) {
+            longitude = theLongitude;
+            latitude = theLatitude;
+        }
+
+        public GPSCoordinates(double theLatitude, double theLongitude) {
+            longitude = (float) theLongitude;
+            latitude = (float) theLatitude;
+        }
+    }
 }

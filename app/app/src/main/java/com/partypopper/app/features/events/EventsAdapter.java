@@ -80,7 +80,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
                 intent.putExtra("eventId", event.getEntityKey());
                 intent.putExtra("location", new LatLng(event.getLocation().getLatitude(), event.getLocation().getLongitude()));
 
-                ImageView mBannerIv = viewHolder.getMBannerIv();
+                /*ImageView mBannerIv = viewHolder.getMBannerIv();
                 Drawable mBannerDrawable = mBannerIv.getDrawable();
                 if (mBannerDrawable != null) {
                     Bitmap mBanner = ((BitmapDrawable) mBannerDrawable).getBitmap();
@@ -88,7 +88,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
                     mBanner.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, stream);
                     byte[] bytes = stream.toByteArray();
                     intent.putExtra("image", bytes);
-                }
+                }*/
 
                 view.getContext().startActivity(intent);
             }

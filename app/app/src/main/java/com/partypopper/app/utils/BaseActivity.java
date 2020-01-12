@@ -37,6 +37,8 @@ import com.partypopper.app.R;
 import java.io.IOException;
 import java.util.List;
 
+import static com.partypopper.app.utils.Constants.STANDARD_ANIMATION_DURATION;
+
 public abstract class BaseActivity extends AppCompatActivity {
 
     public static final FirebaseFunctions mFunctions;
@@ -162,7 +164,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             });
             valueAnimator.setIntValues(behavior.getTopAndBottomOffset(), -offset);
-            valueAnimator.setDuration(400);
+            valueAnimator.setDuration(STANDARD_ANIMATION_DURATION);
             valueAnimator.start();
         }
     }

@@ -24,6 +24,10 @@ public final class Constants {
     /** Standard map zoom */
     public static final float MAP_ZOOM = 15.0f;
 
+    /** Standard duration for an animation */
+    public static final int STANDARD_ANIMATION_DURATION = 400;
+
+
     private Constants(){
         //this prevents even the native class from
         //calling this ctor as well :

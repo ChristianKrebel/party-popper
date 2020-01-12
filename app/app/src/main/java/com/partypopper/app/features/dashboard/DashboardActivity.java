@@ -97,6 +97,12 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         initWithPermission();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initWithPermission();
+    }
+
     protected void initWithPermission() {
 
         // If Version with flexible permissions ask for them
@@ -121,7 +127,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
     private void setCurrentLocation() {
         // Use callback to initialize the recyclerView AFTER receiving the current location
-        LocationService.getLocationManager(this,
+        LocationService.requestSingleUpdate(this,
                 new LocationService.LocationCallback() {
                     @Override public void onNewLocationAvailable(LocationService.GPSCoordinates location) {
                         currentLocation = new LatLng(location.latitude, location.longitude);

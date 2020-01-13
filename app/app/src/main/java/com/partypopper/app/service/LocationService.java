@@ -60,6 +60,8 @@ public class LocationService {
                 public void onProviderDisabled(String provider) {
                 }
             }, null);
+            Location loc = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+            callback.onNewLocationAvailable(new GPSCoordinates(loc.getLatitude(), loc.getLongitude()));
         } else {
             boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (isGPSEnabled) {
@@ -68,6 +70,7 @@ public class LocationService {
                 locationManager.requestSingleUpdate(criteria, new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
+
                         callback.onNewLocationAvailable(new GPSCoordinates(location.getLatitude(), location.getLongitude()));
                     }
 
@@ -75,6 +78,8 @@ public class LocationService {
                     @Override public void onProviderEnabled(String provider) { }
                     @Override public void onProviderDisabled(String provider) { }
                 }, null);
+                Location loc = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+                callback.onNewLocationAvailable(new GPSCoordinates(loc.getLatitude(), loc.getLongitude()));
             }
         }
     }

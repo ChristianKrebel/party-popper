@@ -1,11 +1,15 @@
 package com.partypopper.app.utils;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.partypopper.app.database.model.BlockedOrganizer;
 import com.partypopper.app.database.model.Event;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class EventHelper {
@@ -56,6 +60,48 @@ public class EventHelper {
             }
         });
         return events;
+    }
+
+    /**
+     * Checks the current date and returns a NEW list with all events which
+     * end today or later
+     *
+     * @param events
+     * @return NEW list with events
+     */
+    public static List<Event> getEventsWithoutPassedOnes(List<Event> events) {
+        Date today = Calendar.getInstance().getTime();
+        List<Event> newEvents = new ArrayList<>();
+        for (Event e: events) {
+            if (!e.getEndDate().before(today)) {
+                newEvents.add(e);
+            }
+        }
+        return newEvents;
+    }
+
+    /**
+     * Returns a NEW list of Events from organizers that are not blocked
+     *
+     * @param events
+     * @param blockedOrganizers
+     * @return NEW list with events
+     */
+    public static List<Event> getEventsWithoutBlockedOnes(List<Event> events, List<BlockedOrganizer> blockedOrganizers) {
+        List<Event> newEvents = new ArrayList<>();
+        List<String> blockedOrganizerKeys = new ArrayList<>();
+
+        for (BlockedOrganizer b: blockedOrganizers) {
+            blockedOrganizerKeys.add(b.getEntityKey());
+        }
+
+        for (int a = 0; a < events.size(); a++) {
+            Event ev = events.get(a);
+            if (!blockedOrganizerKeys.contains(ev.getOrganizer())) {
+                newEvents.add(ev);
+            }
+        }
+        return newEvents;
     }
 
 

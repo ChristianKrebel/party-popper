@@ -3,21 +3,14 @@
 package com.partypopper.app.service;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import androidx.core.content.ContextCompat;
-import lombok.Getter;
 
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 

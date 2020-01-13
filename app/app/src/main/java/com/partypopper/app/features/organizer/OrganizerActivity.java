@@ -1,6 +1,5 @@
 package com.partypopper.app.features.organizer;
 
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -23,9 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
-import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.organizer.ui.main.OrganizerInfoFragment;
@@ -38,6 +35,12 @@ import com.squareup.picasso.Picasso;
 
 import static com.partypopper.app.utils.Constants.HANDLER_DELAY;
 
+/**
+ * The Activity for the profile and overview of an organizer.
+ * It is tabbed and has Fragments.
+ * Tab 1: Info
+ * Tab 2: Events of organizer
+ */
 public class OrganizerActivity extends BaseActivity implements OrganizerRateDialog.OrganizerRateDialogListener {
 
     private ImageView logoIv;
@@ -154,12 +157,23 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         });
     }
 
+    /**
+     * Adds the back button.
+     *
+     * @return
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
+    /**
+     * Rates an organizer and then tries to update the view.
+     * This method is called when a RateDialog got input.
+     *
+     * @param rating
+     */
     @Override
     public void applyRating(float rating) {
         FollowRepository followRepository = FollowRepository.getInstance();
@@ -188,6 +202,11 @@ public class OrganizerActivity extends BaseActivity implements OrganizerRateDial
         }
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onBannerImageViewClick(View view) {
         setAppBarOffset(0, appBarLayout);
     }

@@ -15,12 +15,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.appcompat.app.AlertDialog;
 
+/**
+ * Class of a Dialog with a RatingBar to give a rating.
+ */
 public class OrganizerRateDialog extends AppCompatDialogFragment {
 
     private RatingBar ratingBar;
     private float ratingValue;
     private OrganizerRateDialogListener listener;
 
+    /**
+     * Builds and returns the dialog.
+     *
+     * @param savedInstanceState
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -52,10 +61,14 @@ public class OrganizerRateDialog extends AppCompatDialogFragment {
         return dialog;
     }
 
+    /**
+     * Attaches the dialog.
+     *
+     * @param context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
 
         try {
             listener = (OrganizerRateDialogListener) context;
@@ -66,6 +79,9 @@ public class OrganizerRateDialog extends AppCompatDialogFragment {
 
     }
 
+    /**
+     * Listener-interface for what to do when rated.
+     */
     public interface OrganizerRateDialogListener {
         void applyRating(float rating);
     }

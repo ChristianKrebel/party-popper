@@ -2,7 +2,6 @@ package com.partypopper.app.features.dashboard;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -40,7 +39,6 @@ import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.features.events.eventsAndOrganizerNamesCallback;
 import com.partypopper.app.features.splash.SplashActivity;
 import com.partypopper.app.service.LocationService;
-import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.events.EventsAdapter;
 import com.partypopper.app.features.business.BusinessActivity;
 import com.partypopper.app.features.publishEvent.PublishEventActivity;
@@ -51,7 +49,6 @@ import com.partypopper.app.utils.EventHelper;
 import static com.partypopper.app.utils.Constants.*;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +56,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The Main Activity (SplashActivity will lead you here).
+ * It is a dashboard of nearby events and has functions like
+ * search, add event, become organizer etc.
+ */
 public class DashboardActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private RecyclerView mRecyclerView;
@@ -78,7 +80,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         distance
     }
 
-    Sort sortMethod = Sort.startdate;
+    private Sort sortMethod = Sort.startdate;
 
 
     @Override
@@ -143,12 +145,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         initWithPermission();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    protected void initWithPermission() {
+    private void initWithPermission() {
 
         // If Version with flexible permissions ask for them
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -460,8 +457,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                                     }
                                 });
                             }
-
-
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -632,6 +627,13 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         }
     }
 
+    /**
+     * Checks if a permission is granted and acts for both situations.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {

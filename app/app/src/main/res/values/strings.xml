@@ -62,6 +62,9 @@
 
     <string name="error_location_permission_needed">The application needs the location permission to work!</string>
 
+    <string name="app_bar_create_event">Create event</string>
+    <string name="app_bar_become_organizer">Become organizer</string>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -193,6 +196,6 @@
     <string name="enddate_publish">End date</string>
     <string name="endtime_publish">End Time</string>
     <string name="description_publish">Description</string>
-    <string name="description_hint_publish">Type in your description here</string>
+    <string name="description_hint_publish">Description</string>
     <string name="publish_event_button_publish">Publish event</string>
 </resources>

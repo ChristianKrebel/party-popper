@@ -11,19 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Event;
 
-import static com.partypopper.app.utils.Constants.*;
 
 import com.partypopper.app.features.eventDetail.EventDetailActivity;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,14 +31,26 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * The adapter to control events for a RecyclerView
+ */
 public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
 
-    Activity activity;
-    List<Event> modelList;
-    Map<Event, String> eventsAndOrganizerNames;
-    Context context;
-    int rowLayout;
+    private Activity activity;
+    private List<Event> modelList;
+    private Map<Event, String> eventsAndOrganizerNames;
+    private Context context;
+    private int rowLayout;
 
+    /**
+     * Constructor.
+     *
+     * @param activity
+     * @param modelList events list
+     * @param eventsAndOrganizerNames map with events and its organizer's names
+     * @param context
+     * @param rowLayout
+     */
     public EventsAdapter(Activity activity,
                          List<Event> modelList,
                          Map<Event, String> eventsAndOrganizerNames,
@@ -54,6 +63,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
         this.rowLayout = rowLayout;
     }
 
+    /**
+     * Creates a ViewHolder, inflates the row layout and implements
+     * how clicks are being handled.
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public EventsViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
@@ -94,6 +111,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
         return viewHolder;
     }
 
+    /**
+     * Binds a ViewHolder. The data for its views are being retrieved
+     * from the model and then set.
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull final EventsViewHolder holder, int position) {
         // Bind views / set data
@@ -138,6 +162,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsViewHolder> {
                 + " - " + eventsAndOrganizerNames.get(model));
     }
 
+    /**
+     * Returns the amount of items in the model list.
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return modelList.size();

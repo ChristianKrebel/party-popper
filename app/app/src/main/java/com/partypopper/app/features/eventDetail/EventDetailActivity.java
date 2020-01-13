@@ -57,6 +57,12 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The Activity for a specific event.
+ * It has information about the event and also some about
+ * its organizer.
+ * A user can attend the event.
+ */
 public class EventDetailActivity extends BaseActivity implements OnMapReadyCallback {
 
     private TextView mTitleTv, mDateTv, mTimeTv, mOrganizerTv, mVisitorCountTv, mDescriptionTv,
@@ -209,6 +215,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.coOrganizerLocationMf);
     }
 
+    /**
+     * When this Activity gets resumed (in the view) update some Views.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -323,7 +332,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     /**
-     * Handle item selection of the menu
+     * Handle item selection of the menu.
      * @param item
      * @return if succeeded or with item on default
      */
@@ -341,12 +350,22 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Adds the back button.
+     *
+     * @return
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onExpandButtonClick(View view) {
         if (isOrganizerInfoExpanded) {
             organizerInfoLl.setVisibility(View.GONE);
@@ -358,10 +377,20 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         isOrganizerInfoExpanded = !isOrganizerInfoExpanded;
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onBannerImageViewClick(View view) {
         setAppBarOffset(0, appBarLayout);
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onAttendEventButtonClick(View view) {
         final EventsRepository eventsRepository = EventsRepository.getInstance();
         eventsRepository.hasJoined(eventId).addOnCompleteListener(new OnCompleteListener<Boolean>() {
@@ -402,6 +431,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onOrganizerClick(View view) {
         Intent intent = new Intent(view.getContext(), OrganizerActivity.class);
         intent.putExtra("organizerId", organizerId);
@@ -417,6 +451,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         startActivity(intent);
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onOrganizerFavButtonClick(View view) {
         FollowRepository followRepository = FollowRepository.getInstance();
         if (isOrganizerFavored) {
@@ -428,6 +467,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         changeOrganizerFavButtonUIstate(isOrganizerFavored);
     }
 
+    /**
+     * Changes the UI of the Favorate-Button (Follow-Button).
+     *
+     * @param favor
+     */
     private void changeOrganizerFavButtonUIstate(boolean favor) {
         if(favor) {
             favBt.setIconResource(R.drawable.ic_favorite_white_trans30_24dp);
@@ -436,6 +480,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Checks if user is following and updates the View.
+     */
     private void onResumeSetOrganizerFavoredState() {
         // Follows organizer?
         isOrganizerFavored = false;
@@ -453,6 +500,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * Changes the UI of the Attend-Button.
+     *
+     * @param isAttending
+     */
     private void changeAttendingUIstate(boolean isAttending) {
         mVisitorCountTv.setText(eventAttending + " " + getString(R.string.are_attending));
         if (isAttending) {
@@ -464,6 +516,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Checks if user is attending and updates the View.
+     */
     private void onResumeSetAttendingState() {
         final EventsRepository eventsRepository = EventsRepository.getInstance();
         eventsRepository.getEventByEventId(eventId).addOnCompleteListener(new OnCompleteListener<Event>() {
@@ -488,6 +543,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onOrganizerAddressTextViewClick(View view) {
         showText(getString(R.string.copied_address));
 
@@ -495,6 +555,9 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         copyTextToClipboard("Address", textView.getText(), view.getContext());
     }
 
+    /**
+     * Checks if user has blocked the organizer and updates the View.
+     */
     public void onResumeSetBlockedOrganizerState() {
         final BlockedRepository blockedRepository = BlockedRepository.getInstance();
         blockedRepository.hasBlocked(organizerId).addOnCompleteListener(new OnCompleteListener<Boolean>() {
@@ -507,6 +570,11 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     public void onBlockOrganizerButtonClick(View view) {
         showText(getString(R.string.organizer_blocked));
         FollowRepository followRepository = FollowRepository.getInstance();

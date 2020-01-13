@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,8 +66,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     private HorizontalScrollView mSearchHsv;
     private ChipGroup mSearchCg;
 
-    private LocationService locationService;
     private LatLng currentLocation;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private enum Sort {
         startdate,
@@ -117,6 +119,16 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                         mRecyclerView.setAdapter(adapter);
                     }
                 });
+            }
+        });
+
+
+        // Pull down to refresh
+        swipeRefreshLayout = findViewById(R.id.edSwipeRefreshL);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initWithPermission();
             }
         });
 
@@ -190,6 +202,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                         getApplicationContext(),
                         R.layout.row_events_dashboard);
                 mRecyclerView.setAdapter(adapter);
+
+                // Stop showing if it is refreshing
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -536,8 +551,10 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         searchView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
+                // Show Chips
                 mSearchHsv.setVisibility(View.VISIBLE);
 
+                // Instantly search
                 searchData(mSearchCg.getCheckedChipId(), "", new eventsAndOrganizerNamesCallback() {
                     @Override
                     public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames, List<BlockedOrganizer> blockedOrganizers) {
@@ -552,10 +569,14 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
                 // Hide sort options
                 menu.setGroupVisible(R.id.sortMethodGroup, false);
+
+                // Deactivate pull down to refresh
+                swipeRefreshLayout.setEnabled(false);
             }
 
             @Override
             public void onViewDetachedFromWindow(View v) {
+                //Hide chips
                 mSearchHsv.setVisibility(View.GONE);
 
                 // Also reset recyclerview
@@ -564,6 +585,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
                 // Show sort options
                 menu.setGroupVisible(R.id.sortMethodGroup, true);
+
+                // Activate pull down to refresh
+                swipeRefreshLayout.setEnabled(true);
             }
         });
 

@@ -25,28 +25,20 @@ exports.onEventCreate = functions.firestore
         .doc("1")
         .get();
 
-      console.log("a " + organizerDoc.data().name);
-      console.log("b " + followerDoc.data().follower);
-
       var follower = followerDoc.data().follower;
       if (followerDoc.exists && follower !== null) {
         var promises = [];
-        console.log("size " + follower);
+        var organizerName = organizerDoc.data().name;
+        var organizerImage = organizerDoc.data().image;
+        var eventName = change.data().name;
         for (x of follower) {
           promises.push(
-            db
-              .collection("users")
-              .doc(x)
-              .get()
+            sendNotification(x, organizerName, organizerImage, eventName)
           );
         }
 
-        const a = await Promise.all(promises);
-        console.log(a);
-        console.log("c " + promises[0]);
-        console.log("x " + typeof promises[0]);
-        console.log("c " + (await promises[0]).data().createdAt);
-        console.log("c " + promises[0].data().createdAt);
+        await Promise.all(promises);
+        return true;
       }
     } catch (err) {
       console.log(err);
@@ -56,5 +48,47 @@ exports.onEventCreate = functions.firestore
       );
     }
 
-    return true;
+    return false;
   });
+
+async function sendNotification(uid, organizerName, organizerImage, eventName) {
+  try {
+    const userRef = await db
+      .collection("users")
+      .doc(uid)
+      .get();
+    if (userRef !== null && userRef.exists) {
+      const fcmToken = userRef.data().fcmToken;
+      if (fcmToken !== null) {
+        var message = {
+          notification: {
+            title: organizerName,
+            body: "hat ein neues Event erstellt: \n" + eventName,
+            image: organizerImage
+          },
+          token: fcmToken
+        };
+
+        return admin
+          .messaging()
+          .send(message)
+          .then(response => {
+            // Response is a message ID string.
+            console.log("Successfully sent message:", response);
+            return response;
+          })
+          .catch(error => {
+            console.log("Error sending message:", error);
+            return error;
+          });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    throw new functions.https.HttpsError(
+      "internal",
+      "An internal Error occured"
+    );
+  }
+  return true;
+}

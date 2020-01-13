@@ -17,6 +17,7 @@ import com.partypopper.app.database.repository.BlockedRepository;
 import com.partypopper.app.database.repository.EventsRepository;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.dashboard.DashboardActivity;
+import com.partypopper.app.service.MessagingService;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.utils.EventHelper;
 

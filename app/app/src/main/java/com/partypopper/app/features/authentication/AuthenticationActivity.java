@@ -20,6 +20,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.partypopper.app.R;
 import com.partypopper.app.features.splash.SplashActivity;
 import com.partypopper.app.utils.BaseActivity;
@@ -128,7 +130,16 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                             hideProgressDialog();
                         }
                     }
-                });
+                }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                String fcmToken = FirebaseInstanceId.getInstance().getToken();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                if(mAuth.getUid() != null) {
+                    db.collection("users").document(mAuth.getUid()).update("fcmToken", fcmToken);
+                }
+            }
+        });
     }
 
     private void resetPassword() {
@@ -212,6 +223,12 @@ public class AuthenticationActivity extends BaseActivity implements View.OnClick
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            String fcmToken = FirebaseInstanceId.getInstance().getToken();
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            if(mAuth.getUid() != null) {
+                                db.collection("users").document(mAuth.getUid()).update("fcmToken", fcmToken);
+                            }
 
                             Intent intent = new Intent(AuthenticationActivity.this, SplashActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

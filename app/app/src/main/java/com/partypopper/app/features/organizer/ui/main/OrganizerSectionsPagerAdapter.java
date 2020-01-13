@@ -8,8 +8,6 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
-import lombok.Getter;
 
 import com.partypopper.app.R;
 
@@ -25,12 +23,26 @@ public class OrganizerSectionsPagerAdapter extends FragmentPagerAdapter {
     private final Bundle organizerBundle;
     private Fragment one, two;
 
+    /**
+     * Constructor.
+     * The Bundle is used for arguments.
+     *
+     * @param context
+     * @param fm
+     * @param organizerBundle used for arguments
+     */
     public OrganizerSectionsPagerAdapter(Context context, FragmentManager fm, Bundle organizerBundle) {
         super(fm);
         mContext = context;
         this.organizerBundle = organizerBundle;
     }
 
+    /**
+     * Returns the current fragment and initializes it if it was not already.
+     *
+     * @param position
+     * @return
+     */
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -48,12 +60,23 @@ public class OrganizerSectionsPagerAdapter extends FragmentPagerAdapter {
         return null;
     }
 
+    /**
+     * Returns the title of the tab.
+     *
+     * @param position
+     * @return
+     */
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         return mContext.getResources().getString(TAB_TITLES[position]);
     }
 
+    /**
+     * Returns the total count of tabs.
+     *
+     * @return
+     */
     @Override
     public int getCount() {
         // Show 2 total pages.

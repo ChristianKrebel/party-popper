@@ -6,18 +6,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -25,8 +21,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +33,10 @@ import java.util.List;
 
 import static com.partypopper.app.utils.Constants.STANDARD_ANIMATION_DURATION;
 
+/**
+ * Tools for every Activity.
+ * This Activity should be extended instead of AppCompatActivity.
+ */
 public abstract class BaseActivity extends AppCompatActivity {
 
     public static final FirebaseFunctions mFunctions;
@@ -67,6 +65,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         hideProgressDialog();
     }
 
+    /**
+     * Shows a ProgressDialog.
+     *
+     * @param text
+     */
     public void showProgressDialog(String text) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -77,12 +80,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
+    /**
+     * Hides a ProgressDialog.
+     */
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
     }
 
+    /**
+     * Shows a Snackbar.
+     *
+     * @param text text to show
+     */
     public void showText(String text) {
         Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG).show();
     }

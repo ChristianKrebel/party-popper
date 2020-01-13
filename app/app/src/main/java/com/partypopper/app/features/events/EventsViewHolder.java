@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The ViewHolder for an event. It initializes the views.
+ */
 public class EventsViewHolder extends RecyclerView.ViewHolder {
 
     private View mView;
@@ -25,6 +28,12 @@ public class EventsViewHolder extends RecyclerView.ViewHolder {
     private FrameLayout mGradientFl;
     private ClickListener mClickListener;
 
+    /**
+     * The constructor.
+     * Initializes views and sets an onClickListener.
+     *
+     * @param itemView
+     */
     public EventsViewHolder(View itemView) {
         super(itemView);
 
@@ -57,12 +66,18 @@ public class EventsViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    // Interface for click listener
+    /**
+     * Interface for click listener.
+     */
     public interface ClickListener {
         void onItemClick(View view, int position);
         void onItemLongClick(View view, int position);
     }
 
+    /** Sets the ViewHolder's click listener
+     *
+     * @param clickListener
+     */
     public void setOnClickListener(EventsViewHolder.ClickListener clickListener) {
         this.mClickListener = clickListener;
     }

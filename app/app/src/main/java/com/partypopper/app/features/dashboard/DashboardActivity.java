@@ -19,37 +19,48 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.partypopper.app.R;
+import com.partypopper.app.database.model.BlockedOrganizer;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.features.events.eventsAndOrganizerNamesCallback;
+import com.partypopper.app.features.splash.SplashActivity;
 import com.partypopper.app.service.LocationService;
-import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.events.EventsAdapter;
 import com.partypopper.app.features.business.BusinessActivity;
 import com.partypopper.app.features.publishEvent.PublishEventActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.database.repository.*;
+import com.partypopper.app.utils.EventHelper;
 
 import static com.partypopper.app.utils.Constants.*;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The Main Activity (SplashActivity will lead you here).
+ * It is a dashboard of nearby events and has functions like
+ * search, add event, become organizer etc.
+ */
 public class DashboardActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private RecyclerView mRecyclerView;
@@ -59,8 +70,17 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     private HorizontalScrollView mSearchHsv;
     private ChipGroup mSearchCg;
 
-    private LocationService locationService;
     private LatLng currentLocation;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private enum Sort {
+        startdate,
+        attendees,
+        distance
+    }
+
+    private Sort sortMethod = Sort.startdate;
 
 
     @Override
@@ -88,6 +108,34 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         // Chips
         mSearchHsv = findViewById(R.id.edSearchHsv);
         mSearchCg = findViewById(R.id.edSearchCg);
+        // act on chip selection
+        mSearchCg.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(ChipGroup chipGroup, int i) {
+                searchData(i, "", new eventsAndOrganizerNamesCallback() {
+                    @Override
+                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames, List<BlockedOrganizer> blockedOrganizers) {
+                        adapter = new EventsAdapter(DashboardActivity.this,
+                                events,
+                                eventsAndOrganizerNames,
+                                getApplicationContext(),
+                                R.layout.row_events_dashboard);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
+            }
+        });
+
+
+        // Pull down to refresh
+        swipeRefreshLayout = findViewById(R.id.edSwipeRefreshL);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initWithPermission();
+                adapter.notifyDataSetChanged();
+            }
+        });
 
 
         // RecyclerView
@@ -97,7 +145,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         initWithPermission();
     }
 
-    protected void initWithPermission() {
+    private void initWithPermission() {
 
         // If Version with flexible permissions ask for them
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -121,7 +169,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
     private void setCurrentLocation() {
         // Use callback to initialize the recyclerView AFTER receiving the current location
-        LocationService.getLocationManager(this,
+        LocationService.requestSingleUpdate(this,
                 new LocationService.LocationCallback() {
                     @Override public void onNewLocationAvailable(LocationService.GPSCoordinates location) {
                         currentLocation = new LatLng(location.latitude, location.longitude);
@@ -135,13 +183,28 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
         showData(new eventsAndOrganizerNamesCallback() {
             @Override
-            public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+            public void onCallback(List<Event> events,
+                                   Map<Event, String> eventsAndOrganizerNames,
+                                   List<BlockedOrganizer> blockedOrganizers) {
+
+                // Remove passed events
+                events = EventHelper.getEventsWithoutPassedOnes(events);
+
+                // Remove events of blocked organizers
+                events = EventHelper.getEventsWithoutBlockedOnes(events, blockedOrganizers);
+
+                // Sort
+                sortEvents(events);
+
                 adapter = new EventsAdapter(DashboardActivity.this,
                         events,
                         eventsAndOrganizerNames,
                         getApplicationContext(),
                         R.layout.row_events_dashboard);
                 mRecyclerView.setAdapter(adapter);
+
+                // Stop showing if it is refreshing
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -150,6 +213,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         EventsRepository eventsRepository = EventsRepository.getInstance();
         final OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
 
+        // Get nearby Events
         eventsRepository.getNearbyEvents
                 (currentLocation.latitude,
                 currentLocation.longitude,
@@ -159,21 +223,36 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             public void onComplete(@NonNull Task<List<Event>> task) {
                 if(task.getResult() != null) {
                     final List<Event> events = task.getResult();
-                    final Map<Event, String> eventsAndOrganizerNames = new LinkedHashMap<>();
+                    final Map<Event, String> eventsAndOrganizerNames = new HashMap<>();
 
                     for (int a = 0; a < events.size(); a++) {
                         final Event event = events.get(a);
                         final int b = a;
 
-                        organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                        // Get blocked organizers
+                        BlockedRepository.getInstance().getBlockedOrganizers(EVENTS_AMOUNT)
+                                .addOnSuccessListener(new OnSuccessListener<List<BlockedOrganizer>>() {
                             @Override
-                            public void onComplete(@NonNull Task<Organizer> task) {
-                                if (task.isSuccessful()) {
-                                    eventsAndOrganizerNames.put(event, task.getResult().getName());
-                                    if (b == (events.size()-1)) {
-                                        dbCallback.onCallback(events, eventsAndOrganizerNames);
+                            public void onSuccess(final List<BlockedOrganizer> blockedOrganizers) {
+
+                                // Get names of organizers
+                                organizerRepository.getOrganizerById(event.getOrganizer())
+                                        .addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Organizer> task) {
+                                        if (task.isSuccessful()) {
+                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                            if (b == (events.size()-1)) {
+                                                dbCallback.onCallback(events, eventsAndOrganizerNames, blockedOrganizers);
+                                            }
+                                        }
                                     }
-                                }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -214,17 +293,32 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                                 final Event event = events.get(a);
                                 final int b = a;
 
-                                organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Organizer> task) {
-                                        if (task.isSuccessful()) {
-                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
-                                            if (b == (events.size() - 1)) {
-                                                dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                // Get blocked organizers
+                                BlockedRepository.getInstance().getBlockedOrganizers(EVENTS_AMOUNT)
+                                        .addOnSuccessListener(new OnSuccessListener<List<BlockedOrganizer>>() {
+                                            @Override
+                                            public void onSuccess(final List<BlockedOrganizer> blockedOrganizers) {
+
+                                                // Get names of organizers
+                                                organizerRepository.getOrganizerById(event.getOrganizer())
+                                                        .addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Organizer> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                                                    if (b == (events.size()-1)) {
+                                                                        dbCallback.onCallback(events, eventsAndOrganizerNames, blockedOrganizers);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                             }
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
+                                        }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -241,9 +335,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                         Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                break;
-            case R.id.edOrganizersC:
-                // TODO
                 break;
             case R.id.edDateC:
                 Date startDate = Calendar.getInstance().getTime();
@@ -268,17 +359,32 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                                 final Event event = events.get(a);
                                 final int b = a;
 
-                                organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Organizer> task) {
-                                        if (task.isSuccessful()) {
-                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
-                                            if (b == (events.size() - 1)) {
-                                                dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                // Get blocked organizers
+                                BlockedRepository.getInstance().getBlockedOrganizers(EVENTS_AMOUNT)
+                                        .addOnSuccessListener(new OnSuccessListener<List<BlockedOrganizer>>() {
+                                            @Override
+                                            public void onSuccess(final List<BlockedOrganizer> blockedOrganizers) {
+
+                                                // Get names of organizers
+                                                organizerRepository.getOrganizerById(event.getOrganizer())
+                                                        .addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Organizer> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                                                    if (b == (events.size()-1)) {
+                                                                        dbCallback.onCallback(events, eventsAndOrganizerNames, blockedOrganizers);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                             }
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
+                                        }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -319,25 +425,38 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                                 final Event event = events.get(a);
                                 final int b = a;
 
-                                organizerRepository.getOrganizerById(event.getOrganizer()).addOnCompleteListener(new OnCompleteListener<Organizer>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Organizer> task) {
-                                        if (task.isSuccessful()) {
-                                            eventsAndOrganizerNames.put(event, task.getResult().getName());
-                                            if (b == (events.size() - 1)) {
-                                                dbCallback.onCallback(events, eventsAndOrganizerNames);
+                                // Get blocked organizers
+                                BlockedRepository.getInstance().getBlockedOrganizers(EVENTS_AMOUNT)
+                                        .addOnSuccessListener(new OnSuccessListener<List<BlockedOrganizer>>() {
+                                            @Override
+                                            public void onSuccess(final List<BlockedOrganizer> blockedOrganizers) {
+
+                                                // Get names of organizers
+                                                organizerRepository.getOrganizerById(event.getOrganizer())
+                                                        .addOnCompleteListener(new OnCompleteListener<Organizer>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Organizer> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    eventsAndOrganizerNames.put(event, task.getResult().getName());
+                                                                    if (b == (events.size()-1)) {
+                                                                        dbCallback.onCallback(events, eventsAndOrganizerNames, blockedOrganizers);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                             }
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
+                                        }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
-
-
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -351,6 +470,21 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
     }
 
+    private void sortEvents(List<Event> events) {
+        switch (sortMethod) {
+            case startdate:
+                EventHelper.sortByStartdate(events);
+                break;
+            case attendees:
+                EventHelper.sortByAttendees(events);
+                break;
+            case distance:
+                EventHelper.sortByDistance
+                        (currentLocation.latitude, currentLocation.longitude, events);
+                break;
+        }
+    }
+
     /**
      * Inflate the menu; this adds items to the action bar if it is present.
      *
@@ -358,8 +492,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
      * @return if succeeded
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuCompat.setGroupDividerEnabled(menu, true);
 
         if(isOrganizer()) {
             menu.removeItem(R.id.action_open_business_activity);
@@ -374,7 +509,10 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             public boolean onQueryTextSubmit(String query) {
                 searchData(mSearchCg.getCheckedChipId(), query, new eventsAndOrganizerNamesCallback() {
                     @Override
-                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+                    public void onCallback(List<Event> events,
+                                           Map<Event, String> eventsAndOrganizerNames,
+                                           List<BlockedOrganizer> blockedOrganizers) {
+
                         adapter = new EventsAdapter(DashboardActivity.this,
                                 events,
                                 eventsAndOrganizerNames,
@@ -390,7 +528,11 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             public boolean onQueryTextChange(String newText) {
                 searchData(mSearchCg.getCheckedChipId(), newText, new eventsAndOrganizerNamesCallback() {
                     @Override
-                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+                    public void onCallback(List<Event> events,
+                                           Map<Event, String> eventsAndOrganizerNames,
+                                           List<BlockedOrganizer> blockedOrganizers) {
+
+
                         adapter = new EventsAdapter(DashboardActivity.this,
                                 events,
                                 eventsAndOrganizerNames,
@@ -407,16 +549,43 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         searchView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
+                // Show Chips
                 mSearchHsv.setVisibility(View.VISIBLE);
+
+                // Instantly search
+                searchData(mSearchCg.getCheckedChipId(), "", new eventsAndOrganizerNamesCallback() {
+                    @Override
+                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames, List<BlockedOrganizer> blockedOrganizers) {
+                        adapter = new EventsAdapter(DashboardActivity.this,
+                                events,
+                                eventsAndOrganizerNames,
+                                getApplicationContext(),
+                                R.layout.row_events_dashboard);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
+
+                // Hide sort options
+                menu.setGroupVisible(R.id.sortMethodGroup, false);
+
+                // Deactivate pull down to refresh
+                swipeRefreshLayout.setEnabled(false);
             }
 
             @Override
             public void onViewDetachedFromWindow(View v) {
+                //Hide chips
                 mSearchHsv.setVisibility(View.GONE);
 
                 // Also reset recyclerview
                 initWithPermission();
                 mRecyclerView.setVisibility(View.VISIBLE);
+
+                // Show sort options
+                menu.setGroupVisible(R.id.sortMethodGroup, true);
+
+                // Activate pull down to refresh
+                swipeRefreshLayout.setEnabled(true);
             }
         });
 
@@ -433,17 +602,38 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sign_out:
+                isOrganizer = false;
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this, AuthenticationActivity.class));
+                finish();
+                startActivity(new Intent(this, SplashActivity.class));
                 return true;
             case R.id.action_open_business_activity:
                 startActivity(new Intent(this, BusinessActivity.class));
+                return true;
+            case R.id.action_sort_startdate:
+                sortMethod = Sort.startdate;
+                initWithPermission();
+                return true;
+            case R.id.action_sort_attendees:
+                sortMethod = Sort.attendees;
+                initWithPermission();
+                return true;
+            case R.id.action_sort_distance:
+                sortMethod = Sort.distance;
+                initWithPermission();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    /**
+     * Checks if a permission is granted and acts for both situations.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {

@@ -34,7 +34,10 @@ import java.util.List;
 
 import static com.partypopper.app.utils.Constants.MAP_ZOOM;
 
-
+/**
+ * The first Fragment ind the OrganizerActivity.
+ * It hosts information about the organizer.
+ */
 public class OrganizerInfoFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
 
     private boolean isOrganizerFavored;
@@ -63,6 +66,11 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         return fragment;
     }
 
+    /**
+     * Sets all attributes from arguments.
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +87,14 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    /**
+     * Creates the View of the fragment. Similar to onCreate of Activities.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -127,6 +143,9 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         return v;
     }
 
+    /**
+     * When this Activity gets resumed (in the view) update some Views.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -134,6 +153,11 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         onResumeSetOrganizerRating();
     }
 
+    /**
+     * OnClickListener.
+     *
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -152,7 +176,7 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    public void onOrganizerFavButtonClick(View view) {
+    private void onOrganizerFavButtonClick(View view) {
         FollowRepository followRepository = FollowRepository.getInstance();
         if (isOrganizerFavored) {
             followRepository.unfollowOrganizer(organizerId);
@@ -173,6 +197,10 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    /**
+     * Called when the organizer gets rated.
+     * It queries a new AVG rating and updates the UI.
+     */
     public void onResumeSetOrganizerRating() {
         OrganizerRepository organizerRepository = OrganizerRepository.getInstance();
         organizerRepository.getOrganizerById(organizerId).addOnCompleteListener(new OnCompleteListener<Organizer>() {
@@ -207,19 +235,19 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         });
     }
 
-    public void onOrganizerRateClick(View view) {
+    private void onOrganizerRateClick(View view) {
         OrganizerRateDialog organizerRateDialog = new OrganizerRateDialog();
         organizerRateDialog.show(getFragmentManager(), getString(R.string.organizer_rate_dialog_tag));
     }
 
-    public void onOrganizerAddressTextViewClick(View view) {
+    private void onOrganizerAddressTextViewClick(View view) {
         ((OrganizerActivity)getActivity()).showText(getString(R.string.copied_address));
 
         TextView textView = (TextView) view;
         BaseActivity.copyTextToClipboard("Address", textView.getText(), view.getContext());
     }
 
-    public void onBlockOrganizerButtonClick(View view) {
+    private void onBlockOrganizerButtonClick(View view) {
         ((OrganizerActivity)getActivity()).showText(getString(R.string.organizer_blocked));
         FollowRepository followRepository = FollowRepository.getInstance();
         followRepository.blockOrganizer(organizerId);

@@ -2,6 +2,7 @@ package com.partypopper.app.features.dashboard;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -37,6 +38,7 @@ import com.partypopper.app.database.model.BlockedOrganizer;
 import com.partypopper.app.database.model.Event;
 import com.partypopper.app.database.model.Organizer;
 import com.partypopper.app.features.events.eventsAndOrganizerNamesCallback;
+import com.partypopper.app.features.splash.SplashActivity;
 import com.partypopper.app.service.LocationService;
 import com.partypopper.app.features.authentication.AuthenticationActivity;
 import com.partypopper.app.features.events.EventsAdapter;
@@ -129,6 +131,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             @Override
             public void onRefresh() {
                 initWithPermission();
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -604,8 +607,10 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sign_out:
+                isOrganizer = false;
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this, AuthenticationActivity.class));
+                finish();
+                startActivity(new Intent(this, SplashActivity.class));
                 return true;
             case R.id.action_open_business_activity:
                 startActivity(new Intent(this, BusinessActivity.class));

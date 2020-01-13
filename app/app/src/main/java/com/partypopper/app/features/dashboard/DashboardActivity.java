@@ -102,6 +102,23 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         // Chips
         mSearchHsv = findViewById(R.id.edSearchHsv);
         mSearchCg = findViewById(R.id.edSearchCg);
+        // act on chip selection
+        mSearchCg.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(ChipGroup chipGroup, int i) {
+                searchData(i, "", new eventsAndOrganizerNamesCallback() {
+                    @Override
+                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames, List<BlockedOrganizer> blockedOrganizers) {
+                        adapter = new EventsAdapter(DashboardActivity.this,
+                                events,
+                                eventsAndOrganizerNames,
+                                getApplicationContext(),
+                                R.layout.row_events_dashboard);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
+            }
+        });
 
 
         // RecyclerView
@@ -114,7 +131,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     @Override
     protected void onResume() {
         super.onResume();
-        initWithPermission();
     }
 
     protected void initWithPermission() {
@@ -304,9 +320,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                         Toast.makeText(DashboardActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                break;
-            case R.id.edOrganizersC:
-                // TODO
                 break;
             case R.id.edDateC:
                 Date startDate = Calendar.getInstance().getTime();
@@ -524,6 +537,18 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             @Override
             public void onViewAttachedToWindow(View v) {
                 mSearchHsv.setVisibility(View.VISIBLE);
+
+                searchData(mSearchCg.getCheckedChipId(), "", new eventsAndOrganizerNamesCallback() {
+                    @Override
+                    public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames, List<BlockedOrganizer> blockedOrganizers) {
+                        adapter = new EventsAdapter(DashboardActivity.this,
+                                events,
+                                eventsAndOrganizerNames,
+                                getApplicationContext(),
+                                R.layout.row_events_dashboard);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
 
                 // Hide sort options
                 menu.setGroupVisible(R.id.sortMethodGroup, false);

@@ -12,9 +12,9 @@
     <string name="action_sort_alphabetical">A-Z</string>
     <string name="action_open_business_activity">Become organizer</string>
     <string name="action_sign_out">Sign out</string>
-    <string name="action_sort_startdate">Sort with start date</string>
-    <string name="action_sort_attendees">Sort with Attendees</string>
-    <string name="action_sort_distance">Sort with distance</string>
+    <string name="action_sort_startdate">Sort by start date</string>
+    <string name="action_sort_attendees">Sort by Attendees</string>
+    <string name="action_sort_distance">Sort by distance</string>
 
     <string name="auth_login_head">Login to your Account</string>
     <string name="auth_email">Email</string>

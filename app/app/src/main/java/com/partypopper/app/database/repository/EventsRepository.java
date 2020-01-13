@@ -37,7 +37,8 @@ public class EventsRepository {
         return db.collection("events").document(eventId).collection("joined").document(FirebaseAuth.getInstance().getUid()).get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
             @Override
             public Boolean then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                return task.getResult() != null;
+                DocumentSnapshot snapshot = task.getResult();
+                return snapshot != null && snapshot.exists();
             }
         });
     }

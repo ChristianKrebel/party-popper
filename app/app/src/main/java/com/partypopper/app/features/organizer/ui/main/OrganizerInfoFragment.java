@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,10 +21,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.partypopper.app.R;
 import com.partypopper.app.database.model.Organizer;
+import com.partypopper.app.database.repository.BlockedRepository;
 import com.partypopper.app.database.repository.FollowRepository;
 import com.partypopper.app.database.repository.OrganizerRepository;
 import com.partypopper.app.features.organizer.OrganizerActivity;
@@ -40,7 +44,7 @@ import static com.partypopper.app.utils.Constants.MAP_ZOOM;
  */
 public class OrganizerInfoFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
 
-    private boolean isOrganizerFavored;
+    private boolean isOrganizerFavored, isOrganizerBlocked;
     private MaterialButton organizerFavBt, organizerRateBt, organizerBlockBt;
     private RatingBar organizerRb;
     private String organizerId, organizerAddress, organizerDescription, organizerName, organizerPhone, organizerWebsite;
@@ -151,6 +155,7 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         super.onResume();
         onResumeSetOrganizerFavoredState();
         onResumeSetOrganizerRating();
+        onResumeSetBlockedOrganizerState();
     }
 
     /**
@@ -247,10 +252,65 @@ public class OrganizerInfoFragment extends Fragment implements View.OnClickListe
         BaseActivity.copyTextToClipboard("Address", textView.getText(), view.getContext());
     }
 
+    /**
+     * Checks if user has blocked the organizer and updates the View.
+     */
+    public void onResumeSetBlockedOrganizerState() {
+        // Blocks organizer?
+        isOrganizerBlocked = false;
+        changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+        BlockedRepository.getInstance().hasBlocked(organizerId).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                isOrganizerBlocked = aBoolean;
+                changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+            }
+        });
+    }
+
+    /**
+     * OnClickListener-method.
+     *
+     * @param view
+     */
     private void onBlockOrganizerButtonClick(View view) {
-        ((OrganizerActivity)getActivity()).showText(getString(R.string.organizer_blocked));
-        FollowRepository followRepository = FollowRepository.getInstance();
-        followRepository.blockOrganizer(organizerId);
+        final FollowRepository followRepository = FollowRepository.getInstance();
+        BlockedRepository.getInstance().hasBlocked(organizerId).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                isOrganizerBlocked = !aBoolean;
+                if (aBoolean) {
+                    followRepository.unblockOrganizer(organizerId).addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                        @Override
+                        public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                            Toast.makeText(getContext(), getString(R.string.organizer_unblocked), Toast.LENGTH_SHORT).show();
+                            changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+                        }
+                    });
+                } else {
+                    followRepository.blockOrganizer(organizerId).addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                        @Override
+                        public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                            Toast.makeText(getContext(), getString(R.string.organizer_blocked), Toast.LENGTH_SHORT).show();
+                            changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * Changes the UI of the Block-Button (Follow-Button).
+     *
+     * @param blocked
+     */
+    private void changeOrganizerBlockButtonUIstate(boolean blocked) {
+        if(blocked) {
+            organizerBlockBt.setText(getString(R.string.blocked_organizer));
+        } else {
+            organizerBlockBt.setText(getString(R.string.block_organizer));
+        }
     }
 
     /**

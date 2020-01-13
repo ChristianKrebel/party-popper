@@ -173,6 +173,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                 new LocationService.LocationCallback() {
                     @Override public void onNewLocationAvailable(LocationService.GPSCoordinates location) {
                         currentLocation = new LatLng(location.latitude, location.longitude);
+                        Log.d("Location", "----------- Loc: " + currentLocation.latitude + ", " + currentLocation.longitude);
                         initRecyclerView();
                     }
                 });

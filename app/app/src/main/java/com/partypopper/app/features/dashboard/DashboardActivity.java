@@ -146,7 +146,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
     }
 
     private void initWithPermission() {
-
         // If Version with flexible permissions ask for them
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission
@@ -180,7 +179,6 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
     private void initRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         showData(new eventsAndOrganizerNamesCallback() {
             @Override
             public void onCallback(List<Event> events,

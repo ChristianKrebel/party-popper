@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -140,7 +141,6 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         final TextView organizerLinkTv = findViewById(R.id.coOrganizerLinkTv);
         final TextView organizerPhoneTv = findViewById(R.id.coOrganizerPhoneTv);
         final TextView organizerAddressTv = findViewById(R.id.coOrganizerAddressTv);
-        final MaterialButton blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
         final View gradientV = findViewById(R.id.edGradientV);
 
         EventsRepository eventsRepository = EventsRepository.getInstance();
@@ -190,6 +190,7 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
         organizerInfoLl.setVisibility(View.GONE);
 
         favBt = findViewById(R.id.edOrganizerFavBt);
+        blockOrganizerBt = findViewById(R.id.coBlockOrganizerBt);
 
 
         // need for listener for fragment clicks
@@ -559,13 +560,14 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
      * Checks if user has blocked the organizer and updates the View.
      */
     public void onResumeSetBlockedOrganizerState() {
-        final BlockedRepository blockedRepository = BlockedRepository.getInstance();
-        blockedRepository.hasBlocked(organizerId).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+        // Blocks organizer?
+        isOrganizerBlocked = false;
+        changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+        BlockedRepository.getInstance().hasBlocked(organizerId).addOnSuccessListener(new OnSuccessListener<Boolean>() {
             @Override
-            public void onComplete(@NonNull Task<Boolean> task) {
-                if (task.isSuccessful()) {
-                    Log.d("BLOCKED", "Organizer is blocked: " + task.getResult() + "!!!!!!!!!!!!!!!");
-                }
+            public void onSuccess(Boolean aBoolean) {
+                isOrganizerBlocked = aBoolean;
+                changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
             }
         });
     }
@@ -576,9 +578,43 @@ public class EventDetailActivity extends BaseActivity implements OnMapReadyCallb
      * @param view
      */
     public void onBlockOrganizerButtonClick(View view) {
-        showText(getString(R.string.organizer_blocked));
-        FollowRepository followRepository = FollowRepository.getInstance();
-        followRepository.blockOrganizer(organizerId);
+        final FollowRepository followRepository = FollowRepository.getInstance();
+        BlockedRepository.getInstance().hasBlocked(organizerId).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                isOrganizerBlocked = !aBoolean;
+                if (aBoolean) {
+                    followRepository.unblockOrganizer(organizerId).addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                        @Override
+                        public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                            showText(getString(R.string.organizer_unblocked));
+                            changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+                        }
+                    });
+                } else {
+                    followRepository.blockOrganizer(organizerId).addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                        @Override
+                        public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                            showText(getString(R.string.organizer_blocked));
+                            changeOrganizerBlockButtonUIstate(isOrganizerBlocked);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * Changes the UI of the Block-Button (Follow-Button).
+     *
+     * @param blocked
+     */
+    private void changeOrganizerBlockButtonUIstate(boolean blocked) {
+        if(blocked) {
+            blockOrganizerBt.setText(getString(R.string.blocked_organizer));
+        } else {
+            blockOrganizerBt.setText(getString(R.string.block_organizer));
+        }
     }
 
     /**

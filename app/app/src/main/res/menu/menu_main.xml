@@ -2,21 +2,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.partypopper.app.MainActivity">
-    <item
-        android:id="@+id/action_search"
-        android:orderInCategory="101"
-        android:title="@string/action_search"
-        android:icon="@drawable/ic_search_white_24dp"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
-    <item
-        android:id="@+id/action_sign_out"
-        android:orderInCategory="100"
-        android:title="@string/action_sign_out"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_open_business_activity"
-        android:orderInCategory="99"
-        android:title="@string/action_open_business_activity"
-        app:showAsAction="never" />
+    <group android:id="@+id/menu_items">
+        <item
+            android:id="@+id/action_search"
+            android:orderInCategory="101"
+            android:title="@string/action_search"
+            android:icon="@drawable/ic_search_white_24dp"
+            app:showAsAction="ifRoom|collapseActionView"
+            app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+        <item
+            android:id="@+id/action_sign_out"
+            android:orderInCategory="100"
+            android:title="@string/action_sign_out"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_open_business_activity"
+            android:orderInCategory="99"
+            android:title="@string/action_open_business_activity"
+            app:showAsAction="never" />
+    </group>
+    <group android:id="@+id/sortMethodGroup">
+        <item
+            android:id="@+id/action_sort_startdate"
+            android:orderInCategory="96"
+            android:title="@string/action_sort_startdate"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_sort_attendees"
+            android:orderInCategory="97"
+            android:title="@string/action_sort_attendees"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_sort_distance"
+            android:orderInCategory="98"
+            android:title="@string/action_sort_distance"
+            app:showAsAction="never" />
+    </group>
 </menu>

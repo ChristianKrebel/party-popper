@@ -19,6 +19,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,12 +41,14 @@ import com.partypopper.app.features.business.BusinessActivity;
 import com.partypopper.app.features.publishEvent.PublishEventActivity;
 import com.partypopper.app.utils.BaseActivity;
 import com.partypopper.app.database.repository.*;
+import com.partypopper.app.utils.EventHelper;
 
 import static com.partypopper.app.utils.Constants.*;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,14 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
     private LocationService locationService;
     private LatLng currentLocation;
+
+    private enum Sort {
+        startdate,
+        attendees,
+        distance
+    }
+
+    Sort sortMethod = Sort.startdate;
 
 
     @Override
@@ -142,6 +153,10 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
         showData(new eventsAndOrganizerNamesCallback() {
             @Override
             public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+
+                // Sort
+                sortEvents(events);
+
                 adapter = new EventsAdapter(DashboardActivity.this,
                         events,
                         eventsAndOrganizerNames,
@@ -165,7 +180,7 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             public void onComplete(@NonNull Task<List<Event>> task) {
                 if(task.getResult() != null) {
                     final List<Event> events = task.getResult();
-                    final Map<Event, String> eventsAndOrganizerNames = new LinkedHashMap<>();
+                    final Map<Event, String> eventsAndOrganizerNames = new HashMap<>();
 
                     for (int a = 0; a < events.size(); a++) {
                         final Event event = events.get(a);
@@ -357,6 +372,21 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
 
     }
 
+    private void sortEvents(List<Event> events) {
+        switch (sortMethod) {
+            case startdate:
+                EventHelper.sortByStartdate(events);
+                break;
+            case attendees:
+                EventHelper.sortByAttendees(events);
+                break;
+            case distance:
+                EventHelper.sortByDistance
+                        (currentLocation.latitude, currentLocation.longitude, events);
+                break;
+        }
+    }
+
     /**
      * Inflate the menu; this adds items to the action bar if it is present.
      *
@@ -364,8 +394,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
      * @return if succeeded
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuCompat.setGroupDividerEnabled(menu, true);
 
         if(isOrganizer()) {
             menu.removeItem(R.id.action_open_business_activity);
@@ -381,6 +412,8 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                 searchData(mSearchCg.getCheckedChipId(), query, new eventsAndOrganizerNamesCallback() {
                     @Override
                     public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+
+
                         adapter = new EventsAdapter(DashboardActivity.this,
                                 events,
                                 eventsAndOrganizerNames,
@@ -397,6 +430,8 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                 searchData(mSearchCg.getCheckedChipId(), newText, new eventsAndOrganizerNamesCallback() {
                     @Override
                     public void onCallback(List<Event> events, Map<Event, String> eventsAndOrganizerNames) {
+
+
                         adapter = new EventsAdapter(DashboardActivity.this,
                                 events,
                                 eventsAndOrganizerNames,
@@ -414,6 +449,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
             @Override
             public void onViewAttachedToWindow(View v) {
                 mSearchHsv.setVisibility(View.VISIBLE);
+
+                // Hide sort options
+                menu.setGroupVisible(R.id.sortMethodGroup, false);
             }
 
             @Override
@@ -423,6 +461,9 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                 // Also reset recyclerview
                 initWithPermission();
                 mRecyclerView.setVisibility(View.VISIBLE);
+
+                // Show sort options
+                menu.setGroupVisible(R.id.sortMethodGroup, true);
             }
         });
 
@@ -444,6 +485,18 @@ public class DashboardActivity extends BaseActivity implements ActivityCompat.On
                 return true;
             case R.id.action_open_business_activity:
                 startActivity(new Intent(this, BusinessActivity.class));
+                return true;
+            case R.id.action_sort_startdate:
+                sortMethod = Sort.startdate;
+                initWithPermission();
+                return true;
+            case R.id.action_sort_attendees:
+                sortMethod = Sort.attendees;
+                initWithPermission();
+                return true;
+            case R.id.action_sort_distance:
+                sortMethod = Sort.distance;
+                initWithPermission();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

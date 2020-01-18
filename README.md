@@ -1,6 +1,6 @@
 # Party Popper
 
-![Icon](app\app\src\main\res\mipmap-xxxhdpi\ic_launcher_round.png)
+![Icon](app/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png)
 
 App for finding and exploring nearby events and parties 🎉
 
@@ -9,9 +9,9 @@ The code is documented in English but the general documentation which one can fi
 
 ## Team
 
-* @Leon338
-* @starlesschris
-* @jrafflenbeul
+* [@Leon338](https://github.com/Leon338)
+* [@starlesschris](https://github.com/starlesschris)
+* [@jrafflenbeul](https://github.com/jrafflenbeul)
 
 ## Idea
 
@@ -47,4 +47,4 @@ are displayed. These events get hotter depending on how many users have agreed t
 
 ## Screenshots
 
-![Screenshots](docs\Screenshots.png)
+![Screenshots](docs/Screenshots.png)

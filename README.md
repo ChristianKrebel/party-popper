@@ -10,7 +10,7 @@ The code is documented in English but the general documentation which one can fi
 ## Team
 
 * [@Leon338](https://github.com/Leon338)
-* [@starlesschris](https://github.com/starlesschris)
+* [@ChristianKrebel](https://github.com/ChristianKrebel)
 * [@jrafflenbeul](https://github.com/jrafflenbeul)
 
 ## Idea
